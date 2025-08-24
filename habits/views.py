@@ -25,7 +25,14 @@ class HabitViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Habit.objects.filter(user=self.request.user)
+        queryset = Habit.objects.filter(user=self.request.user)
+        
+        # Фильтрация по группе
+        group_id = self.request.query_params.get('group', None)
+        if group_id:
+            queryset = queryset.filter(group_id=group_id)
+        
+        return queryset
 
     def perform_create(self, serializer):
         habit = serializer.save(user=self.request.user)

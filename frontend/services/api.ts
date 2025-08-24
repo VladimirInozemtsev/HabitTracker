@@ -141,6 +141,24 @@ export const api = {
   getAnalytics: async (): Promise<any> => {
     return apiRequest('/analytics/');
   },
+
+  // Получить группы привычек
+  getGroups: async (): Promise<any[]> => {
+    return apiRequest('/habits/groups/');
+  },
+
+  // Создать новую группу
+  createGroup: async (groupData: any): Promise<any> => {
+    return apiRequest('/habits/groups/', {
+      method: 'POST',
+      body: JSON.stringify(groupData),
+    });
+  },
+
+  // Получить привычки по группе
+  getHabitsByGroup: async (groupId: string): Promise<any[]> => {
+    return apiRequest(`/habits/?group=${groupId}`);
+  },
 };
 
 // Проверка аутентификации
