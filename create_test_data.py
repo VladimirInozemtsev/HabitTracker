@@ -116,6 +116,7 @@ def create_demo_data():
     print("\n📊 Создаем логи выполнения...")
     for i in range(14):
         log_date = date.today() - timedelta(days=i)
+        print(f"Создаем лог для даты: {log_date}")
         
         for habit in habits:
             # Реалистичные данные выполнения

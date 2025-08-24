@@ -1,12 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Modal, TextInput } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
+import {
+  Provider as PaperProvider,
+  Text,
+  Button,
+  Card,
+  TextInput,
+  FAB,
+  BottomNavigation,
+  Surface,
+  Divider,
+  Chip,
+  Portal,
+  Dialog,
+  List,
+  Avatar,
+  Badge,
+  useTheme,
+  Appbar,
+} from 'react-native-paper';
 import { api, Habit, isAuthenticated } from './services/api';
+import { HabitGrid } from './components/HabitGrid';
+import { HabitCalendar } from './components/HabitCalendar';
+import { getHabitColor } from './utils/colors';
 
 // Типы для навигации
 type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
 
-export default function App() {
+function AppContent() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,6 +45,10 @@ export default function App() {
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [newGroupColor, setNewGroupColor] = useState('#4CAF50');
+  
+  // Состояние для детальной страницы привычки
+  const [selectedHabit, setSelectedHabit] = useState<any>(null);
+  const [showHabitDetail, setShowHabitDetail] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [groupHabits, setGroupHabits] = useState<{[key: string]: any[]}>({});
 
@@ -97,6 +123,53 @@ export default function App() {
     } catch (error) {
       console.error('Toggle habit error:', error);
       Alert.alert('Ошибка', 'Не удалось отметить привычку');
+    }
+  };
+
+  const handleHabitPress = (habit: any) => {
+    setSelectedHabit(habit);
+    setShowHabitDetail(true);
+  };
+
+  const handleCalendarDayToggle = async (date: string) => {
+    if (!selectedHabit) return;
+    
+    console.log('Calendar toggle DEBUG:', {
+      date,
+      habitId: selectedHabit.id,
+      habitName: selectedHabit.name,
+      logs: selectedHabit.logs,
+      isCompleted: selectedHabit.logs?.some((log: any) => 
+        log.date === date && log.status === 'completed'
+      )
+    });
+    
+    try {
+      // Проверяем, была ли привычка выполнена в этот день
+      const isCompleted = selectedHabit.logs?.some((log: any) => 
+        log.date === date && log.status === 'completed'
+      );
+      
+      if (isCompleted) {
+        // Если уже выполнена - убираем выполнение
+        console.log('Removing completion for date:', date);
+        await api.unmarkHabitCompleteForDate(selectedHabit.id, date);
+      } else {
+        // Если не выполнена - отмечаем как выполненную на конкретную дату
+        console.log('Adding completion for date:', date);
+        await api.markHabitCompleteForDate(selectedHabit.id, date);
+      }
+      
+      // Перезагружаем привычки чтобы обновить данные
+      await loadHabits();
+      // Обновляем выбранную привычку
+      const updatedHabits = habits.filter((h: any) => h.id === selectedHabit.id);
+      if (updatedHabits.length > 0) {
+        setSelectedHabit(updatedHabits[0]);
+      }
+    } catch (error) {
+      console.error('Calendar day toggle error:', error);
+      Alert.alert('Ошибка', 'Не удалось изменить статус привычки');
     }
   };
 
@@ -252,54 +325,148 @@ export default function App() {
 
   // Функция для рендеринга экранов
   const renderScreen = () => {
+    // Детальная страница привычки
+    if (showHabitDetail && selectedHabit) {
+      return (
+        <View style={styles.container}>
+          <Appbar.Header style={styles.appbar}>
+            <Appbar.BackAction onPress={() => setShowHabitDetail(false)} />
+            <Appbar.Content title={selectedHabit.name} />
+            <Appbar.Action 
+              icon="check" 
+              onPress={() => handleHabitToggle(selectedHabit.id)}
+              iconColor="#fff"
+            />
+          </Appbar.Header>
+          
+          <ScrollView style={styles.content}>
+            <View style={styles.habitDetailContainer}>
+              <Card style={styles.habitDetailCard}>
+                <Card.Content>
+                  <Text variant="titleLarge" style={styles.habitDetailName}>
+                    {selectedHabit.name}
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.habitDetailDescription}>
+                    {selectedHabit.description}
+                  </Text>
+                  
+                  <View style={styles.habitDetailStats}>
+                    <Chip 
+                      icon="fire" 
+                      textStyle={{color: '#FF6B35'}}
+                      style={styles.streakChip}
+                    >
+                      {selectedHabit.streak} дней подряд
+                    </Chip>
+                    {selectedHabit.group ? (
+                      <Chip 
+                        icon="folder" 
+                        textStyle={{color: selectedHabit.group.color}}
+                        style={[styles.groupChip, {borderColor: selectedHabit.group.color}]}
+                        mode="outlined"
+                      >
+                        {selectedHabit.group.name}
+                      </Chip>
+                    ) : (
+                      <Chip 
+                        icon="folder-outline" 
+                        textStyle={{color: '#999'}}
+                        style={[styles.groupChip, {borderColor: '#999'}]}
+                        mode="outlined"
+                      >
+                        Без группы
+                      </Chip>
+                    )}
+                  </View>
+                  
+                  {/* Интерактивный календарь */}
+                  <HabitCalendar
+                    habitId={selectedHabit.id}
+                    color={getHabitColor(selectedHabit.id)}
+                    completions={selectedHabit.logs || []}
+                    onToggleDay={handleCalendarDayToggle}
+                  />
+                </Card.Content>
+              </Card>
+            </View>
+          </ScrollView>
+        </View>
+      );
+    }
+
     switch (currentScreen) {
       case 'habits':
         return (
-          <ScrollView>
-            <View style={styles.header}>
-              <View style={styles.headerContent}>
-                <View>
-                  <Text style={styles.title}>🎯 Habit Tracker</Text>
-                  <Text style={styles.subtitle}>Твой путь к лучшей версии себя</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={handleOpenAddModal}
-                >
-                  <Text style={styles.addButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+          <View style={styles.container}>
+            <Appbar.Header style={styles.appbar}>
+              <Appbar.Content 
+                title="HabitTracker" 
+                subtitle=""
+                titleStyle={styles.appbarTitle}
+                subtitleStyle={styles.appbarSubtitle}
+              />
+              <Appbar.Action 
+                icon="chart-bar" 
+                onPress={() => {}}
+                iconColor="#fff"
+              />
+              <Appbar.Action 
+                icon="plus" 
+                onPress={handleOpenAddModal}
+                iconColor="#fff"
+              />
+            </Appbar.Header>
+            
+            <ScrollView 
+              style={styles.content}
+            >
 
             <View style={styles.habitsList}>
               {habits.map((habit) => (
-                <TouchableOpacity
+                <Card
                   key={habit.id}
                   style={styles.habitCard}
-                  onPress={() => handleHabitToggle(habit.id)}
+                  onPress={() => handleHabitPress(habit)}
                 >
-                  <View style={styles.habitInfo}>
-                    <Text style={styles.habitName}>{habit.name}</Text>
-                    <Text style={styles.habitDescription}>{habit.description}</Text>
-                    <Text style={styles.habitStreak}>🔥 {habit.streak} дней подряд</Text>
-                    {habit.group && (
-                      <Text style={[styles.habitGroup, { color: habit.group.color }]}>
-                        📁 {habit.group.name}
-                      </Text>
-                    )}
-                  </View>
-                  <View style={[
-                    styles.habitStatus,
-                    { backgroundColor: habit.is_completed_today ? '#4CAF50' : '#E0E0E0' }
-                  ]}>
-                    <Text style={styles.statusText}>
-                      {habit.is_completed_today ? '✅' : '⭕'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                  <Card.Content style={styles.habitCardContent}>
+                    <View style={styles.habitInfo}>
+                      {/* Компактная карточка: название + описание + статус */}
+                      <View style={styles.habitHeader}>
+                        <View style={styles.habitText}>
+                          <Text variant="bodyMedium" style={styles.habitName}>
+                            {habit.name}
+                          </Text>
+                          <Text variant="bodySmall" style={styles.habitDescription}>
+                            {habit.description}
+                          </Text>
+                        </View>
+                        <View style={styles.habitStatus}>
+                          <Avatar.Icon 
+                            size={20} 
+                            icon={habit.is_completed_today ? "check" : "circle-outline"}
+                            style={{
+                              backgroundColor: habit.is_completed_today ? '#4CAF50' : '#E0E0E0'
+                            }}
+                            color="#fff"
+                          />
+                        </View>
+                      </View>
+                      
+                      {/* Сетка истории привычки */}
+                      <HabitGrid
+                        habitId={habit.id}
+                        color={getHabitColor(habit.id)}
+                        completions={habit.logs || []}
+                        weeks={20} // показываем 20 недель
+                        showLegend={false} // Убираем легенду с главного экрана
+                      />
+                    </View>
+                  </Card.Content>
+                </Card>
               ))}
             </View>
           </ScrollView>
+        </View>
         );
       
       case 'stats':
@@ -711,28 +878,25 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000', // Черный фон как в HabitKit
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: '#ffffff',
   },
   header: {
     padding: 20,
     paddingTop: 60,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: '#000000', // Черная шапка
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
   },
   headerContent: {
     flexDirection: 'row',
@@ -760,98 +924,49 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff', // Белый текст
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#cccccc', // Светло-серый текст
   },
   habitsList: {
-    padding: 20,
+    padding: 0, // Убираем отступы полностью
   },
-  habitCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  habitInfo: {
-    flex: 1,
-  },
-  habitName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  habitDescription: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 4,
-  },
-  habitStreak: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  habitGroup: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  habitStatus: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12,
-  },
-  statusText: {
-    fontSize: 20,
-  },
+
   // Стили для модального окна
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1a1a1a', // Темно-серый фон для модала
     borderRadius: 12,
     padding: 20,
     width: '90%',
     maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff', // Белый текст
     marginBottom: 20,
     textAlign: 'center',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#333333',
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#2a2a2a', // Темный фон для инпутов
+    color: '#ffffff', // Белый текст
   },
   modalButtons: {
     flexDirection: 'row',
@@ -887,8 +1002,10 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#000000',
   },
   screenContentContainer: {
+    paddingHorizontal: 0, // Убираем горизонтальные отступы полностью
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -896,20 +1013,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#ffffff',
   },
   screenText: {
     fontSize: 16,
-    color: '#666',
+    color: '#cccccc',
     textAlign: 'center',
   },
   
   // Стили для нижней навигации
   bottomNavigation: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: '#1a1a1a', // Темный фон для навигации
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: '#333333',
     paddingVertical: 10,
     paddingHorizontal: 5,
   },
@@ -919,22 +1036,23 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   navItemActive: {
-    backgroundColor: '#F0F8FF',
+    backgroundColor: '#333333',
     borderRadius: 8,
   },
   navIcon: {
     fontSize: 20,
     marginBottom: 4,
+    color: '#cccccc',
   },
   navIconActive: {
-    color: '#4CAF50',
+    color: '#ffffff',
   },
   navText: {
     fontSize: 12,
-    color: '#666',
+    color: '#cccccc',
   },
   navTextActive: {
-    color: '#4CAF50',
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   
@@ -946,27 +1064,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   statCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#1a1a1a', // Темный фон для карточек статистики
     borderRadius: 12,
     padding: 20,
     marginBottom: 15,
     width: '48%',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
   statNumber: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: '#ffffff', // Белые цифры
     marginBottom: 8,
   },
   statLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#cccccc', // Светло-серый текст
     textAlign: 'center',
   },
   loadButton: {
@@ -987,17 +1102,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   groupCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#1a1a1a', // Темный фон как у карточек привычек
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#333333', // Серая рамка
   },
   groupColor: {
     width: 20,
@@ -1011,40 +1123,37 @@ const styles = StyleSheet.create({
   groupName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#ffffff', // Белый текст
     marginBottom: 4,
   },
   groupDescription: {
     fontSize: 14,
-    color: '#888',
+    color: '#cccccc', // Светло-серый текст
     marginBottom: 4,
   },
   groupCount: {
     fontSize: 12,
-    color: '#666',
+    color: '#999999', // Серый текст
   },
   
   // Стили для профиля
   profileCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#1a1a1a', // Темный фон как у карточек привычек
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#333333', // Серая рамка
   },
   profileTitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#cccccc', // Светло-серый текст
     marginBottom: 4,
   },
   profileText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#ffffff', // Белый текст
   },
   
   // Стили для заголовка групп
@@ -1062,7 +1171,7 @@ const styles = StyleSheet.create({
   },
   colorLabel: {
     fontSize: 16,
-    color: '#333',
+    color: '#ffffff', // Белый текст
     marginBottom: 8,
   },
   colorOptions: {
@@ -1186,54 +1295,148 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#333333',
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#2a2a2a', // Темный фон
   },
   groupDropdownButtonText: {
     fontSize: 16,
-    color: '#333',
+    color: '#ffffff', // Белый текст
   },
   groupDropdownArrow: {
     fontSize: 12,
-    color: '#666',
+    color: '#cccccc', // Светло-серый текст
   },
   groupDropdownList: {
     position: 'absolute',
     top: '100%',
     left: 0,
     right: 0,
-    backgroundColor: 'white',
+    backgroundColor: '#1a1a1a', // Темный фон
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#333333',
     borderRadius: 8,
     marginTop: 2,
     maxHeight: 200,
     zIndex: 1000,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
   },
   groupDropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#333333',
   },
   groupDropdownItemSelected: {
     backgroundColor: '#4CAF50',
   },
   groupDropdownItemText: {
     fontSize: 16,
-    color: '#333',
+    color: '#ffffff', // Белый текст
     marginLeft: 8,
   },
   groupDropdownItemTextSelected: {
     color: '#fff',
     fontWeight: '600',
   },
+  
+  // Стили для Appbar
+  appbar: {
+    backgroundColor: '#000000', // Черная шапка как в HabitKit
+    elevation: 4,
+  },
+  appbarTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  appbarSubtitle: {
+    color: '#fff',
+    fontSize: 14,
+    opacity: 0.9,
+  },
+  content: {
+    flex: 1,
+    backgroundColor: '#000000', // Черный фон как у шапки
+  },
+  
+  // Стили для карточек привычек
+  habitCard: {
+    marginBottom: 6, // Уменьшаем отступы между карточками
+    marginHorizontal: 8, // Добавляем небольшие боковые отступы
+    elevation: 2,
+    backgroundColor: '#2a2a2a', // Dark card background
+  },
+  habitCardContent: {
+    paddingVertical: 8, // Уменьшаем внутренние отступы
+  },
+  habitInfo: {
+    flex: 1,
+  },
+  habitHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4, // Уменьшаем отступ
+  },
+  habitText: {
+    flex: 1,
+  },
+  habitDetails: {
+    marginBottom: 8,
+  },
+  habitName: {
+    fontWeight: 'bold',
+    color: '#fff', // White text for dark theme
+    flex: 1,
+  },
+  habitDescription: {
+    color: '#ccc', // Light grey text for dark theme
+    marginBottom: 8,
+  },
+  habitMeta: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  streakChip: {
+    backgroundColor: '#FFF3E0',
+  },
+  groupChip: {
+    backgroundColor: 'transparent',
+  },
+  habitStatus: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  // Стили для детальной страницы привычки
+  habitDetailContainer: {
+    padding: 16,
+  },
+  habitDetailCard: {
+    backgroundColor: '#2a2a2a',
+    marginBottom: 16,
+  },
+  habitDetailName: {
+    color: '#fff',
+    marginBottom: 8,
+  },
+  habitDetailDescription: {
+    color: '#ccc',
+    marginBottom: 16,
+  },
+  habitDetailStats: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 16,
+  },
 });
+
+export default function App() {
+  return (
+    <PaperProvider>
+      <AppContent />
+    </PaperProvider>
+  );
+}

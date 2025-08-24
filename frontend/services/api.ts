@@ -8,11 +8,16 @@ export interface Habit {
   description: string;
   streak: number;
   is_completed_today: boolean;
-  group: {
+  group?: {
     id: string;
     name: string;
     color: string;
   };
+  logs?: Array<{
+    id: string;
+    date: string;
+    status: string;
+  }>;
 }
 
 export interface User {
@@ -129,6 +134,22 @@ export const api = {
   markHabitComplete: async (habitId: string): Promise<any> => {
     return apiRequest(`/habits/${habitId}/complete/`, {
       method: 'POST',
+    });
+  },
+
+  // Отметить привычку как выполненную на конкретную дату
+  markHabitCompleteForDate: async (habitId: string, date: string): Promise<any> => {
+    return apiRequest(`/habits/${habitId}/complete/`, {
+      method: 'POST',
+      body: JSON.stringify({ date }),
+    });
+  },
+
+  // Убрать отметку выполнения привычки на конкретную дату
+  unmarkHabitCompleteForDate: async (habitId: string, date: string): Promise<any> => {
+    return apiRequest(`/habits/${habitId}/complete/`, {
+      method: 'DELETE',
+      body: JSON.stringify({ date }),
     });
   },
 

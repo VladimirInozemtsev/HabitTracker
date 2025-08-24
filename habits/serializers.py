@@ -14,10 +14,20 @@ class HabitReminderSerializer(serializers.ModelSerializer):
         model = HabitReminder
         fields = '__all__'
 
+class HabitLogSerializer(serializers.ModelSerializer):
+    """Сериализатор для лога привычки"""
+    habit_name = serializers.CharField(source='habit.name', read_only=True)
+    
+    class Meta:
+        model = HabitLog
+        fields = '__all__'
+        read_only_fields = ['created_at', 'updated_at']
+
 class HabitSerializer(serializers.ModelSerializer):
     """Сериализатор для привычки"""
     reminders = HabitReminderSerializer(many=True, read_only=True)
     group_name = serializers.CharField(source='group.name', read_only=True)
+    logs = HabitLogSerializer(many=True, read_only=True)  # Добавляем логи
     
     # Расчетные поля
     total_completions = serializers.SerializerMethodField()
@@ -58,12 +68,3 @@ class HabitSerializer(serializers.ModelSerializer):
             date=today,
             status='completed'
         ).exists()
-
-class HabitLogSerializer(serializers.ModelSerializer):
-    """Сериализатор для лога привычки"""
-    habit_name = serializers.CharField(source='habit.name', read_only=True)
-    
-    class Meta:
-        model = HabitLog
-        fields = '__all__'
-        read_only_fields = ['created_at', 'updated_at']
