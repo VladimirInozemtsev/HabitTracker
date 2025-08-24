@@ -25,6 +25,7 @@ class HabitSerializer(serializers.ModelSerializer):
     streak = serializers.SerializerMethodField()
     longest_streak = serializers.SerializerMethodField()
     completion_rate = serializers.SerializerMethodField()
+    is_completed_today = serializers.SerializerMethodField()
     
     class Meta:
         model = Habit
@@ -48,6 +49,15 @@ class HabitSerializer(serializers.ModelSerializer):
         if total == 0:
             return 0
         return round((obj.calculated_total_completions / total) * 100, 2)
+
+    def get_is_completed_today(self, obj):
+        """Проверяет, выполнена ли привычка сегодня"""
+        from django.utils import timezone
+        today = timezone.now().date()
+        return obj.logs.filter(
+            date=today,
+            status='completed'
+        ).exists()
 
 class HabitLogSerializer(serializers.ModelSerializer):
     """Сериализатор для лога привычки"""

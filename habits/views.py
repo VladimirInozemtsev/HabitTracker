@@ -37,20 +37,29 @@ class HabitViewSet(viewsets.ModelViewSet):
         """Отметить выполнение привычки"""
         habit = self.get_object()
         
-        # Создаем лог выполнения
-        HabitLog.objects.create(
+        # Создаем или обновляем лог выполнения
+        log, created = HabitLog.objects.get_or_create(
             habit=habit,
             date=timezone.now().date(),
-            status='completed',
-            value=request.data.get('value', 1)
+            defaults={
+                'status': 'completed',
+                'value': request.data.get('value', 1)
+            }
         )
         
-        # Обновляем статистику привычки
-        habit.total_completions += 1
-        habit.streak += 1
-        if habit.streak > habit.longest_streak:
-            habit.longest_streak = habit.streak
-        habit.save()
+        # Если лог уже существовал, обновляем его статус
+        if not created and log.status != 'completed':
+            log.status = 'completed'
+            log.value = request.data.get('value', 1)
+            log.save()
+        
+        # Обновляем статистику привычки только если лог был создан
+        if created:
+            habit.total_completions += 1
+            habit.streak += 1
+            if habit.streak > habit.longest_streak:
+                habit.longest_streak = habit.streak
+            habit.save()
         
         # Обновляем статистику пользователя
         request.user.update_habits_completed_count()
@@ -83,25 +92,56 @@ def complete_habit(request, habit_id):
     try:
         habit = Habit.objects.get(id=habit_id, user=request.user)
         
-        # Создаем лог выполнения
-        HabitLog.objects.create(
+        # Проверяем не была ли привычка уже выполнена сегодня
+        today = timezone.now().date()
+        existing_log = HabitLog.objects.filter(
             habit=habit,
-            date=timezone.now().date(),
-            status='completed',
-            value=request.data.get('value', 1)
+            date=today,
+            status='completed'
+        ).first()
+        
+        if existing_log:
+            # Привычка уже выполнена сегодня, но можно нажать еще раз
+            return Response({
+                'message': 'Привычка уже выполнена сегодня!', 
+                'completed_today': True
+            }, status=status.HTTP_200_OK)
+        
+        # Создаем или обновляем лог выполнения
+        log, created = HabitLog.objects.get_or_create(
+            habit=habit,
+            date=today,
+            defaults={
+                'status': 'completed',
+                'value': request.data.get('value', 1)
+            }
         )
         
-        # Обновляем статистику привычки
-        habit.total_completions += 1
-        habit.streak += 1
-        if habit.streak > habit.longest_streak:
-            habit.longest_streak = habit.streak
-        habit.save()
+        # Если лог уже существовал, обновляем его статус
+        if not created and log.status != 'completed':
+            log.status = 'completed'
+            log.value = request.data.get('value', 1)
+            log.save()
         
-        # Обновляем статистику пользователя
-        request.user.update_habits_completed_count()
-        request.user.update_streak_stats()
+        # Обновляем статистику привычки только если лог был создан
+        if created:
+            habit.total_completions += 1
+            habit.streak += 1
+            if habit.streak > habit.longest_streak:
+                habit.longest_streak = habit.streak
+            habit.save()
+        
+        # Обновляем статистику пользователя (с обработкой ошибок)
+        try:
+            request.user.update_habits_completed_count()
+            request.user.update_streak_stats()
+        except Exception as e:
+            print(f"Error updating user stats: {e}")
         
         return Response({'message': 'Привычка выполнена!'}, status=status.HTTP_200_OK)
+        
     except Habit.DoesNotExist:
         return Response({'error': 'Привычка не найдена'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error in complete_habit: {e}")
+        return Response({'error': 'Внутренняя ошибка сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
