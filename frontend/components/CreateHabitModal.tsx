@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
-import { Text, TextInput, Button, IconButton, Chip } from 'react-native-paper';
+import { View, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { Text, TextInput, Button, IconButton } from 'react-native-paper';
+
+// Импорты из констант
+import { HABIT_ICONS, getAllIcons } from '../constants/icons';
+import { HABIT_COLORS } from '../constants/colors';
+import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '../constants/goals';
+
+// Импорт стилей
+import { modalStyles as styles } from '../styles/modalStyles';
+
+// Импорт компонентов
+import { CategoriesScreen } from './CategoriesScreen';
 
 interface CreateHabitModalProps {
   visible: boolean;
@@ -10,47 +21,6 @@ interface CreateHabitModalProps {
   editMode?: boolean;
   habitData?: any;
 }
-
-const HABIT_COLORS = [
-  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD',
-  '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA',
-  '#F1948A', '#85C1E9', '#F7DC6F', '#D7BDE2', '#A9CCE3', '#FAD7A0',
-  // Добавляем неоновые цвета
-  '#00FF88', '#FF0080', '#8000FF', '#FF8000', '#00FFFF', '#FF00FF',
-  '#FFFF00', '#80FF00', '#FF8000', '#0080FF', '#FF0080', '#8000FF'
-];
-
-// 100% рабочие иконки Material Design (по 12 в категории)
-const HABIT_ICONS = [
-  // Деятельность (12 самых ходовых)
-  'briefcase', 'clock', 'phone', 'cart', 'bed', 'book', 
-  'target', 'headphones', 'leaf', 'wrench', 'fire', 'cellphone',
-  
-  // Спорт (12 самых ходовых)
-  'heart', 'star', 'bike', 'target', 'heart', 'basketball', 
-  'dumbbell', 'walk', 'run', 'tennis', 'volleyball', 'swim',
-  
-  // Еда и напитки (12 самых ходовых)
-  'food', 'food-variant', 'food-apple', 'food-croissant', 'food-cake', 'food-coffee',
-  'food-fork-knife', 'food-bowl', 'food-bottle', 'food-water', 'food-soda', 'food-beer',
-  
-  // Искусство (12 самых ходовых)
-  'image', 'brush', 'camera', 'palette', 'pencil', 'music',
-  'microphone', 'film', 'video', 'book', 'piano', 'guitar',
-  
-  // Финансы (12 самых ходовых)
-  'cash', 'wallet', 'briefcase', 'coins', 'credit-card', 'currency-usd',
-  'currency-eur', 'currency-jpy', 'currency-gbp', 'bitcoin', 'piggy-bank', 'chart-line'
-];
-
-const SERIES_GOALS = [
-  { value: 7, label: '7 дней' },
-  { value: 21, label: '21 день' },
-  { value: 30, label: '30 дней' },
-  { value: 60, label: '60 дней' },
-  { value: 90, label: '90 дней' },
-  { value: 100, label: '100 дней' }
-];
 
 export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
   visible,
@@ -63,13 +33,15 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
-  const [selectedIcon, setSelectedIcon] = useState(HABIT_ICONS[0]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [selectedIcon, setSelectedIcon] = useState(getAllIcons()[0]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [seriesGoal, setSeriesGoal] = useState<number | null>(null);
-  const [trackingType, setTrackingType] = useState<'step' | 'custom'>('step');
+  const [trackingType, setTrackingType] = useState<TrackingType>('step');
   const [dailyTarget, setDailyTarget] = useState(1);
   const [reminderTime, setReminderTime] = useState<string | null>(null);
+  const [showFullIconSelector, setShowFullIconSelector] = useState<boolean>(false);
+  const [showCategoriesScreen, setShowCategoriesScreen] = useState<boolean>(false);
 
   // Загружаем данные привычки при редактировании
   useEffect(() => {
@@ -77,8 +49,8 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
       setName(habitData.name || '');
       setDescription(habitData.description || '');
       setSelectedColor(habitData.color || HABIT_COLORS[0]);
-      setSelectedIcon(habitData.icon || HABIT_ICONS[0]);
-      setSelectedGroup(habitData.group?.id || null);
+      setSelectedIcon(habitData.icon || getAllIcons()[0]);
+      setSelectedCategories(habitData.categories || []);
       setSeriesGoal(habitData.series_goal || null);
       setTrackingType(habitData.tracking_type || 'step');
       setDailyTarget(habitData.daily_target || 1);
@@ -94,7 +66,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
       description: description.trim(),
       color: selectedColor,
       icon: selectedIcon,
-      group: selectedGroup,
+      categories: selectedCategories,
       series_goal: seriesGoal,
       tracking_type: trackingType,
       daily_target: dailyTarget,
@@ -103,14 +75,15 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
 
     onSave(habitData);
     resetForm();
+    onClose();
   };
 
   const resetForm = () => {
     setName('');
     setDescription('');
     setSelectedColor(HABIT_COLORS[0]);
-    setSelectedIcon(HABIT_ICONS[0]);
-    setSelectedGroup(null);
+    setSelectedIcon(getAllIcons()[0]);
+    setSelectedCategories([]);
     setShowAdvancedSettings(false);
     setSeriesGoal(null);
     setTrackingType('step');
@@ -133,123 +106,85 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             size={24}
             onPress={onClose}
           />
-          <Text style={styles.headerTitle}>Новая привычка</Text>
+          <Text style={styles.headerTitle}>
+            {editMode ? 'Редактировать привычку' : 'Новая привычка'}
+          </Text>
           <View style={{ width: 48 }} />
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                     {/* Icon Selection */}
-           <View style={styles.section}>
-             <Text style={styles.sectionTitle}>Иконка</Text>
-             
-                           {/* Категории иконок */}
-              <View style={styles.iconCategories}>
-                <Text style={styles.categoryTitle}>Деятельность</Text>
-                                 <View style={styles.iconGrid}>
-                   {HABIT_ICONS.slice(0, 12).map((icon, index) => (
-                     <TouchableOpacity
-                       key={index}
-                       style={[
-                         styles.iconItem,
-                         selectedIcon === icon && styles.iconItemSelected
-                       ]}
-                       onPress={() => setSelectedIcon(icon)}
-                     >
-                       <IconButton
-                         icon={icon}
-                         iconColor="#ffffff"
-                         size={22}
-                         style={styles.iconButton}
-                       />
-                     </TouchableOpacity>
-                   ))}
-                 </View>
-                
-                <Text style={styles.categoryTitle}>Спорт</Text>
-                                 <View style={styles.iconGrid}>
-                   {HABIT_ICONS.slice(12, 24).map((icon, index) => (
-                     <TouchableOpacity
-                       key={index + 12}
-                       style={[
-                         styles.iconItem,
-                         selectedIcon === icon && styles.iconItemSelected
-                       ]}
-                       onPress={() => setSelectedIcon(icon)}
-                     >
-                       <IconButton
-                         icon={icon}
-                         iconColor="#ffffff"
-                         size={22}
-                         style={styles.iconButton}
-                       />
-                     </TouchableOpacity>
-                   ))}
-                 </View>
-                
-                <Text style={styles.categoryTitle}>Еда и напитки</Text>
-                                 <View style={styles.iconGrid}>
-                   {HABIT_ICONS.slice(24, 36).map((icon, index) => (
-                     <TouchableOpacity
-                       key={index + 24}
-                       style={[
-                         styles.iconItem,
-                         selectedIcon === icon && styles.iconItemSelected
-                       ]}
-                       onPress={() => setSelectedIcon(icon)}
-                     >
-                       <IconButton
-                         icon={icon}
-                         iconColor="#ffffff"
-                         size={22}
-                         style={styles.iconButton}
-                       />
-                     </TouchableOpacity>
-                   ))}
-                 </View>
-                
-                <Text style={styles.categoryTitle}>Искусство</Text>
-                                 <View style={styles.iconGrid}>
-                   {HABIT_ICONS.slice(36, 48).map((icon, index) => (
-                     <TouchableOpacity
-                       key={index + 36}
-                       style={[
-                         styles.iconItem,
-                         selectedIcon === icon && styles.iconItemSelected
-                       ]}
-                       onPress={() => setSelectedIcon(icon)}
-                     >
-                       <IconButton
-                         icon={icon}
-                         iconColor="#ffffff"
-                         size={22}
-                         style={styles.iconButton}
-                       />
-                     </TouchableOpacity>
-                   ))}
-                 </View>
-                
-                <Text style={styles.categoryTitle}>Финансы</Text>
-                                 <View style={styles.iconGrid}>
-                   {HABIT_ICONS.slice(48, 60).map((icon, index) => (
-                     <TouchableOpacity
-                       key={index + 48}
-                       style={[
-                         styles.iconItem,
-                         selectedIcon === icon && styles.iconItemSelected
-                       ]}
-                       onPress={() => setSelectedIcon(icon)}
-                     >
-                       <IconButton
-                         icon={icon}
-                         iconColor="#ffffff"
-                         size={22}
-                         style={styles.iconButton}
-                       />
-                     </TouchableOpacity>
-                   ))}
-                 </View>
+          {/* Icon Selection */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Иконка</Text>
+            
+            {/* Центральная иконка с фоном */}
+            <TouchableOpacity 
+              style={styles.centralIconContainer}
+              onPress={() => setShowFullIconSelector(!showFullIconSelector)}
+            >
+              {/* Фоновые мини-иконки */}
+              <View style={styles.backgroundIcons}>
+                {getAllIcons().slice(0, 45).map((icon, index) => (
+                  <IconButton
+                    key={index}
+                    icon={icon}
+                    iconColor="#ffffff"
+                    size={12}
+                    style={styles.backgroundIcon}
+                  />
+                ))}
               </View>
-           </View>
+              
+              {/* Центральная большая иконка */}
+              <View style={styles.centralIconCircle}>
+                <IconButton
+                  icon={selectedIcon}
+                  iconColor="#ffffff"
+                  size={32}
+                  style={styles.centralIcon}
+                />
+              </View>
+            </TouchableOpacity>
+            
+            {/* Полный селектор иконок (показывается при нажатии) */}
+            {showFullIconSelector && (
+              <View style={styles.iconCategories}>
+                {Object.entries(HABIT_ICONS).map(([category, icons]) => (
+                  <View key={category}>
+                    <Text style={styles.categoryTitle}>
+                      {category === 'activity' && 'Деятельность'}
+                      {category === 'sport' && 'Спорт'}
+                      {category === 'food' && 'Еда и напитки'}
+                      {category === 'art' && 'Искусство'}
+                      {category === 'finance' && 'Финансы'}
+                    </Text>
+                    <View style={styles.iconGrid}>
+                      {icons.map((icon, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={[
+                            styles.iconItem,
+                            selectedIcon === icon && styles.iconItemSelected
+                          ]}
+                          onPress={() => {
+                            setSelectedIcon(icon);
+                            setShowFullIconSelector(false); // Скрываем после выбора
+                          }}
+                        >
+                          <IconButton
+                            icon={icon}
+                            iconColor="#ffffff"
+                            size={22}
+                            style={styles.iconButton}
+                          />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
 
           {/* Name and Description */}
           <View style={styles.section}>
@@ -260,6 +195,11 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               onChangeText={setName}
               placeholder="Название привычки"
               placeholderTextColor="#666"
+              dense
+              mode="outlined"
+              outlineColor="#ffffff"
+              activeOutlineColor="#ffffff"
+              contentStyle={{ paddingVertical: 4 }}
             />
             
             <Text style={styles.sectionTitle}>Описание</Text>
@@ -270,6 +210,11 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               placeholder="Описание привычки"
               placeholderTextColor="#666"
               multiline
+              dense
+              mode="outlined"
+              outlineColor="#ffffff"
+              activeOutlineColor="#ffffff"
+              contentStyle={{ paddingVertical: 4 }}
             />
           </View>
 
@@ -291,44 +236,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             </View>
           </View>
 
-          {/* Group Selection */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Категория</Text>
-            <View style={styles.groupOptions}>
-              <TouchableOpacity
-                style={[
-                  styles.groupOption,
-                  !selectedGroup && styles.groupOptionSelected
-                ]}
-                onPress={() => setSelectedGroup(null)}
-              >
-                <Text style={[
-                  styles.groupOptionText,
-                  !selectedGroup && styles.groupOptionTextSelected
-                ]}>
-                  Без группы
-                </Text>
-              </TouchableOpacity>
-              {groups.map((group) => (
-                <TouchableOpacity
-                  key={group.id}
-                  style={[
-                    styles.groupOption,
-                    selectedGroup === group.id && styles.groupOptionSelected
-                  ]}
-                  onPress={() => setSelectedGroup(group.id)}
-                >
-                  <View style={[styles.groupColor, { backgroundColor: group.color }]} />
-                  <Text style={[
-                    styles.groupOptionText,
-                    selectedGroup === group.id && styles.groupOptionTextSelected
-                  ]}>
-                    {group.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+
 
           {/* Advanced Settings Toggle */}
           <TouchableOpacity
@@ -377,13 +285,13 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                   <TouchableOpacity
                     style={[
                       styles.trackingOption,
-                      trackingType === 'step' && styles.trackingOptionSelected
+                      trackingType === TRACKING_TYPES.step && styles.trackingOptionSelected
                     ]}
-                    onPress={() => setTrackingType('step')}
+                    onPress={() => setTrackingType(TRACKING_TYPES.step)}
                   >
                     <Text style={[
                       styles.trackingOptionText,
-                      trackingType === 'step' && styles.trackingOptionTextSelected
+                      trackingType === TRACKING_TYPES.step && styles.trackingOptionTextSelected
                     ]}>
                       Пошагово
                     </Text>
@@ -391,20 +299,20 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                   <TouchableOpacity
                     style={[
                       styles.trackingOption,
-                      trackingType === 'custom' && styles.trackingOptionSelected
+                      trackingType === TRACKING_TYPES.custom && styles.trackingOptionSelected
                     ]}
-                    onPress={() => setTrackingType('custom')}
+                    onPress={() => setTrackingType(TRACKING_TYPES.custom)}
                   >
                     <Text style={[
                       styles.trackingOptionText,
-                      trackingType === 'custom' && styles.trackingOptionTextSelected
+                      trackingType === TRACKING_TYPES.custom && styles.trackingOptionTextSelected
                     ]}>
                       Своё значение
                     </Text>
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.trackingDescription}>
-                  {trackingType === 'step' 
+                  {trackingType === TRACKING_TYPES.step 
                     ? 'Увеличивать на 1 с каждым выполнением'
                     : 'Вводить количество выполнений вручную'
                   }
@@ -438,6 +346,47 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                 </Text>
               </View>
 
+              {/* Categories */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Категории</Text>
+                <TouchableOpacity 
+                  style={styles.categoriesButton}
+                  onPress={() => setShowCategoriesScreen(true)}
+                >
+                  <View style={styles.categoriesButtonContent}>
+                    {selectedCategories.length > 0 ? (
+                      <View style={styles.selectedCategoriesPreview}>
+                        {selectedCategories.slice(0, 2).map((categoryId) => {
+                          const category = HABIT_CATEGORIES.find(c => c.id === categoryId);
+                          return (
+                            <View key={categoryId} style={styles.categoryPreviewItem}>
+                              <IconButton
+                                icon={category?.icon || 'star'}
+                                iconColor={category?.color || '#ffffff'}
+                                size={16}
+                                style={styles.categoryPreviewIcon}
+                              />
+                            </View>
+                          );
+                        })}
+                        {selectedCategories.length > 2 && (
+                          <Text style={styles.categoryPreviewCount}>
+                            +{selectedCategories.length - 2}
+                          </Text>
+                        )}
+                      </View>
+                    ) : (
+                      <Text style={styles.categoriesButtonText}>Выбрать категории</Text>
+                    )}
+                  </View>
+                  <IconButton
+                    icon="chevron-right"
+                    iconColor="#fff"
+                    size={20}
+                  />
+                </TouchableOpacity>
+              </View>
+
               {/* Reminder */}
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Напоминание</Text>
@@ -464,278 +413,18 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             style={styles.saveButton}
             disabled={!name.trim()}
           >
-            Сохранить
+            {editMode ? 'Сохранить изменения' : 'Сохранить'}
           </Button>
         </View>
       </View>
+
+      {/* Categories Screen */}
+      <CategoriesScreen
+        visible={showCategoriesScreen}
+        onClose={() => setShowCategoriesScreen(false)}
+        onSave={setSelectedCategories}
+        selectedCategories={selectedCategories}
+      />
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000000',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginBottom: 12,
-  },
-  input: {
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#333333',
-    borderRadius: 8,
-    padding: 12,
-    color: '#ffffff',
-    marginBottom: 16,
-  },
-  iconCategories: {
-    marginBottom: 16,
-  },
-  categoryTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#cccccc',
-    marginTop: 16,
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  iconGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 4,
-    justifyContent: 'center',
-    maxWidth: 280, // Принудительно ограничиваем ширину для 6 иконок
-  },
-  iconItem: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-    backgroundColor: '#1a1a1a',
-    borderWidth: 1,
-    borderColor: '#333333',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconItemSelected: {
-    borderColor: '#00FF88',
-    borderWidth: 2,
-    backgroundColor: '#1a2a1a',
-  },
-  iconButton: {
-    margin: 0,
-    padding: 0,
-  },
-  colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  colorItem: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  colorItemSelected: {
-    borderColor: '#ffffff',
-    borderWidth: 3,
-  },
-  groupOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  groupOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
-  },
-  groupOptionSelected: {
-    backgroundColor: '#00FF88',
-    borderColor: '#00FF88',
-  },
-  groupColor: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 6,
-  },
-  groupOptionText: {
-    fontSize: 14,
-    color: '#cccccc',
-  },
-  groupOptionTextSelected: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  advancedToggle: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#333333',
-    marginTop: 16,
-  },
-  advancedToggleText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  advancedSettings: {
-    marginTop: 16,
-  },
-  goalOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  goalOption: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
-  },
-  goalOptionSelected: {
-    backgroundColor: '#00FF88',
-    borderColor: '#00FF88',
-  },
-  goalOptionText: {
-    fontSize: 14,
-    color: '#cccccc',
-  },
-  goalOptionTextSelected: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  trackingOptions: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 8,
-  },
-  trackingOption: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
-    alignItems: 'center',
-  },
-  trackingOptionSelected: {
-    backgroundColor: '#00FF88',
-    borderColor: '#00FF88',
-  },
-  trackingOptionText: {
-    fontSize: 14,
-    color: '#cccccc',
-  },
-  trackingOptionTextSelected: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  trackingDescription: {
-    fontSize: 12,
-    color: '#999999',
-    fontStyle: 'italic',
-  },
-  targetControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 8,
-  },
-  targetDisplay: {
-    flex: 1,
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#333333',
-    borderRadius: 8,
-    padding: 12,
-  },
-  targetText: {
-    fontSize: 16,
-    color: '#ffffff',
-    textAlign: 'center',
-  },
-  targetButtons: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  targetButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#00FF88',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  targetButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  targetDescription: {
-    fontSize: 12,
-    color: '#999999',
-    fontStyle: 'italic',
-  },
-  reminderButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#333333',
-    borderRadius: 8,
-    padding: 12,
-  },
-  reminderButtonText: {
-    fontSize: 16,
-    color: '#ffffff',
-  },
-  footer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#333333',
-  },
-  saveButton: {
-    backgroundColor: '#00FF88',
-  },
-});

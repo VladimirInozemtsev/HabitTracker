@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { useEffect, useState } from 'react';
 import {
   Provider as PaperProvider,
@@ -25,7 +25,7 @@ import { api, Habit, isAuthenticated } from './services/api';
 import { HabitGrid } from './components/HabitGrid';
 import { HabitCalendar } from './components/HabitCalendar';
 import { CreateHabitModal } from './components/CreateHabitModal';
-import { getHabitColor } from './utils/colors';
+import { getHabitColor } from './constants/colors';
 
 // Типы для навигации
 type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
@@ -35,6 +35,11 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // Responsive state
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+  const isTablet = screenWidth <= 991;
+  const isMobile = screenWidth <= 640;
 
   const [currentScreen, setCurrentScreen] = useState<Screen>('habits');
   const [userStats, setUserStats] = useState<any>(null);
@@ -51,6 +56,25 @@ function AppContent() {
   const [showHabitDetail, setShowHabitDetail] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [groupHabits, setGroupHabits] = useState<{[key: string]: any[]}>({});
+
+    // Автоматически обновляем selectedHabit при изменении habits
+  useEffect(() => {
+    if (selectedHabit && habits.length > 0) {
+      const updatedHabit = habits.find(h => h.id === selectedHabit.id);
+      if (updatedHabit) {
+        setSelectedHabit(updatedHabit);
+      }
+    }
+  }, [habits]);
+
+  // Responsive dimensions listener
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({window}) => {
+      setScreenWidth(window.width);
+    });
+
+    return () => subscription?.remove();
+  }, []);
 
   // Проверка аутентификации при загрузке
   useEffect(() => {
@@ -91,10 +115,10 @@ function AppContent() {
       
       // Проверяем структуру данных
       if (data && Array.isArray(data)) {
-        setHabits(data);
+        setHabits([...data]); // Принудительно создаем новый массив
       } else if (data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results)) {
         // Если данные в формате пагинации
-        setHabits((data as any).results);
+        setHabits([...(data as any).results]); // Принудительно создаем новый массив
       } else {
         console.error('Unexpected data format:', data);
         setHabits([]);
@@ -134,16 +158,6 @@ function AppContent() {
   const handleCalendarDayToggle = async (date: string) => {
     if (!selectedHabit) return;
     
-    console.log('Calendar toggle DEBUG:', {
-      date,
-      habitId: selectedHabit.id,
-      habitName: selectedHabit.name,
-      logs: selectedHabit.logs,
-      isCompleted: selectedHabit.logs?.some((log: any) => 
-        log.date === date && log.status === 'completed'
-      )
-    });
-    
     try {
       // Проверяем, была ли привычка выполнена в этот день
       const isCompleted = selectedHabit.logs?.some((log: any) => 
@@ -152,21 +166,14 @@ function AppContent() {
       
       if (isCompleted) {
         // Если уже выполнена - убираем выполнение
-        console.log('Removing completion for date:', date);
         await api.unmarkHabitCompleteForDate(selectedHabit.id, date);
       } else {
         // Если не выполнена - отмечаем как выполненную на конкретную дату
-        console.log('Adding completion for date:', date);
         await api.markHabitCompleteForDate(selectedHabit.id, date);
       }
       
-      // Перезагружаем привычки чтобы обновить данные
+      // Перезагружаем привычки - selectedHabit обновится автоматически через useEffect
       await loadHabits();
-      // Обновляем выбранную привычку
-      const updatedHabits = habits.filter((h: any) => h.id === selectedHabit.id);
-      if (updatedHabits.length > 0) {
-        setSelectedHabit(updatedHabits[0]);
-      }
     } catch (error) {
       console.error('Calendar day toggle error:', error);
       Alert.alert('Ошибка', 'Не удалось изменить статус привычки');
@@ -203,8 +210,17 @@ function AppContent() {
 
   const handleEditHabitSave = async (habitData: any) => {
     try {
-      // Пока что просто показываем уведомление
-      Alert.alert('Успех', `Привычка "${habitData.name}" будет обновлена!`);
+      if (!selectedHabit?.id) {
+        Alert.alert('Ошибка', 'Привычка не найдена');
+        return;
+      }
+
+      await api.updateHabit(selectedHabit.id, habitData);
+      
+      // Перезагружаем привычки - selectedHabit обновится автоматически через useEffect
+      await loadHabits();
+      
+      Alert.alert('Успех', `Привычка "${habitData.name}" обновлена!`);
       setShowEditModal(false);
     } catch (error) {
       console.error('Edit habit error:', error);
@@ -380,7 +396,7 @@ function AppContent() {
                   {/* Сетка активности (7×25) */}
                   <HabitGrid
                     habitId={selectedHabit.id}
-                    color={getHabitColor(selectedHabit.id)}
+                    color={selectedHabit.color || getHabitColor(selectedHabit.id)}
                     completions={selectedHabit.logs || []}
                     weeks={25} // показываем 25 недель для детального просмотра
                     showLegend={false}
@@ -389,7 +405,7 @@ function AppContent() {
                   {/* Панель действий */}
                   <View style={styles.actionBar}>
                     <IconButton
-                      icon="bike"
+                      icon={selectedHabit.icon || "target"}
                       iconColor="#ffffff"
                       size={24}
                       style={styles.actionButton}
@@ -424,7 +440,7 @@ function AppContent() {
                   {/* Интерактивный календарь */}
                   <HabitCalendar
                     habitId={selectedHabit.id}
-                    color={getHabitColor(selectedHabit.id)}
+                    color={selectedHabit.color || getHabitColor(selectedHabit.id)}
                     completions={selectedHabit.logs || []}
                     onToggleDay={handleCalendarDayToggle}
                   />
@@ -467,10 +483,16 @@ function AppContent() {
               {habits.map((habit) => (
                 <Card
                   key={habit.id}
-                  style={styles.habitCard}
+                  style={[
+                    styles.habitCard,
+                    isTablet && styles.habitCardTablet
+                  ]}
                   onPress={() => handleHabitPress(habit)}
                 >
-                  <Card.Content style={styles.habitCardContent}>
+                  <Card.Content style={[
+                    styles.habitCardContent,
+                    isTablet && styles.habitCardContentTablet
+                  ]}>
                     <View style={styles.habitInfo}>
                       {/* Компактная карточка: название + описание + статус */}
                       <View style={styles.habitHeader}>
@@ -482,9 +504,12 @@ function AppContent() {
                             {habit.description}
                           </Text>
                         </View>
-                        <View style={styles.habitStatus}>
-                          <Avatar.Icon 
-                            size={20} 
+                        <View style={[
+                          styles.habitStatus,
+                          isMobile && styles.habitStatusMobile
+                        ]}>
+                          <Avatar.Icon
+                            size={20}
                             icon={habit.is_completed_today ? "check" : "circle-outline"}
                             style={{
                               backgroundColor: habit.is_completed_today ? '#4CAF50' : '#E0E0E0'
@@ -497,7 +522,7 @@ function AppContent() {
                       {/* Сетка истории привычки */}
                       <HabitGrid
                         habitId={habit.id}
-                        color={getHabitColor(habit.id)}
+                        color={habit.color || getHabitColor(habit.id)}
                         completions={habit.logs || []}
                         weeks={20} // показываем 20 недель
                         showLegend={false} // Убираем легенду с главного экрана
@@ -683,9 +708,16 @@ function AppContent() {
       <StatusBar style="auto" />
 
       {/* Нижняя навигация */}
-      <View style={styles.bottomNavigation}>
+      <View style={[
+        styles.bottomNavigation,
+        isTablet && styles.bottomNavigationTablet
+      ]}>
         <TouchableOpacity
-          style={[styles.navItem, currentScreen === 'habits' && styles.navItemActive]}
+          style={[
+            styles.navItem,
+            currentScreen === 'habits' && styles.navItemActive,
+            isTablet && styles.navItemTablet
+          ]}
           onPress={() => setCurrentScreen('habits')}
         >
           <IconButton
@@ -698,7 +730,11 @@ function AppContent() {
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[styles.navItem, currentScreen === 'stats' && styles.navItemActive]}
+          style={[
+            styles.navItem,
+            currentScreen === 'stats' && styles.navItemActive,
+            isTablet && styles.navItemTablet
+          ]}
           onPress={() => setCurrentScreen('stats')}
         >
           <IconButton
@@ -711,7 +747,11 @@ function AppContent() {
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[styles.navItem, currentScreen === 'analytics' && styles.navItemActive]}
+          style={[
+            styles.navItem,
+            currentScreen === 'analytics' && styles.navItemActive,
+            isTablet && styles.navItemTablet
+          ]}
           onPress={() => setCurrentScreen('analytics')}
         >
           <IconButton
@@ -724,7 +764,11 @@ function AppContent() {
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[styles.navItem, currentScreen === 'groups' && styles.navItemActive]}
+          style={[
+            styles.navItem,
+            currentScreen === 'groups' && styles.navItemActive,
+            isTablet && styles.navItemTablet
+          ]}
           onPress={() => setCurrentScreen('groups')}
         >
           <IconButton
@@ -737,7 +781,11 @@ function AppContent() {
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[styles.navItem, currentScreen === 'profile' && styles.navItemActive]}
+          style={[
+            styles.navItem,
+            currentScreen === 'profile' && styles.navItemActive,
+            isTablet && styles.navItemTablet
+          ]}
           onPress={() => setCurrentScreen('profile')}
         >
           <IconButton
@@ -844,7 +892,7 @@ function AppContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000', // Черный фон как в HabitKit
+    backgroundColor: '#0D1015', // Угольно-синий фон приложения
   },
   loadingContainer: {
     flex: 1,
@@ -1007,6 +1055,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 5,
   },
+  bottomNavigationTablet: {
+    marginBottom: 3,
+    backgroundColor: '#000000', // Black background for tablets
+  },
   navItem: {
     flex: 1,
     alignItems: 'center',
@@ -1015,6 +1067,9 @@ const styles = StyleSheet.create({
   navItemActive: {
     backgroundColor: '#333333',
     borderRadius: 8,
+  },
+  navItemTablet: {
+    backgroundColor: '#000000', // Black background for tablet nav items
   },
   navIcon: {
     fontSize: 20,
@@ -1045,7 +1100,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   statCard: {
-    backgroundColor: '#1a1a1a', // Темный фон для карточек статистики
+    backgroundColor: '#1a1a1a', // Темный фон дл�� карточек статистики
     borderRadius: 12,
     padding: 20,
     marginBottom: 15,
@@ -1330,25 +1385,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 0, // Убираем горизонтальные отступы
+    paddingVertical: 8, // Уменьшаем вертикальные отступы
     marginVertical: 16,
-    backgroundColor: '#1a1a1a',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#333333',
+    // backgroundColor: '#1a1a1a', // Убираем общий фон
+    // borderRadius: 12, // Убираем общий радиус
+    // borderWidth: 1, // Убираем общую рамку
+    // borderColor: '#333333', // Убираем общую рамку
   },
   actionButton: {
     margin: 0,
-    padding: 0,
+    padding: 8, // Добавляем отступы
+    backgroundColor: '#1A1E24', // Фон для отдельных кнопок
+    borderRadius: 8, // Радиус для отдельных кнопок
+    borderWidth: 1, // Рамка для отдельных кнопок
+    borderColor: '#1F232A', // Цвет рамки
   },
   seriesGoalButton: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#1A1E24', // Фон как у других кнопок
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#1F232A', // Цвет рамки
   },
   seriesGoalText: {
     fontSize: 14,
@@ -1358,12 +1417,12 @@ const styles = StyleSheet.create({
   streakCounter: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#1A1E24', // Фон как у других кнопок
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#1F232A', // Цвет рамки
   },
   streakIcon: {
     margin: 0,
@@ -1398,13 +1457,20 @@ const styles = StyleSheet.create({
   
   // Стили для карточек привычек
   habitCard: {
-    marginBottom: 6, // Уменьшаем отступы между карточками
-    marginHorizontal: 8, // Добавляем небольшие боковые отступы
+    marginBottom: 10, // Уменьшаем отступы между карточками
+    marginHorizontal: 20, // Добавляем небольшие боковые отступы
     elevation: 2,
-    backgroundColor: '#2a2a2a', // Dark card background
+    backgroundColor: '#272B33', // Dark card background
+  },
+  habitCardTablet: {
+    // Убираем backgroundColor - оставляем только специфичные для планшетов стили
+    // backgroundColor: '#1a1a1a', // Darker background for tablets (991px breakpoint)
   },
   habitCardContent: {
     paddingVertical: 8, // Уменьшаем внутренние отступы
+  },
+  habitCardContentTablet: {
+    marginHorizontal: 20, // Add margin for tablet screens
   },
   habitInfo: {
     flex: 1,
@@ -1435,7 +1501,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   streakChip: {
-    backgroundColor: '#FFF3E0',
+    backgroundColor: '#2a2a2a', // Темный фон для чипов
   },
   groupChip: {
     backgroundColor: 'transparent',
@@ -1444,8 +1510,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  habitStatusMobile: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   
-  // Стили для детальной страницы привычки
+  // Стили для детальной стра��ицы привычки
   habitDetailContainer: {
     padding: 16,
   },

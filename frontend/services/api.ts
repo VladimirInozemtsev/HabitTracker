@@ -6,6 +6,8 @@ export interface Habit {
   id: string;
   name: string;
   description: string;
+  color: string;
+  icon: string;
   streak: number;
   is_completed_today: boolean;
   group?: {
@@ -126,6 +128,14 @@ export const api = {
   createHabit: async (habitData: any): Promise<any> => {
     return apiRequest('/habits/', {
       method: 'POST',
+      body: JSON.stringify(habitData),
+    });
+  },
+
+  // Обновить привычку
+  updateHabit: async (habitId: string, habitData: any): Promise<any> => {
+    return apiRequest(`/habits/${habitId}/`, {
+      method: 'PUT',
       body: JSON.stringify(habitData),
     });
   },

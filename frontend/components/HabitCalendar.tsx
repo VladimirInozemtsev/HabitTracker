@@ -9,6 +9,12 @@ interface HabitCalendarProps {
   onToggleDay?: (date: string) => void;
 }
 
+// Функция для создания приглушенного цвета
+const getMutedColor = (color: string): string => {
+  // Добавляем прозрачность к основному цвету (60 = 37.5% непрозрачности)
+  return `${color}60`;
+};
+
 export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   habitId,
   color,
@@ -16,6 +22,12 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   onToggleDay
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Автоматически переключаемся на текущий месяц при загрузке
+  React.useEffect(() => {
+    const today = new Date();
+    setCurrentDate(today);
+  }, []);
 
   // Получаем выполненные даты
   const completedDates = completions
@@ -34,20 +46,15 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
         return completion.date;
       }
     });
+    
 
-  // ОТЛАДКА: выводим информацию о данных
-  console.log('HabitCalendar DEBUG:', {
-    habitId,
-    color,
-    completionsLength: completions.length,
-    completedDates,
-    completions: completions
-  });
 
-         // Генерируем календарь для текущего месяца
+  // Генерируем календарь для текущего месяца
    const generateCalendar = () => {
      const year = currentDate.getFullYear();
      const month = currentDate.getMonth();
+     
+     
      
      // Первый день месяца
      const firstDay = new Date(year, month, 1);
@@ -81,16 +88,23 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
      
      // Добавляем дни текущего месяца
      for (let day = 1; day <= lastDay.getDate(); day++) {
-       const date = new Date(year, month, day);
-       const dateString = date.toISOString().split('T')[0];
-       const today = new Date();
-       const isToday = date.toDateString() === today.toDateString();
+               const date = new Date(year, month, day);
+        const dateString = date.toISOString().split('T')[0];
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+        
+        // Используем ту же логику что и в сетке
+        const isToday = dateString === todayString;
+        const isFuture = dateString > todayString;
+        
+        
        
        calendar.push({
          date: dateString,
          day: day,
          isCurrentMonth: true,
-         isToday: isToday
+         isToday: isToday,
+         isFuture: isFuture
        });
      }
      
@@ -99,27 +113,22 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
      const weeksNeeded = Math.ceil(totalDays / 7);
      const daysNeeded = weeksNeeded * 7 - totalDays;
      
-     // Добавляем дни только если нужно заполнить последнюю неделю
-     if (daysNeeded > 0) {
-       for (let day = 1; day <= daysNeeded; day++) {
-         const date = new Date(year, month + 1, day);
-         calendar.push({
-           date: date.toISOString().split('T')[0],
-           day: day,
-           isCurrentMonth: false,
-           isToday: false
-         });
-       }
+     for (let day = 1; day <= daysNeeded; day++) {
+       const date = new Date(year, month + 1, day);
+       calendar.push({
+         date: date.toISOString().split('T')[0],
+         day: day,
+         isCurrentMonth: false,
+         isToday: false
+       });
      }
      
      return calendar;
    };
 
-     const calendar = generateCalendar();
-   
-   // Вычисляем день недели для дебаг информации
+   const calendar = generateCalendar();
    const firstDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-   
+
    const monthNames = [
      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
@@ -141,7 +150,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Заголовок календаря */}
+      {/* Заголовок с навигацией */}
       <View style={styles.header}>
         <IconButton
           icon="chevron-left"
@@ -149,7 +158,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
           size={24}
           onPress={goToPreviousMonth}
         />
-        <Text variant="titleMedium" style={styles.monthTitle}>
+        <Text style={styles.monthTitle}>
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </Text>
         <IconButton
@@ -160,7 +169,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
         />
       </View>
 
-      {/* Дни недели */}
+      {/* Названия дней недели */}
       <View style={styles.weekDays}>
         {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
           <Text key={index} style={styles.weekDay}>
@@ -169,57 +178,51 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
         ))}
       </View>
 
-             {/* Календарная сетка */}
-       <View style={styles.calendar}>
-         {calendar.map((day, index) => {
-           const isCompleted = completedDates.includes(day.date);
-           const isFuture = new Date(day.date) > new Date();
-           
-           // Создаем светлый оттенок цвета для неактивных дней
-           const lightColor = color ? `${color}40` : '#4CAF5040'; // 40 = 25% прозрачности
-           
-           return (
-             <TouchableOpacity
-               key={index}
-               style={[
-                 styles.day,
-                 day.isCurrentMonth && { backgroundColor: lightColor }, // Светлый цвет для всех дней текущего месяца
-                 !day.isCurrentMonth && styles.otherMonthDay,
-                 day.isToday && styles.today,
-                 isCompleted && { backgroundColor: color }, // Полный цвет для выполненных
-                 isFuture && styles.futureDay
-               ]}
-               onPress={() => handleDayPress(day.date)}
-               disabled={isFuture || !day.isCurrentMonth}
-             >
-               <Text style={[
-                 styles.dayText,
-                 day.isToday && styles.todayText,
-                 !day.isCurrentMonth && styles.otherMonthText,
-                 isCompleted && styles.completedText
-               ]}>
-                 {day.day}
-               </Text>
-               {isCompleted && (
-                 <View style={[styles.completionDot, { backgroundColor: color }]} />
-               )}
-             </TouchableOpacity>
-           );
-         })}
-       </View>
+      {/* Календарная сетка */}
+      <View style={styles.calendar}>
+        {calendar.map((day, index) => {
+          const isCompleted = completedDates.includes(day.date);
+          const mutedColor = getMutedColor(color);
+          
 
-             {/* Подсказка */}
-       <Text style={styles.hint}>
-         Tap dates to add or remove completions
-       </Text>
-       
-               {/* Дебаг информация */}
-        <Text style={styles.debug}>
-          Недель: {Math.ceil(calendar.length / 7)} | Дней: {calendar.length} | 
-          Первый день: {new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toDateString()} |
-          День недели: {new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()} |
-          Дней из прошлого: {firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1}
-        </Text>
+          
+
+          
+          return (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.day,
+                day.isFuture && styles.futureDay, // Будущие дни - прозрачные с рамкой
+                !day.isFuture && day.isCurrentMonth && { backgroundColor: mutedColor }, // Приглушенный цвет для текущего месяца (не будущие)
+                !day.isFuture && !day.isCurrentMonth && styles.otherMonthDay, // Дни других месяцев (не будущие)
+                !day.isFuture && day.isToday && styles.today, // Сегодня (не будущие)
+                !day.isFuture && isCompleted && { backgroundColor: color }, // Полный цвет для выполненных (не будущие)
+              ]}
+              onPress={() => !day.isFuture && onToggleDay && onToggleDay(day.date)}
+            >
+              <Text style={[
+                styles.dayText,
+                !day.isCurrentMonth && styles.otherMonthText,
+                day.isToday && styles.todayText,
+                isCompleted && styles.completedText,
+              ]}>
+                {day.day}
+              </Text>
+              {isCompleted && !day.isFuture && (
+                <View style={[styles.completionDot, { backgroundColor: color }]} />
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {/* Подсказка */}
+      <Text style={styles.hint}>
+        Tap dates to add or remove completions
+      </Text>
+      
+
     </View>
   );
 };
@@ -265,20 +268,23 @@ const styles = StyleSheet.create({
      aspectRatio: 1,
      justifyContent: 'center',
      alignItems: 'center',
-     borderRadius: 6, // Уменьшили радиус
+     borderRadius: 8, // Увеличиваем скругления
      position: 'relative',
-     minHeight: 32, // Уменьшили минимальную высоту
+     minHeight: 36, // Увеличиваем минимальную высоту
+     margin: 1, // Добавляем небольшие отступы
    },
      // currentMonthDay больше не нужен - используем динамический светлый цвет
   otherMonthDay: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#2a2a2a', // Яркий темно-серый
   },
   today: {
     borderWidth: 2,
     borderColor: '#4CAF50',
   },
   futureDay: {
-    opacity: 0.3,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   dayText: {
     color: '#fff',
@@ -310,10 +316,5 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontStyle: 'italic',
   },
-  debug: {
-    textAlign: 'center',
-    color: '#666',
-    fontSize: 10,
-    marginTop: 8,
-  },
+
 });

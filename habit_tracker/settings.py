@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-iyyi0+av%dw62#d$uxba=xjd+%iiv*u38rby(_-xt*3^@jo@)8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 
@@ -151,6 +151,23 @@ REST_FRAMEWORK = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # Только для разработки!
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8081",
+    "http://localhost:19006",  # Expo Web
+    "http://127.0.0.1:8081",
+    "http://127.0.0.1:19006",
+]
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
