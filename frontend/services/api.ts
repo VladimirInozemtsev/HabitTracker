@@ -10,6 +10,8 @@ export interface Habit {
   icon: string;
   streak: number;
   is_completed_today: boolean;
+  series_goal?: number;
+  categories?: string[];
   group?: {
     id: string;
     name: string;

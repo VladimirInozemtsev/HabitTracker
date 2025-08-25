@@ -5,6 +5,7 @@ import { HabitGrid } from './HabitGrid';
 import { HabitCalendar } from './HabitCalendar';
 import { getHabitColor } from '../constants/colors';
 import { Habit } from '../services/api';
+import { HABIT_CATEGORIES, SERIES_GOALS } from '../constants/goals';
 
 interface HabitDetailScreenProps {
   habit: Habit;
@@ -21,6 +22,67 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
   onCalendarDayToggle,
   styles
 }) => {
+  // Определяем иконку для первой кнопки (иконка деятельности)
+  const categoryIcon = habit.icon || "target";
+  
+  // Определяем текст цели серии
+  const seriesGoalText = habit.series_goal 
+    ? SERIES_GOALS.find(goal => goal.value === habit.series_goal)?.label || 'Нет цели серии'
+    : 'Нет цели серии';
+
+  // Функция для подсчета текущего стрика (последнего комбо)
+  const calculateCurrentStreak = () => {
+    console.log('=== Streak Debug ===');
+    console.log('habit.logs:', habit.logs);
+    
+    if (!habit.logs || habit.logs.length === 0) {
+      console.log('No logs found, returning 0');
+      return 0;
+    }
+    
+    // Получаем выполненные даты
+    const completedDates = habit.logs
+      .filter(log => log.status === 'completed')
+      .map(log => log.date)
+      .sort((a, b) => b.localeCompare(a)); // Сортируем по убыванию (новые сначала)
+    
+    console.log('completedDates:', completedDates);
+    
+    if (completedDates.length === 0) {
+      console.log('No completed dates found, returning 0');
+      return 0;
+    }
+    
+    // Начинаем с последнего выполненного дня
+    const lastCompletedDate = completedDates[0]; // Самая новая дата
+    console.log('lastCompletedDate:', lastCompletedDate);
+    
+    let streak = 0;
+    let currentDate = new Date(lastCompletedDate);
+    
+    // Идем назад от последнего выполненного дня
+    while (true) {
+      const dateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+      
+      console.log('Checking date:', dateString, 'completedDates.includes:', completedDates.includes(dateString));
+      
+      if (completedDates.includes(dateString)) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+        console.log('Date completed, streak now:', streak);
+      } else {
+        console.log('Date not completed, breaking streak at:', streak);
+        break; // Прерываем стрик
+      }
+    }
+    
+    console.log('Final streak:', streak);
+    console.log('=== End Streak Debug ===');
+    return streak;
+  };
+
+  const currentStreak = calculateCurrentStreak();
+
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.appbar}>
@@ -42,34 +104,7 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
                 {habit.description}
               </Text>
               
-              <View style={styles.habitDetailStats}>
-                <Chip 
-                  icon="fire" 
-                  textStyle={{color: '#FF6B35'}}
-                  style={styles.streakChip}
-                >
-                  {habit.streak} дней подряд
-                </Chip>
-                {habit.group ? (
-                  <Chip 
-                    icon="folder" 
-                    textStyle={{color: habit.group.color}}
-                    style={[styles.groupChip, {borderColor: habit.group.color}]}
-                    mode="outlined"
-                  >
-                    {habit.group.name}
-                  </Chip>
-                ) : (
-                  <Chip 
-                    icon="folder-outline" 
-                    textStyle={{color: '#999'}}
-                    style={[styles.groupChip, {borderColor: '#999'}]}
-                    mode="outlined"
-                  >
-                    Без группы
-                  </Chip>
-                )}
-              </View>
+              
               
               {/* Сетка активности (7×25) */}
               <HabitGrid
@@ -83,22 +118,22 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
               {/* Панель действий */}
               <View style={styles.actionBar}>
                 <IconButton
-                  icon={habit.icon || "target"}
+                  icon={categoryIcon}
                   iconColor="#ffffff"
                   size={24}
                   style={styles.actionButton}
                 />
                 <TouchableOpacity style={styles.seriesGoalButton}>
-                  <Text style={styles.seriesGoalText}>Нет цели серии</Text>
+                  <Text style={styles.seriesGoalText}>{seriesGoalText}</Text>
                 </TouchableOpacity>
                 <View style={styles.streakCounter}>
                   <IconButton
-                    icon="water"
+                    icon="fire"
                     iconColor="#ffffff"
                     size={20}
                     style={styles.streakIcon}
                   />
-                  <Text style={styles.streakText}>0</Text>
+                  <Text style={styles.streakText}>{currentStreak}</Text>
                 </View>
                 <IconButton
                   icon="pencil"

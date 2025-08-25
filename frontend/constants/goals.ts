@@ -18,16 +18,16 @@ export type TrackingType = typeof TRACKING_TYPES[keyof typeof TRACKING_TYPES];
 
 // Категории привычек с иконками
 export const HABIT_CATEGORIES = [
-  { id: 'health', name: 'Здоровье', icon: 'heart', color: '#00BCD4' },
-  { id: 'art', name: 'Искусство', icon: 'palette', color: '#E91E63' },
-  { id: 'social', name: 'Общение', icon: 'account-group', color: '#4CAF50' },
-  { id: 'nutrition', name: 'Питание', icon: 'food-fork-drink', color: '#FF9800' },
-  { id: 'work', name: 'Работа', icon: 'briefcase', color: '#2196F3' },
-  { id: 'study', name: 'Учеба', icon: 'school', color: '#9C27B0' },
-  { id: 'finance', name: 'Финансы', icon: 'wallet', color: '#4CAF50' },
-  { id: 'fitness', name: 'Фитнес', icon: 'bike', color: '#FF5722' },
-  { id: 'other', name: 'Другое', icon: 'star', color: '#607D8B' },
-  { id: 'morning', name: 'Утро', icon: 'weather-sunny', color: '#FFC107' },
-  { id: 'day', name: 'День', icon: 'white-balance-sunny', color: '#FF9800' },
-  { id: 'evening', name: 'Вечер', icon: 'weather-night', color: '#3F51B5' },
+  { id: 'health', name: 'Здоровье', icon: 'heart-pulse' },
+  { id: 'art', name: 'Искусство', icon: 'palette' },
+  { id: 'social', name: 'Общение', icon: 'account-group' },
+  { id: 'nutrition', name: 'Питание', icon: 'food' },
+  { id: 'work', name: 'Работа', icon: 'briefcase' },
+  { id: 'study', name: 'Учеба', icon: 'book-open' },
+  { id: 'finance', name: 'Финансы', icon: 'wallet' },
+  { id: 'fitness', name: 'Фитнес', icon: 'dumbbell' },
+  { id: 'other', name: 'Другое', icon: 'star' },
+  { id: 'morning', name: 'Утро', icon: 'weather-sunny' },
+  { id: 'day', name: 'День', icon: 'white-balance-sunny' },
+  { id: 'evening', name: 'Вечер', icon: 'weather-night' },
 ];

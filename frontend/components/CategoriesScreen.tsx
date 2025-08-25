@@ -77,7 +77,7 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
                 >
                   <IconButton
                     icon={category.icon}
-                    iconColor={selected.includes(category.id) ? '#ffffff' : category.color}
+                    iconColor="#ffffff"
                     size={24}
                     style={styles.categoryIcon}
                   />
@@ -89,19 +89,12 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
                   </Text>
                 </TouchableOpacity>
               ))}
+              
+              {/* Create Custom Category - в центре сетки */}
+              <TouchableOpacity style={styles.createCustomButton}>
+                <Text style={styles.createCustomText}>Создать свою</Text>
+              </TouchableOpacity>
             </View>
-          </View>
-
-          {/* Create Custom Category */}
-          <View style={styles.section}>
-            <TouchableOpacity style={styles.createCustomButton}>
-              <IconButton
-                icon="plus"
-                iconColor="#ffffff"
-                size={20}
-              />
-              <Text style={styles.createCustomText}>Создать свою</Text>
-            </TouchableOpacity>
           </View>
         </ScrollView>
 

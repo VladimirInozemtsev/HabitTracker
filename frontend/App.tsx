@@ -26,6 +26,7 @@ import { HabitGrid } from './components/HabitGrid';
 import { HabitCalendar } from './components/HabitCalendar';
 import { CreateHabitModal } from './components/CreateHabitModal';
 import { getHabitColor } from './constants/colors';
+import { SERIES_GOALS } from './constants/goals';
 
 // Типы для навигации
 type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
@@ -364,34 +365,7 @@ function AppContent() {
                     {selectedHabit.description}
                   </Text>
                   
-                  <View style={styles.habitDetailStats}>
-                    <Chip 
-                      icon="fire" 
-                      textStyle={{color: '#FF6B35'}}
-                      style={styles.streakChip}
-                    >
-                      {selectedHabit.streak} дней подряд
-                    </Chip>
-                    {selectedHabit.group ? (
-                      <Chip 
-                        icon="folder" 
-                        textStyle={{color: selectedHabit.group.color}}
-                        style={[styles.groupChip, {borderColor: selectedHabit.group.color}]}
-                        mode="outlined"
-                      >
-                        {selectedHabit.group.name}
-                      </Chip>
-                    ) : (
-                      <Chip 
-                        icon="folder-outline" 
-                        textStyle={{color: '#999'}}
-                        style={[styles.groupChip, {borderColor: '#999'}]}
-                        mode="outlined"
-                      >
-                        Без группы
-                      </Chip>
-                    )}
-                  </View>
+
                   
                   {/* Сетка активности (7×25) */}
                   <HabitGrid
@@ -403,39 +377,101 @@ function AppContent() {
                   />
                   
                   {/* Панель действий */}
-                  <View style={styles.actionBar}>
-                    <IconButton
-                      icon={selectedHabit.icon || "target"}
-                      iconColor="#ffffff"
-                      size={24}
-                      style={styles.actionButton}
-                    />
-                    <TouchableOpacity style={styles.seriesGoalButton}>
-                      <Text style={styles.seriesGoalText}>Нет цели серии</Text>
-                    </TouchableOpacity>
-                    <View style={styles.streakCounter}>
-                      <IconButton
-                        icon="water"
-                        iconColor="#ffffff"
-                        size={20}
-                        style={styles.streakIcon}
-                      />
-                      <Text style={styles.streakText}>0</Text>
-                    </View>
-                    <IconButton
-                      icon="pencil"
-                      iconColor="#ffffff"
-                      size={24}
-                      style={styles.actionButton}
-                      onPress={() => handleEditHabit(selectedHabit)}
-                    />
-                    <IconButton
-                      icon="cog"
-                      iconColor="#ffffff"
-                      size={24}
-                      style={styles.actionButton}
-                    />
-                  </View>
+                  {/* Функция для подсчета текущего стрика */}
+                  {(() => {
+                    const calculateCurrentStreak = () => {
+                      console.log('=== App Streak Debug ===');
+                      console.log('selectedHabit.logs:', selectedHabit.logs);
+                      
+                      if (!selectedHabit.logs || selectedHabit.logs.length === 0) {
+                        console.log('No logs found, returning 0');
+                        return 0;
+                      }
+                      
+                      const completedDates = selectedHabit.logs
+                        .filter((log: any) => log.status === 'completed')
+                        .map((log: any) => log.date)
+                        .sort((a: string, b: string) => b.localeCompare(a));
+                      
+                      console.log('completedDates:', completedDates);
+                      
+                      if (completedDates.length === 0) {
+                        console.log('No completed dates found, returning 0');
+                        return 0;
+                      }
+                      
+                      // Начинаем с последнего выполненного дня
+                      const lastCompletedDate = completedDates[0]; // Самая новая дата
+                      console.log('lastCompletedDate:', lastCompletedDate);
+                      
+                      let streak = 0;
+                      let currentDate = new Date(lastCompletedDate);
+                      
+                      while (true) {
+                        const dateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                        
+                        console.log('Checking date:', dateString, 'completedDates.includes:', completedDates.includes(dateString));
+                        
+                        if (completedDates.includes(dateString)) {
+                          streak++;
+                          currentDate.setDate(currentDate.getDate() - 1);
+                          console.log('Date completed, streak now:', streak);
+                        } else {
+                          console.log('Date not completed, breaking streak at:', streak);
+                          break;
+                        }
+                      }
+                      
+                      console.log('Final streak:', streak);
+                      console.log('=== End App Streak Debug ===');
+                      return streak;
+                    };
+                    
+                    const currentStreak = calculateCurrentStreak();
+                    
+                    return (
+                      <View style={styles.actionBar}>
+                        <IconButton
+                          icon={selectedHabit.icon || "target"}
+                          iconColor="#ffffff"
+                          size={24}
+                          style={styles.actionButton}
+                        />
+                        <TouchableOpacity style={styles.seriesGoalButton}>
+                          <Text style={styles.seriesGoalText}>
+                            {selectedHabit.series_goal 
+                              ? SERIES_GOALS.find(goal => goal.value === selectedHabit.series_goal)?.label || 'Нет цели серии'
+                              : 'Нет цели серии'
+                            }
+                          </Text>
+                        </TouchableOpacity>
+                        <View style={styles.streakCounter}>
+                          <IconButton
+                            icon="fire"
+                            iconColor="#ffffff"
+                            size={20}
+                            style={styles.streakIcon}
+                          />
+                          <Text style={styles.streakText}>{currentStreak}</Text>
+                        </View>
+                        <IconButton
+                          icon="pencil"
+                          iconColor="#ffffff"
+                          size={24}
+                          style={styles.actionButton}
+                          onPress={() => handleEditHabit(selectedHabit)}
+                        />
+                        <IconButton
+                          icon="cog"
+                          iconColor="#ffffff"
+                          size={24}
+                          style={styles.actionButton}
+                        />
+                      </View>
+                    );
+                  })()}
+                  
+                  {/* Интерактивный календарь */}
                   
                   {/* Интерактивный календарь */}
                   <HabitCalendar
@@ -1385,29 +1421,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 0, // Убираем горизонтальные отступы
-    paddingVertical: 8, // Уменьшаем вертикальные отступы
+    paddingHorizontal: 0,
+    paddingVertical: 8,
     marginVertical: 16,
-    // backgroundColor: '#1a1a1a', // Убираем общий фон
-    // borderRadius: 12, // Убираем общий радиус
-    // borderWidth: 1, // Убираем общую рамку
-    // borderColor: '#333333', // Убираем общую рамку
   },
   actionButton: {
     margin: 0,
-    padding: 8, // Добавляем отступы
-    backgroundColor: '#1A1E24', // Фон для отдельных кнопок
-    borderRadius: 8, // Радиус для отдельных кнопок
-    borderWidth: 1, // Рамка для отдельных кнопок
-    borderColor: '#1F232A', // Цвет рамки
+    padding: 8,
+    backgroundColor: '#1A1E24',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ffffff', // Белый контур
+    height: 40, // Фиксированная высота
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   seriesGoalButton: {
-    backgroundColor: '#1A1E24', // Фон как у других кнопок
+    backgroundColor: '#1A1E24',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#1F232A', // Цвет рамки
+    borderColor: '#ffffff', // Белый контур
+    height: 40, // Фиксированная высота
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   seriesGoalText: {
     fontSize: 14,
@@ -1417,17 +1455,19 @@ const styles = StyleSheet.create({
   streakCounter: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1E24', // Фон как у других кнопок
-    paddingHorizontal: 8,
+    backgroundColor: '#1A1E24',
+    paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#1F232A', // Цвет рамки
+    borderColor: '#ffffff', // Белый контур
+    height: 40, // Фиксированная высота
+    justifyContent: 'center',
   },
   streakIcon: {
     margin: 0,
     padding: 0,
-    marginRight: 4,
+    marginRight: 6,
   },
   streakText: {
     fontSize: 16,

@@ -73,6 +73,8 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
       reminder_time: reminderTime,
     };
 
+
+
     onSave(habitData);
     resetForm();
     onClose();
