@@ -743,11 +743,12 @@ function AppContent() {
 
       <StatusBar style="auto" />
 
-      {/* Нижняя навигация */}
-      <View style={[
-        styles.bottomNavigation,
-        isTablet && styles.bottomNavigationTablet
-      ]}>
+      {/* Нижняя навигация - скрываем в детальном экране */}
+      {!showHabitDetail && (
+        <View style={[
+          styles.bottomNavigation,
+          isTablet && styles.bottomNavigationTablet
+        ]}>
         <TouchableOpacity
           style={[
             styles.navItem,
@@ -833,6 +834,7 @@ function AppContent() {
           <Text style={[styles.navText, currentScreen === 'profile' && styles.navTextActive]}>Профиль</Text>
         </TouchableOpacity>
       </View>
+      )}
 
         {/* Новое модальное окно создания привычки */}
         <CreateHabitModal
