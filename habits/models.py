@@ -64,6 +64,21 @@ class Habit(models.Model):
     frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default='daily', verbose_name='Частота')
     custom_days = models.JSONField(default=list, blank=True, verbose_name='Кастомные дни')
     
+    # Дополнительные настройки
+    series_goal = models.PositiveIntegerField(null=True, blank=True, verbose_name='Цель серии (дней)')
+    tracking_type = models.CharField(
+        max_length=20, 
+        choices=[
+            ('step', 'Пошагово'),
+            ('custom', 'Своё значение')
+        ], 
+        default='step', 
+        verbose_name='Тип отслеживания'
+    )
+    daily_target = models.PositiveIntegerField(default=1, verbose_name='Цель в день')
+    color = models.CharField(max_length=7, default='#3B82F6', verbose_name='Цвет')
+    icon = models.CharField(max_length=50, blank=True, verbose_name='Иконка')
+    
     # Напоминания
     reminder_time = models.TimeField(null=True, blank=True, verbose_name='Время напоминания')
     reminder_days = models.JSONField(default=list, blank=True, verbose_name='Дни напоминаний')

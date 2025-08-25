@@ -19,10 +19,12 @@ import {
   Badge,
   useTheme,
   Appbar,
+  IconButton,
 } from 'react-native-paper';
 import { api, Habit, isAuthenticated } from './services/api';
 import { HabitGrid } from './components/HabitGrid';
 import { HabitCalendar } from './components/HabitCalendar';
+import { CreateHabitModal } from './components/CreateHabitModal';
 import { getHabitColor } from './utils/colors';
 
 // Типы для навигации
@@ -33,15 +35,13 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newHabitName, setNewHabitName] = useState('');
-  const [newHabitDescription, setNewHabitDescription] = useState('');
-  const [newHabitGroup, setNewHabitGroup] = useState<string | null>(null);
-  const [showGroupDropdown, setShowGroupDropdown] = useState(false);
+
   const [currentScreen, setCurrentScreen] = useState<Screen>('habits');
   const [userStats, setUserStats] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
   const [showAddGroupModal, setShowAddGroupModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [newGroupColor, setNewGroupColor] = useState('#4CAF50');
@@ -173,33 +173,16 @@ function AppContent() {
     }
   };
 
-  const handleAddHabit = async () => {
-    if (!newHabitName.trim()) {
-      Alert.alert('Ошибка', 'Введите название привычки');
-      return;
-    }
-
+  const handleAddHabit = async (habitData: any) => {
     try {
-      const habitData: any = {
-        name: newHabitName.trim(),
-        description: newHabitDescription.trim(),
+      // Добавляем базовые поля
+      const data = {
+        ...habitData,
         habit_type: 'boolean',
         frequency: 'daily'
       };
       
-      // Добавляем группу, если выбрана
-      if (newHabitGroup) {
-        habitData.group = newHabitGroup;
-      }
-      
-      await api.createHabit(habitData);
-      
-      // Очищаем форму
-      setNewHabitName('');
-      setNewHabitDescription('');
-      setNewHabitGroup(null);
-      setShowGroupDropdown(false);
-      setShowAddModal(false);
+      await api.createHabit(data);
       
       // Перезагружаем привычки и группы
       await loadHabits();
@@ -209,6 +192,23 @@ function AppContent() {
     } catch (error) {
       console.error('Add habit error:', error);
       Alert.alert('Ошибка', 'Не удалось добавить привычку');
+    }
+  };
+
+  const handleEditHabit = (habit: any) => {
+    // Открываем модальное окно редактирования
+    setSelectedHabit(habit);
+    setShowEditModal(true);
+  };
+
+  const handleEditHabitSave = async (habitData: any) => {
+    try {
+      // Пока что просто показываем уведомление
+      Alert.alert('Успех', `Привычка "${habitData.name}" будет обновлена!`);
+      setShowEditModal(false);
+    } catch (error) {
+      console.error('Edit habit error:', error);
+      Alert.alert('Ошибка', 'Не удалось обновить привычку');
     }
   };
 
@@ -330,13 +330,11 @@ function AppContent() {
       return (
         <View style={styles.container}>
           <Appbar.Header style={styles.appbar}>
-            <Appbar.BackAction onPress={() => setShowHabitDetail(false)} />
-            <Appbar.Content title={selectedHabit.name} />
-            <Appbar.Action 
-              icon="check" 
-              onPress={() => handleHabitToggle(selectedHabit.id)}
-              iconColor="#fff"
+            <Appbar.BackAction 
+              onPress={() => setShowHabitDetail(false)} 
+              iconColor="#ffffff"
             />
+            <Appbar.Content title={selectedHabit.name} />
           </Appbar.Header>
           
           <ScrollView style={styles.content}>
@@ -377,6 +375,50 @@ function AppContent() {
                         Без группы
                       </Chip>
                     )}
+                  </View>
+                  
+                  {/* Сетка активности (7×25) */}
+                  <HabitGrid
+                    habitId={selectedHabit.id}
+                    color={getHabitColor(selectedHabit.id)}
+                    completions={selectedHabit.logs || []}
+                    weeks={25} // показываем 25 недель для детального просмотра
+                    showLegend={false}
+                  />
+                  
+                  {/* Панель действий */}
+                  <View style={styles.actionBar}>
+                    <IconButton
+                      icon="bike"
+                      iconColor="#ffffff"
+                      size={24}
+                      style={styles.actionButton}
+                    />
+                    <TouchableOpacity style={styles.seriesGoalButton}>
+                      <Text style={styles.seriesGoalText}>Нет цели серии</Text>
+                    </TouchableOpacity>
+                    <View style={styles.streakCounter}>
+                      <IconButton
+                        icon="water"
+                        iconColor="#ffffff"
+                        size={20}
+                        style={styles.streakIcon}
+                      />
+                      <Text style={styles.streakText}>0</Text>
+                    </View>
+                    <IconButton
+                      icon="pencil"
+                      iconColor="#ffffff"
+                      size={24}
+                      style={styles.actionButton}
+                      onPress={() => handleEditHabit(selectedHabit)}
+                    />
+                    <IconButton
+                      icon="cog"
+                      iconColor="#ffffff"
+                      size={24}
+                      style={styles.actionButton}
+                    />
                   </View>
                   
                   {/* Интерактивный календарь */}
@@ -475,7 +517,7 @@ function AppContent() {
             style={styles.screenContainer}
             contentContainerStyle={styles.screenContentContainer}
           >
-            <Text style={styles.screenTitle}>📊 Статистика</Text>
+                    <Text style={styles.screenTitle}>Статистика</Text>
             {userStats ? (
               <View style={styles.statsContainer}>
                 <View style={styles.statCard}>
@@ -555,15 +597,13 @@ function AppContent() {
             style={styles.screenContainer}
             contentContainerStyle={styles.screenContentContainer}
           >
-            <View style={styles.groupsHeader}>
-              <Text style={styles.screenTitle}>📁 Группы привычек</Text>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => setShowAddGroupModal(true)}
-              >
-                <Text style={styles.addButtonText}>+</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.screenTitle}>Группы привычек</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => setShowAddGroupModal(true)}
+            >
+              <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
             {groups.length > 0 ? (
               <View style={styles.groupsContainer}>
                 {groups.map((group) => {
@@ -648,7 +688,12 @@ function AppContent() {
           style={[styles.navItem, currentScreen === 'habits' && styles.navItemActive]}
           onPress={() => setCurrentScreen('habits')}
         >
-          <Text style={[styles.navIcon, currentScreen === 'habits' && styles.navIconActive]}>🎯</Text>
+          <IconButton
+            icon="target"
+            iconColor={currentScreen === 'habits' ? '#00FF88' : '#666666'}
+            size={24}
+            style={styles.navIconButton}
+          />
           <Text style={[styles.navText, currentScreen === 'habits' && styles.navTextActive]}>Привычки</Text>
         </TouchableOpacity>
         
@@ -656,7 +701,12 @@ function AppContent() {
           style={[styles.navItem, currentScreen === 'stats' && styles.navItemActive]}
           onPress={() => setCurrentScreen('stats')}
         >
-          <Text style={[styles.navIcon, currentScreen === 'stats' && styles.navIconActive]}>📊</Text>
+          <IconButton
+            icon="chart-bar"
+            iconColor={currentScreen === 'stats' ? '#00FF88' : '#666666'}
+            size={24}
+            style={styles.navIconButton}
+          />
           <Text style={[styles.navText, currentScreen === 'stats' && styles.navTextActive]}>Статистика</Text>
         </TouchableOpacity>
         
@@ -664,7 +714,12 @@ function AppContent() {
           style={[styles.navItem, currentScreen === 'analytics' && styles.navItemActive]}
           onPress={() => setCurrentScreen('analytics')}
         >
-          <Text style={[styles.navIcon, currentScreen === 'analytics' && styles.navIconActive]}>📈</Text>
+          <IconButton
+            icon="chart-line"
+            iconColor={currentScreen === 'analytics' ? '#00FF88' : '#666666'}
+            size={24}
+            style={styles.navIconButton}
+          />
           <Text style={[styles.navText, currentScreen === 'analytics' && styles.navTextActive]}>Аналитика</Text>
         </TouchableOpacity>
         
@@ -672,7 +727,12 @@ function AppContent() {
           style={[styles.navItem, currentScreen === 'groups' && styles.navItemActive]}
           onPress={() => setCurrentScreen('groups')}
         >
-          <Text style={[styles.navIcon, currentScreen === 'groups' && styles.navIconActive]}>📁</Text>
+          <IconButton
+            icon="folder"
+            iconColor={currentScreen === 'groups' ? '#00FF88' : '#666666'}
+            size={24}
+            style={styles.navIconButton}
+          />
           <Text style={[styles.navText, currentScreen === 'groups' && styles.navTextActive]}>Группы</Text>
         </TouchableOpacity>
         
@@ -680,127 +740,33 @@ function AppContent() {
           style={[styles.navItem, currentScreen === 'profile' && styles.navItemActive]}
           onPress={() => setCurrentScreen('profile')}
         >
-          <Text style={[styles.navIcon, currentScreen === 'profile' && styles.navIconActive]}>👤</Text>
+          <IconButton
+            icon="account"
+            iconColor={currentScreen === 'profile' ? '#00FF88' : '#666666'}
+            size={24}
+            style={styles.navIconButton}
+          />
           <Text style={[styles.navText, currentScreen === 'profile' && styles.navTextActive]}>Профиль</Text>
         </TouchableOpacity>
       </View>
 
-            {/* Модальное окно для добавления привычки */}
-      <Modal
-        visible={showAddModal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowAddModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Добавить новую привычку</Text>
-            
-            <TextInput
-              style={styles.input}
-              placeholder="Название привычки"
-              value={newHabitName}
-              onChangeText={setNewHabitName}
-              maxLength={100}
-            />
-            
-            <TextInput
-              style={styles.input}
-              placeholder="Описание (необязательно)"
-              value={newHabitDescription}
-              onChangeText={setNewHabitDescription}
-              multiline
-              numberOfLines={3}
-              maxLength={500}
-            />
-            
-            <View style={styles.groupPicker}>
-              <Text style={styles.groupLabel}>Группа (необязательно):</Text>
-              <View style={styles.groupDropdown}>
-                <TouchableOpacity
-                  style={styles.groupDropdownButton}
-                  onPress={() => setShowGroupDropdown(!showGroupDropdown)}
-                >
-                  <Text style={styles.groupDropdownButtonText}>
-                    {newHabitGroup ? 
-                      groups.find(g => g.id === newHabitGroup)?.name || 'Выберите группу' : 
-                      'Без группы'
-                    }
-                  </Text>
-                  <Text style={styles.groupDropdownArrow}>
-                    {showGroupDropdown ? '▲' : '▼'}
-                  </Text>
-                </TouchableOpacity>
-                
-                {showGroupDropdown && (
-                  <View style={styles.groupDropdownList}>
-                  <TouchableOpacity
-                    style={[
-                      styles.groupDropdownItem,
-                      !newHabitGroup && styles.groupDropdownItemSelected
-                    ]}
-                    onPress={() => {
-                      setNewHabitGroup(null);
-                      setShowGroupDropdown(false);
-                    }}
-                  >
-                    <Text style={[
-                      styles.groupDropdownItemText,
-                      !newHabitGroup && styles.groupDropdownItemTextSelected
-                    ]}>
-                      Без группы
-                    </Text>
-                  </TouchableOpacity>
-                  {groups.map((group) => (
-                    <TouchableOpacity
-                      key={group.id}
-                      style={[
-                        styles.groupDropdownItem,
-                        newHabitGroup === group.id && styles.groupDropdownItemSelected
-                      ]}
-                      onPress={() => {
-                        setNewHabitGroup(group.id);
-                        setShowGroupDropdown(false);
-                      }}
-                    >
-                      <View style={[styles.groupColorDot, { backgroundColor: group.color }]} />
-                      <Text style={[
-                        styles.groupDropdownItemText,
-                        newHabitGroup === group.id && styles.groupDropdownItemTextSelected
-                      ]}>
-                        {group.name}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                  </View>
-                )}
-              </View>
-            </View>
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => {
-                  setShowAddModal(false);
-                  setNewHabitName('');
-                  setNewHabitDescription('');
-                  setNewHabitGroup(null);
-                  setShowGroupDropdown(false);
-                }}
-              >
-                <Text style={styles.cancelButtonText}>Отмена</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={handleAddHabit}
-              >
-                <Text style={styles.saveButtonText}>Добавить</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        {/* Новое модальное окно создания привычки */}
+        <CreateHabitModal
+          visible={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSave={handleAddHabit}
+          groups={groups}
+        />
+
+        {/* Модальное окно редактирования привычки */}
+        <CreateHabitModal
+          visible={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSave={handleEditHabitSave}
+          groups={groups}
+          editMode={true}
+          habitData={selectedHabit}
+        />
 
       {/* Модальное окно для добавления группы */}
       <Modal
@@ -904,21 +870,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#4CAF50',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1a1a1a',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
   addButtonText: {
-    fontSize: 24,
-    color: '#fff',
+    fontSize: 20,
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   title: {
@@ -1014,6 +977,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#ffffff',
+    textAlign: 'center',
+  },
+  screenTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  screenTitleIcon: {
+    margin: 0,
+    padding: 0,
+    marginRight: 8,
+    alignSelf: 'center',
+    marginTop: 2,
   },
   screenText: {
     fontSize: 16,
@@ -1046,6 +1023,10 @@ const styles = StyleSheet.create({
   },
   navIconActive: {
     color: '#ffffff',
+  },
+  navIconButton: {
+    margin: 0,
+    padding: 0,
   },
   navText: {
     fontSize: 12,
@@ -1085,10 +1066,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   loadButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#1a1a1a',
     padding: 15,
     borderRadius: 8,
     marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#333333',
+    alignItems: 'center',
   },
   loadButtonText: {
     color: 'white',
@@ -1339,6 +1323,57 @@ const styles = StyleSheet.create({
   groupDropdownItemTextSelected: {
     color: '#fff',
     fontWeight: '600',
+  },
+  
+  // Стили для панели действий в детальном экране
+  actionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginVertical: 16,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333333',
+  },
+  actionButton: {
+    margin: 0,
+    padding: 0,
+  },
+  seriesGoalButton: {
+    backgroundColor: '#2a2a2a',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#333333',
+  },
+  seriesGoalText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: '500',
+  },
+  streakCounter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2a2a2a',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#333333',
+  },
+  streakIcon: {
+    margin: 0,
+    padding: 0,
+    marginRight: 4,
+  },
+  streakText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
   
   // Стили для Appbar
