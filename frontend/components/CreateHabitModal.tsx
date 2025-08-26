@@ -118,8 +118,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Icon Selection */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Иконка</Text>
-            
+                        
             {/* Центральная иконка с фоном */}
             <TouchableOpacity 
               style={styles.centralIconContainer}
