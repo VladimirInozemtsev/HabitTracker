@@ -1,5 +1,6 @@
 // Цели серий для привычек
 export const SERIES_GOALS = [
+  { value: 1, label: 'ежедневно' },
   { value: 7, label: '7 дней' },
   { value: 21, label: '21 день' },
   { value: 30, label: '30 дней' },

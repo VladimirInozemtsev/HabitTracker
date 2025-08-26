@@ -120,7 +120,7 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
                 <IconButton
                   icon={categoryIcon}
                   iconColor="#ffffff"
-                  size={24}
+                  size={20}
                   style={styles.actionButton}
                 />
                 <TouchableOpacity style={styles.seriesGoalButton}>

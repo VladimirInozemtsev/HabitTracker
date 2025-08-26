@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { useEffect, useState } from 'react';
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import {
   Provider as PaperProvider,
   Text,
@@ -38,6 +39,13 @@ const getMutedColor = (color: string): string => {
 type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
 
 function AppContent() {
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
+
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -765,7 +773,7 @@ function AppContent() {
     }
   };
 
-  if (loading) {
+  if (!fontsLoaded || loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4CAF50" />
@@ -1578,9 +1586,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 8, // отступы слева и справа от текстовых блоков
   },
   habitNameContainer: {
-    marginBottom: 6, // увеличиваем отступ между названием и описанием
+    marginBottom: 0, // уменьшаем отступ между названием и описанием
     paddingHorizontal: 12, // увеличиваем внутренние отступы текста
-    paddingVertical: 6, // увеличиваем внутренние отступы текста
+    paddingVertical: 0, // увеличиваем внутренние отступы текста
     borderRadius: 6, // скругление углов текстового блока
     borderWidth: 0, // убираем рамку
     backgroundColor: 'transparent', // прозрачный фон (сливается с карточкой)
@@ -1606,15 +1614,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   habitName: {
-    fontWeight: 'bold',
+    fontFamily: 'Inter_700Bold',
     fontSize: 20, // увеличиваем размер шрифта
     color: '#fff', // White text for dark theme
     flex: 1,
   },
   habitDescription: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 18, // увеличиваем размер шрифта
     color: '#ccc', // Light grey text for dark theme
-    marginBottom: 8,
+    marginBottom: 0,
   },
   habitMeta: {
     flexDirection: 'row',
