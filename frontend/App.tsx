@@ -827,7 +827,7 @@ function AppContent() {
         >
           <IconButton
             icon="target"
-            iconColor={currentScreen === 'habits' ? '#00FF88' : '#666666'}
+            iconColor={currentScreen === 'habits' ? '#ffffff' : '#666666'}
             size={24}
             style={styles.navIconButton}
           />
@@ -844,7 +844,7 @@ function AppContent() {
         >
           <IconButton
             icon="chart-bar"
-            iconColor={currentScreen === 'stats' ? '#00FF88' : '#666666'}
+            iconColor={currentScreen === 'stats' ? '#ffffff' : '#666666'}
             size={24}
             style={styles.navIconButton}
           />
@@ -861,7 +861,7 @@ function AppContent() {
         >
           <IconButton
             icon="chart-line"
-            iconColor={currentScreen === 'analytics' ? '#00FF88' : '#666666'}
+            iconColor={currentScreen === 'analytics' ? '#ffffff' : '#666666'}
             size={24}
             style={styles.navIconButton}
           />
@@ -878,7 +878,7 @@ function AppContent() {
         >
           <IconButton
             icon="folder"
-            iconColor={currentScreen === 'groups' ? '#00FF88' : '#666666'}
+            iconColor={currentScreen === 'groups' ? '#ffffff' : '#666666'}
             size={24}
             style={styles.navIconButton}
           />
@@ -895,7 +895,7 @@ function AppContent() {
         >
           <IconButton
             icon="account"
-            iconColor={currentScreen === 'profile' ? '#00FF88' : '#666666'}
+            iconColor={currentScreen === 'profile' ? '#ffffff' : '#666666'}
             size={24}
             style={styles.navIconButton}
           />

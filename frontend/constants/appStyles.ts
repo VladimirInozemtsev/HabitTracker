@@ -1,10 +1,11 @@
 // Базовые стили для всего приложения HabitTracker
+// СТИЛЬ: Чёрный фон + белый/серый текст + цвета привычек выбирает пользователь
 
-// Цветовая палитра (сохраняем текущие цвета)
+// Цветовая палитра (минималистичная)
 export const colors = {
   // Основные цвета
-  primary: '#00FF88',        // Зелёный акцент
-  secondary: '#4CAF50',      // Вторичный зелёный
+  primary: '#ffffff',        // Белый (основной текст)
+  secondary: '#cccccc',      // Светло-серый (вторичный текст)
   
   // Фоны
   background: '#000000',     // Основной фон (чёрный)
@@ -22,17 +23,17 @@ export const colors = {
   border: '#333333',         // Границы
   divider: '#333333',        // Разделители
   
-  // Статусы
-  success: '#66BB6A',        // Успех
-  error: '#EF5350',          // Ошибка
-  warning: '#FFA726',        // Предупреждение
-  info: '#4ECDC4',           // Информация
+  // Статусы (нейтральные)
+  success: '#ffffff',        // Успех (белый)
+  error: '#ff6b6b',          // Ошибка (красный)
+  warning: '#ffa726',        // Предупреждение (оранжевый)
+  info: '#4ecdc4',           // Информация (бирюзовый)
   
-  // Акценты
+  // Акценты (минималистичные)
   accent: {
-    primary: '#00FF88',      // Основной акцент
-    secondary: '#4CAF50',    // Вторичный акцент
-    muted: '#666666',        // Приглушенный
+    primary: '#ffffff',      // Основной акцент (белый)
+    secondary: '#cccccc',    // Вторичный акцент (серый)
+    muted: '#666666',        // Приглушенный (тёмно-серый)
   }
 };
 
@@ -56,17 +57,17 @@ export const baseStyles = {
   button: {
     padding: 16,
     borderRadius: 8,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   
-  buttonSecondary: {
+  buttonPrimary: {
     padding: 16,
     borderRadius: 8,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -110,8 +111,8 @@ export const baseStyles = {
     color: colors.text.primary,
   },
   
-  iconPrimary: {
-    color: colors.primary,
+  iconSecondary: {
+    color: colors.text.secondary,
   },
   
   // Списки
