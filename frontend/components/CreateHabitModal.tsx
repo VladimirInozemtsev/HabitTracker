@@ -364,7 +364,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                             <View key={categoryId} style={styles.categoryPreviewItem}>
                               <IconButton
                                 icon={category?.icon || 'star'}
-                                iconColor={category?.color || '#ffffff'}
+                                iconColor="#ffffff"
                                 size={16}
                                 style={styles.categoryPreviewIcon}
                               />

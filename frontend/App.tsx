@@ -26,6 +26,7 @@ import { api, Habit, isAuthenticated } from './services/api';
 import { HabitGrid } from './components/HabitGrid';
 import { HabitCalendar } from './components/HabitCalendar';
 import { CreateHabitModal } from './components/CreateHabitModal';
+import { SettingsScreen } from './components/SettingsScreen';
 import { getHabitColor } from './constants/colors';
 import { SERIES_GOALS } from './constants/goals';
 
@@ -50,6 +51,7 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Responsive state
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
@@ -252,6 +254,11 @@ function AppContent() {
     }
   };
 
+  // Обработчик для открытия настроек
+  const handleSettingsPress = () => {
+    setShowSettings(true);
+  };
+
   // Функции загрузки данных для разных экранов
   const loadUserStats = async () => {
     try {
@@ -356,6 +363,16 @@ function AppContent() {
 
   // Функция для рендеринга экранов
   const renderScreen = () => {
+    // Страница настроек
+    if (showSettings) {
+      return (
+        <SettingsScreen
+          onClose={() => setShowSettings(false)}
+          styles={styles}
+        />
+      );
+    }
+
     // Детальная страница привычки
     if (showHabitDetail && selectedHabit) {
       return (
@@ -507,6 +524,11 @@ function AppContent() {
         return (
           <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
+              <Appbar.Action 
+                icon="cog" 
+                onPress={handleSettingsPress}
+                iconColor="#fff"
+              />
               <Appbar.Content 
                 title="HabitTracker" 
                 subtitle=""
@@ -1664,6 +1686,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 16,
+  },
+
+  // Стили для страницы настроек
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 12,
+    marginHorizontal: 16,
+    marginTop: 8,
+  },
+  listItem: {
+    backgroundColor: '#1a1a1a',
+    marginHorizontal: 16,
+    marginBottom: 1,
+    borderRadius: 8,
+  },
+  listItemTitle: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  versionContainer: {
+    alignItems: 'center',
+    paddingVertical: 32,
+    marginTop: 16,
+  },
+  versionText: {
+    color: '#666666',
+    fontSize: 14,
   },
 });
 
