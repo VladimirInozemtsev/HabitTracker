@@ -69,11 +69,7 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
         const date = new Date(monday);
         date.setDate(monday.getDate() + day);
         // Генерируем дату точно как в календаре (используя локальное время)
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const dayNum = date.getDate();
-        const localDate = new Date(year, month, dayNum);
-        const dateString = localDate.toISOString().split('T')[0];
+        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         
                  const isCompleted = completedDates.includes(dateString);
          // Используем строковое форматирование даты

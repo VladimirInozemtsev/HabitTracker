@@ -541,13 +541,13 @@ function AppContent() {
                          {/* Левый блок с иконкой */}
                          <View style={styles.habitIconContainer}>
                            <IconButton
-                             size={32}
+                             size={35}
                              icon={habit.icon || "target"}
                              iconColor="#ffffff"
                              style={{ 
                                margin: 0,
-                               width: 44,
-                               height: 44,
+                               width: 60,
+                               height: 60,
                                borderRadius: 8,
                                backgroundColor: getMutedColor(habit.color || getHabitColor(habit.id))
                              }}
@@ -557,12 +557,12 @@ function AppContent() {
                          {/* Центральный блок с текстом */}
                          <View style={styles.habitTextContainer}>
                            <View style={styles.habitNameContainer}>
-                             <Text variant="bodyMedium" style={styles.habitName}>
+                             <Text variant="bodyLarge" style={styles.habitName}>
                                {habit.name}
                              </Text>
                            </View>
                            <View style={styles.habitDescriptionContainer}>
-                             <Text variant="bodySmall" style={styles.habitDescription}>
+                             <Text variant="bodyMedium" style={styles.habitDescription}>
                                {habit.description}
                              </Text>
                            </View>
@@ -570,18 +570,26 @@ function AppContent() {
                          
                          {/* Правый блок со статусом */}
                          <View style={styles.habitStatusContainer}>
-                           <IconButton
-                             size={32}
-                             icon={habit.is_completed_today ? "check" : "circle-outline"}
-                             iconColor="#ffffff"
+                           <View
                              style={{
                                margin: 0,
-                               width: 44,
-                               height: 44,
+                               width: 60,
+                               height: 60,
                                borderRadius: 8,
-                               backgroundColor: habit.is_completed_today ? (habit.color || getHabitColor(habit.id)) : getMutedColor(habit.color || getHabitColor(habit.id))
+                               backgroundColor: habit.is_completed_today ? (habit.color || getHabitColor(habit.id)) : getMutedColor(habit.color || getHabitColor(habit.id)),
+                               justifyContent: 'center',
+                               alignItems: 'center'
                              }}
-                           />
+                           >
+                             {habit.is_completed_today && (
+                               <IconButton
+                                 size={35}
+                                 icon="check"
+                                 iconColor="#ffffff"
+                                 style={{ margin: 0 }}
+                               />
+                             )}
+                           </View>
                          </View>
                        </View>
                       
@@ -1599,12 +1607,12 @@ const styles = StyleSheet.create({
   },
   habitName: {
     fontWeight: 'bold',
-    fontSize: 18, // увеличиваем размер шрифта
+    fontSize: 20, // увеличиваем размер шрифта
     color: '#fff', // White text for dark theme
     flex: 1,
   },
   habitDescription: {
-    fontSize: 16, // увеличиваем размер шрифта
+    fontSize: 18, // увеличиваем размер шрифта
     color: '#ccc', // Light grey text for dark theme
     marginBottom: 8,
   },

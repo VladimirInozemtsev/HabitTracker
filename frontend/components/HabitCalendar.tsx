@@ -88,10 +88,10 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
      
      // Добавляем дни текущего месяца
      for (let day = 1; day <= lastDay.getDate(); day++) {
-               const date = new Date(year, month, day);
-        const dateString = date.toISOString().split('T')[0];
-        const today = new Date();
-        const todayString = today.toISOString().split('T')[0];
+                        const date = new Date(year, month, day);
+         const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                 const today = new Date();
+         const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         
         // Используем ту же логику что и в сетке
         const isToday = dateString === todayString;
@@ -279,8 +279,7 @@ const styles = StyleSheet.create({
   },
   futureDay: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderWidth: 0, // убираем рамку
   },
   dayText: {
     color: '#fff',
