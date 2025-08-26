@@ -76,7 +76,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
                     habitId={habit.id}
                     color={habit.color || getHabitColor(habit.id)}
                     completions={habit.logs || []}
-                    weeks={20} // показываем 20 недель
+                    weeks={25} // показываем 25 недель, как на детальном экране
                     showLegend={false} // Убираем легенду с главного экрана
                   />
                 </View>

@@ -28,6 +28,12 @@ import { CreateHabitModal } from './components/CreateHabitModal';
 import { getHabitColor } from './constants/colors';
 import { SERIES_GOALS } from './constants/goals';
 
+// Функция для создания приглушенного цвета
+const getMutedColor = (color: string): string => {
+  // Добавляем прозрачность к основному цвету (60 = 37.5% непрозрачности)
+  return `${color}60`;
+};
+
 // Типы для навигации
 type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
 
@@ -530,37 +536,61 @@ function AppContent() {
                     isTablet && styles.habitCardContentTablet
                   ]}>
                     <View style={styles.habitInfo}>
-                      {/* Компактная карточка: название + описание + статус */}
-                      <View style={styles.habitHeader}>
-                        <View style={styles.habitText}>
-                          <Text variant="bodyMedium" style={styles.habitName}>
-                            {habit.name}
-                          </Text>
-                          <Text variant="bodySmall" style={styles.habitDescription}>
-                            {habit.description}
-                          </Text>
-                        </View>
-                        <View style={[
-                          styles.habitStatus,
-                          isMobile && styles.habitStatusMobile
-                        ]}>
-                          <Avatar.Icon
-                            size={20}
-                            icon={habit.is_completed_today ? "check" : "circle-outline"}
-                            style={{
-                              backgroundColor: habit.is_completed_today ? '#4CAF50' : '#E0E0E0'
-                            }}
-                            color="#fff"
-                          />
-                        </View>
-                      </View>
+                       {/* Новый хедер карточки: иконка слева, текст центр, статус справа */}
+                       <View style={styles.habitHeader}>
+                         {/* Левый блок с иконкой */}
+                         <View style={styles.habitIconContainer}>
+                           <IconButton
+                             size={32}
+                             icon={habit.icon || "target"}
+                             iconColor="#ffffff"
+                             style={{ 
+                               margin: 0,
+                               width: 44,
+                               height: 44,
+                               borderRadius: 8,
+                               backgroundColor: getMutedColor(habit.color || getHabitColor(habit.id))
+                             }}
+                           />
+                         </View>
+                         
+                         {/* Центральный блок с текстом */}
+                         <View style={styles.habitTextContainer}>
+                           <View style={styles.habitNameContainer}>
+                             <Text variant="bodyMedium" style={styles.habitName}>
+                               {habit.name}
+                             </Text>
+                           </View>
+                           <View style={styles.habitDescriptionContainer}>
+                             <Text variant="bodySmall" style={styles.habitDescription}>
+                               {habit.description}
+                             </Text>
+                           </View>
+                         </View>
+                         
+                         {/* Правый блок со статусом */}
+                         <View style={styles.habitStatusContainer}>
+                           <IconButton
+                             size={32}
+                             icon={habit.is_completed_today ? "check" : "circle-outline"}
+                             iconColor="#ffffff"
+                             style={{
+                               margin: 0,
+                               width: 44,
+                               height: 44,
+                               borderRadius: 8,
+                               backgroundColor: habit.is_completed_today ? (habit.color || getHabitColor(habit.id)) : getMutedColor(habit.color || getHabitColor(habit.id))
+                             }}
+                           />
+                         </View>
+                       </View>
                       
                       {/* Сетка истории привычки */}
                       <HabitGrid
                         habitId={habit.id}
                         color={habit.color || getHabitColor(habit.id)}
                         completions={habit.logs || []}
-                        weeks={20} // показываем 20 недель
+                        weeks={25} // показываем 25 недель, как в детальном экране
                         showLegend={false} // Убираем легенду с главного экрана
                       />
                     </View>
@@ -1509,7 +1539,8 @@ const styles = StyleSheet.create({
     // backgroundColor: '#1a1a1a', // Darker background for tablets (991px breakpoint)
   },
   habitCardContent: {
-    paddingVertical: 8, // Уменьшаем внутренние отступы
+    paddingVertical: 0, // Убираем вертикальные отступы полностью
+    paddingHorizontal: 0, // Убираем горизонтальные паддинги Card.Content, чтобы сетка растягивалась
   },
   habitCardContentTablet: {
     marginHorizontal: 20, // Add margin for tablet screens
@@ -1521,20 +1552,59 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4, // Уменьшаем отступ
+    marginBottom: 8, // Отступ как у сетки
+    paddingVertical: 8, // Отступы сверху и снизу
   },
-  habitText: {
-    flex: 1,
+  habitIconContainer: {
+    marginRight: 8, // отступ от центрального блока (как у сетки)
+    width: 44, // фиксированная ширина квадратного контейнера (как ячейки сетки)
+    height: 44, // фиксированная высота квадратного контейнера (как ячейки сетки)
+    borderRadius: 8, // скругление углов контейнера
+    borderWidth: 0, // убираем рамку
+    backgroundColor: 'transparent', // прозрачный фон
+    alignItems: 'center', // центрирование иконки по горизонтали
+    justifyContent: 'center', // центрирование иконки по вертикали
+  },
+  habitTextContainer: {
+    flex: 1, // занимает всё доступное пространство между иконкой и статусом
+    marginHorizontal: 8, // отступы слева и справа от текстовых блоков
+  },
+  habitNameContainer: {
+    marginBottom: 6, // увеличиваем отступ между названием и описанием
+    paddingHorizontal: 12, // увеличиваем внутренние отступы текста
+    paddingVertical: 6, // увеличиваем внутренние отступы текста
+    borderRadius: 6, // скругление углов текстового блока
+    borderWidth: 0, // убираем рамку
+    backgroundColor: 'transparent', // прозрачный фон (сливается с карточкой)
+  },
+  habitDescriptionContainer: {
+    paddingHorizontal: 12, // увеличиваем внутренние отступы текста
+    paddingVertical: 6, // увеличиваем внутренние отступы текста
+    borderRadius: 6, // скругление углов текстового блока
+    borderWidth: 0, // убираем рамку
+    backgroundColor: 'transparent', // прозрачный фон (сливается с карточкой)
+  },
+  habitStatusContainer: {
+    marginLeft: 8, // отступ от центрального блока (как у сетки)
+    width: 44, // фиксированная ширина квадратного контейнера (как ячейки сетки)
+    height: 44, // фиксированная высота квадратного контейнера (как ячейки сетки)
+    borderRadius: 8, // скругление углов контейнера (как у иконки)
+    borderWidth: 0, // убираем рамку
+    backgroundColor: 'transparent', // прозрачный фон
+    alignItems: 'center', // центрирование иконки по горизонтали
+    justifyContent: 'center', // центрирование иконки по вертикали
   },
   habitDetails: {
     marginBottom: 8,
   },
   habitName: {
     fontWeight: 'bold',
+    fontSize: 18, // увеличиваем размер шрифта
     color: '#fff', // White text for dark theme
     flex: 1,
   },
   habitDescription: {
+    fontSize: 16, // увеличиваем размер шрифта
     color: '#ccc', // Light grey text for dark theme
     marginBottom: 8,
   },
@@ -1557,7 +1627,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   
-  // Стили для детальной стра��ицы привычки
+  // Стили для детальной страницы привычки
   habitDetailContainer: {
     padding: 16,
   },

@@ -194,12 +194,11 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
               style={[
                 styles.day,
                 day.isFuture && styles.futureDay, // Будущие дни - прозрачные с рамкой
-                !day.isFuture && day.isCurrentMonth && { backgroundColor: mutedColor }, // Приглушенный цвет для текущего месяца (не будущие)
                 !day.isFuture && !day.isCurrentMonth && styles.otherMonthDay, // Дни других месяцев (не будущие)
                 !day.isFuture && day.isToday && styles.today, // Сегодня (не будущие)
-                !day.isFuture && isCompleted && { backgroundColor: color }, // Полный цвет для выполненных (не будущие)
+                !day.isFuture && isCompleted && { backgroundColor: color }, // Полный цвет только для выполненных (не будущие)
               ]}
-              onPress={() => !day.isFuture && onToggleDay && onToggleDay(day.date)}
+              onPress={() => !day.isFuture && day.isCurrentMonth && onToggleDay && onToggleDay(day.date)}
             >
               <Text style={[
                 styles.dayText,
@@ -209,9 +208,6 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
               ]}>
                 {day.day}
               </Text>
-              {isCompleted && !day.isFuture && (
-                <View style={[styles.completionDot, { backgroundColor: color }]} />
-              )}
             </TouchableOpacity>
           );
         })}

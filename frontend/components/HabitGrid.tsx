@@ -117,11 +117,10 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
                 <View
                   key={dayIndex}
                                      style={[
-                     styles.day,
-                     day.completed && { backgroundColor: color }, // Полный цвет для выполненных
-                     (day.future || day.dateString >= day.todayString) && styles.future, // Будущие дни - прозрачные с рамкой
-                     !day.completed && day.dateString < day.todayString && { backgroundColor: mutedColor } // Прошлые неактивные - приглушенный цвет привычки
-                   ]}
+                    styles.day,
+                    { backgroundColor: mutedColor },
+                    day.completed && { backgroundColor: color }
+                  ]}
                 />
               );
             })}
@@ -141,31 +140,32 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 4, // Уменьшаем отступы
+    // компенсируем внутренний паддинг карточки, чтобы сетка занимала всю ширину
+    marginHorizontal: -16, // больше компенсация для полного растяжения
+    paddingHorizontal: 8, // минимальные поля внутри
+    paddingBottom: 8, // такой же отступ как по горизонтали
+    marginVertical: 2, // уменьшаем вертикальные отступы
   },
   grid: {
     flexDirection: 'row',
-    gap: 2, // Уменьшаем отступы между неделями
-    flex: 1, // Растягиваем сетку на всю ширину
+    gap: 2, // стандартные интервалы между столбцами
+    flex: 1,
+    width: '100%',
+    alignSelf: 'stretch',
   },
   week: {
-    gap: 2, // Уменьшаем отступы между днями
+    gap: 2, // стандартные интервалы между днями
     flex: 1, // Каждая неделя растягивается
   },
   day: {
     flex: 1, // Растягиваем на всю доступную ширину
-    aspectRatio: 1, // Делаем квадратными
-    borderRadius: 3, // Увеличиваем скругления
-    margin: 0.5, // Немного увеличиваем отступы для лучшего вида
-    maxWidth: 20, // Увеличиваем максимальную ширину
-    maxHeight: 20, // Увеличиваем максимальную высоту
+    aspectRatio: 1, // Квадратные клетки
+    borderRadius: 3,
+    margin: 0.5,
+    // убраны maxWidth/maxHeight, чтобы сетка могла заполнять всю карточку
   },
-  // empty больше не нужен - используем динамический светлый цвет
-  future: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
+  // пустых дней нет — базовый цвет задаётся в day
+  future: {},
   legend: {
     fontSize: 12,
     color: '#ccc', // Light grey text for dark theme
