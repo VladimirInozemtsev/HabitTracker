@@ -9,6 +9,7 @@ import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '..
 
 // Импорт стилей
 import { modalStyles as styles } from '../styles/modalStyles';
+import { colors, baseStyles } from '../constants/appStyles';
 
 // Импорт компонентов
 import { CategoriesScreen } from './CategoriesScreen';
@@ -104,7 +105,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
         <View style={styles.header}>
           <IconButton
             icon="close"
-            iconColor="#fff"
+            iconColor={colors.text.primary}
             size={24}
             onPress={onClose}
           />
@@ -130,7 +131,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                   <IconButton
                     key={index}
                     icon={icon}
-                    iconColor="#ffffff"
+                    iconColor={colors.text.primary}
                     size={12}
                     style={styles.backgroundIcon}
                   />
@@ -141,7 +142,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               <View style={styles.centralIconCircle}>
                 <IconButton
                   icon={selectedIcon}
-                  iconColor="#ffffff"
+                  iconColor={colors.text.primary}
                   size={32}
                   style={styles.centralIcon}
                 />
@@ -175,7 +176,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                         >
                           <IconButton
                             icon={icon}
-                            iconColor="#ffffff"
+                            iconColor={colors.text.primary}
                             size={22}
                             style={styles.iconButton}
                           />
@@ -199,8 +200,8 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               placeholderTextColor="#666"
               dense
               mode="outlined"
-              outlineColor="#ffffff"
-              activeOutlineColor="#ffffff"
+              outlineColor={colors.text.primary}
+              activeOutlineColor={colors.text.primary}
               contentStyle={{ paddingVertical: 4 }}
             />
             
@@ -214,8 +215,8 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               multiline
               dense
               mode="outlined"
-              outlineColor="#ffffff"
-              activeOutlineColor="#ffffff"
+              outlineColor={colors.text.primary}
+              activeOutlineColor={colors.text.primary}
               contentStyle={{ paddingVertical: 4 }}
             />
           </View>
@@ -248,7 +249,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             <Text style={styles.advancedToggleText}>Дополнительные настройки</Text>
             <IconButton
               icon={showAdvancedSettings ? "chevron-up" : "chevron-down"}
-              iconColor="#fff"
+              iconColor={colors.text.primary}
               size={20}
             />
           </TouchableOpacity>
@@ -364,7 +365,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                             <View key={categoryId} style={styles.categoryPreviewItem}>
                               <IconButton
                                 icon={category?.icon || 'star'}
-                                iconColor="#ffffff"
+                                iconColor={colors.text.primary}
                                 size={16}
                                 style={styles.categoryPreviewIcon}
                               />
@@ -383,7 +384,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                   </View>
                   <IconButton
                     icon="chevron-right"
-                    iconColor="#fff"
+                    iconColor={colors.text.primary}
                     size={20}
                   />
                 </TouchableOpacity>
@@ -398,7 +399,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                   </Text>
                   <IconButton
                     icon="chevron-right"
-                    iconColor="#fff"
+                    iconColor={colors.text.primary}
                     size={20}
                   />
                 </TouchableOpacity>

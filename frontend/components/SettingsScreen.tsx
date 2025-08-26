@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Appbar, IconButton, List } from 'react-native-paper';
+import { colors, baseStyles } from '../constants/appStyles';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -16,7 +17,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       <Appbar.Header style={styles.appbar}>
         <Appbar.BackAction 
           onPress={onClose} 
-          iconColor="#ffffff"
+          iconColor={colors.text.primary}
         />
         <Appbar.Content title="Настройки" />
       </Appbar.Header>
@@ -97,7 +98,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Обратная связь"
-            left={(props) => <List.Icon {...props} icon="send" color="#ffffff" />}
+            left={(props) => <List.Icon {...props} icon="send" color={colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
