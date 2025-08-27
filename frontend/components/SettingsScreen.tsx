@@ -6,11 +6,15 @@ import { colors, baseStyles } from '../constants/appStyles';
 interface SettingsScreenProps {
   onClose: () => void;
   styles: any;
+  isDark?: boolean;
+  onToggleTheme?: () => void;
 }
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClose,
-  styles
+  styles,
+  isDark = true,
+  onToggleTheme,
 }) => {
   return (
     <View style={styles.container}>
@@ -46,7 +50,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <List.Item
             title="Тема"
             left={(props) => <List.Icon {...props} icon="palette" color="#FFA726" />}
-            right={(props) => <List.Icon {...props} icon="chevron-right" />}
+            right={() => (
+              <IconButton
+                icon={isDark ? 'toggle-switch' : 'toggle-switch-off'}
+                onPress={onToggleTheme}
+              />
+            )}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
           />
