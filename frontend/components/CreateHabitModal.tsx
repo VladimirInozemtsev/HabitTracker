@@ -201,7 +201,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               mode="outlined"
               outlineColor={colors.text.primary}
               activeOutlineColor={colors.text.primary}
-              contentStyle={{ paddingVertical: 4 }}
+              contentStyle={{ paddingVertical: 4, color: '#ffffff', fontWeight: '600' }}
             />
             
             <Text style={styles.sectionTitle}>Описание</Text>
@@ -216,7 +216,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               mode="outlined"
               outlineColor={colors.text.primary}
               activeOutlineColor={colors.text.primary}
-              contentStyle={{ paddingVertical: 4 }}
+              contentStyle={{ paddingVertical: 4, color: '#ffffff', fontWeight: '600' }}
             />
           </View>
 
@@ -414,6 +414,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             onPress={handleSave}
             style={styles.saveButton}
             disabled={!name.trim()}
+            labelStyle={styles.saveButtonLabel}
           >
             {editMode ? 'Сохранить изменения' : 'Сохранить'}
           </Button>
