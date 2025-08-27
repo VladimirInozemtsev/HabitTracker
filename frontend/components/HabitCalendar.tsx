@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
+import { colors } from '../constants/appStyles';
 
 interface HabitCalendarProps {
   habitId: string;
@@ -74,12 +75,15 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
      const calendar = [];
      
      // Добавляем дни предыдущего месяца для заполнения первой недели
-     const prevMonth = new Date(year, month - 1, 0);
+     // ВАЖНО: последний день ПРЕДЫДУЩЕГО месяца получаем как new Date(year, month, 0)
+     // (month уже текущий, day=0 смещает к последнему дню предыдущего месяца)
+     const prevMonth = new Date(year, month, 0);
      
      for (let i = daysFromPrevMonth - 1; i >= 0; i--) {
        const day = new Date(year, month - 1, prevMonth.getDate() - i);
+       const dateString = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
        calendar.push({
-         date: day.toISOString().split('T')[0],
+         date: dateString,
          day: day.getDate(),
          isCurrentMonth: false,
          isToday: false
@@ -115,8 +119,9 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
      
      for (let day = 1; day <= daysNeeded; day++) {
        const date = new Date(year, month + 1, day);
+       const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
        calendar.push({
-         date: date.toISOString().split('T')[0],
+         date: dateString,
          day: day,
          isCurrentMonth: false,
          isToday: false
@@ -154,7 +159,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
       <View style={styles.header}>
         <IconButton
           icon="chevron-left"
-          iconColor="#fff"
+          iconColor={colors.text.primary}
           size={24}
           onPress={goToPreviousMonth}
         />
@@ -163,7 +168,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
         </Text>
         <IconButton
           icon="chevron-right"
-          iconColor="#fff"
+          iconColor={colors.text.primary}
           size={24}
           onPress={goToNextMonth}
         />
@@ -193,18 +198,26 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
               key={index}
               style={[
                 styles.day,
-                day.isFuture && styles.futureDay, // Будущие дни - прозрачные с рамкой
-                !day.isFuture && !day.isCurrentMonth && styles.otherMonthDay, // Дни других месяцев (не будущие)
-                !day.isFuture && day.isToday && styles.today, // Сегодня (не будущие)
-                !day.isFuture && isCompleted && { backgroundColor: color }, // Полный цвет только для выполненных (не будущие)
+                day.isFuture && styles.futureDay,
+                !day.isFuture && !day.isCurrentMonth && styles.otherMonthDay,
+                !day.isFuture && day.isToday && styles.today,
+                !day.isFuture && day.isCurrentMonth && isCompleted && { backgroundColor: color },
               ]}
-              onPress={() => !day.isFuture && day.isCurrentMonth && onToggleDay && onToggleDay(day.date)}
+              onPress={() => {
+                if (day.isFuture) return;
+                if (!day.isCurrentMonth) {
+                  const d = new Date(day.date);
+                  setCurrentDate(new Date(d.getFullYear(), d.getMonth(), 1));
+                  return;
+                }
+                if (onToggleDay) onToggleDay(day.date);
+              }}
             >
               <Text style={[
                 styles.dayText,
                 !day.isCurrentMonth && styles.otherMonthText,
                 day.isToday && styles.todayText,
-                isCompleted && styles.completedText,
+                day.isCurrentMonth && isCompleted && styles.completedText,
               ]}>
                 {day.day}
               </Text>
@@ -234,7 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   monthTitle: {
-    color: '#fff',
+    color: colors.text.primary,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -248,7 +261,7 @@ const styles = StyleSheet.create({
    weekDay: {
      width: '12%', // Такая же ширина как у дней
      textAlign: 'center',
-     color: '#ccc',
+     color: colors.text.secondary,
      fontSize: 12,
      fontWeight: '500',
    },
@@ -271,31 +284,32 @@ const styles = StyleSheet.create({
    },
      // currentMonthDay больше не нужен - используем динамический светлый цвет
   otherMonthDay: {
-    backgroundColor: '#2a2a2a', // Яркий темно-серый
+    backgroundColor: 'transparent',
   },
   today: {
     borderWidth: 2,
-    borderColor: '#4CAF50',
+    borderColor: colors.text.primary,
   },
   futureDay: {
     backgroundColor: 'transparent',
     borderWidth: 0, // убираем рамку
   },
   dayText: {
-    color: '#fff',
+    color: colors.text.primary,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '400', // базовый нормальный вес
   },
   todayText: {
-    color: '#4CAF50',
-    fontWeight: 'bold',
+    color: colors.text.primary,
+    fontWeight: '400', // не делаем жирным, только рамка у контейнера today
   },
   otherMonthText: {
-    color: '#666',
+    color: colors.text.disabled,
+    fontWeight: '400',
   },
   completedText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: colors.text.primary,
+    fontWeight: '700', // жирный только для реально выполненных дней текущего месяца
   },
   completionDot: {
     position: 'absolute',
@@ -306,7 +320,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     textAlign: 'center',
-    color: '#999',
+    color: colors.text.secondary,
     fontSize: 12,
     marginTop: 12,
     fontStyle: 'italic',

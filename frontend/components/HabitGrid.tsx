@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
+import { colors } from '../constants/appStyles';
 
 interface HabitGridProps {
   habitId: string;
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
   future: {},
   legend: {
     fontSize: 12,
-    color: '#ccc', // Light grey text for dark theme
+    color: colors.text.secondary,
     marginTop: 8,
     textAlign: 'center',
   },

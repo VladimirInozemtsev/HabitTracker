@@ -29,6 +29,7 @@ import { CreateHabitModal } from './components/CreateHabitModal';
 import { SettingsScreen } from './components/SettingsScreen';
 import { getHabitColor } from './constants/colors';
 import { SERIES_GOALS } from './constants/goals';
+import { colors } from './constants/appStyles';
 
 // Функция для создания приглушенного цвета
 const getMutedColor = (color: string): string => {
@@ -1498,7 +1499,7 @@ const styles = StyleSheet.create({
   actionButton: {
     margin: 0,
     padding: 8,
-    backgroundColor: '#1A1E24',
+    backgroundColor: colors.surface,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ffffff', // Белый контур
@@ -1507,7 +1508,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   seriesGoalButton: {
-    backgroundColor: '#1A1E24',
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -1519,13 +1520,13 @@ const styles = StyleSheet.create({
   },
   seriesGoalText: {
     fontSize: 14,
-    color: '#ffffff',
+    color: colors.text.primary,
     fontWeight: '500',
   },
   streakCounter: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1E24',
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
@@ -1541,7 +1542,7 @@ const styles = StyleSheet.create({
   },
   streakText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: colors.text.primary,
     fontWeight: 'bold',
   },
   

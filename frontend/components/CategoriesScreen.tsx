@@ -47,7 +47,7 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
         <View style={styles.header}>
           <IconButton
             icon="close"
-            iconColor="#fff"
+            iconColor={undefined}
             size={24}
             onPress={onClose}
           />
@@ -77,7 +77,7 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
                 >
                   <IconButton
                     icon={category.icon}
-                    iconColor="#ffffff"
+                    iconColor={undefined}
                     size={24}
                     style={styles.categoryIcon}
                   />

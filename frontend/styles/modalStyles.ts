@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '../constants/appStyles';
 
 export const modalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -12,12 +13,12 @@ export const modalStyles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 4,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: colors.divider,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: colors.text.primary,
   },
   content: {
     flex: 1,
@@ -318,7 +319,7 @@ export const modalStyles = StyleSheet.create({
   // Стили для экрана категорий
   categoryDescription: {
     fontSize: 16,
-    color: '#cccccc',
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: 16,
     lineHeight: 22,
@@ -334,14 +335,14 @@ export const modalStyles = StyleSheet.create({
     height: 80,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 8,
   },
   categoryItemSelected: {
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     borderColor: '#ffffff',
   },
   categoryIcon: {
@@ -350,12 +351,12 @@ export const modalStyles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 12,
-    color: '#cccccc',
+    color: colors.text.secondary,
     textAlign: 'center',
     fontWeight: '500',
   },
   categoryTextSelected: {
-    color: '#ffffff',
+    color: colors.text.primary,
     fontWeight: '600',
   },
   createCustomButton: {
@@ -367,12 +368,12 @@ export const modalStyles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#ffffff',
-    backgroundColor: '#000000',
+    backgroundColor: colors.background,
     marginTop: 16,
   },
   createCustomText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: colors.text.primary,
     fontWeight: '600',
     textAlign: 'center',
   },
