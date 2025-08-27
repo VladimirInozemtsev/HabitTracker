@@ -36,6 +36,7 @@ export const modalStyles = StyleSheet.create({
   input: {
     backgroundColor: '#000000',
     color: '#ffffff',
+    fontWeight: '600',
     marginBottom: 8,
     fontSize: 16,
   },
@@ -268,6 +269,11 @@ export const modalStyles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#00FFFF',
+  },
+  // Цвет текста на кнопке Сохранить — чёрный
+  saveButtonLabel: {
+    color: '#000000',
+    fontWeight: '700',
   },
   // Стили для центральной иконки с фоном
   centralIconContainer: {

@@ -22,7 +22,29 @@ import {
   Appbar,
   IconButton,
 } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme, configureFonts } from 'react-native-paper';
 import { api, Habit, isAuthenticated } from './services/api';
+
+// Глобальная типографика: Inter 400 по умолчанию, Inter 700 для заголовков и лейблов
+const fontConfig = {
+  displayLarge: { fontFamily: 'Inter_700Bold' },
+  displayMedium: { fontFamily: 'Inter_700Bold' },
+  displaySmall: { fontFamily: 'Inter_700Bold' },
+  headlineLarge: { fontFamily: 'Inter_700Bold' },
+  headlineMedium: { fontFamily: 'Inter_700Bold' },
+  headlineSmall: { fontFamily: 'Inter_700Bold' },
+  titleLarge: { fontFamily: 'Inter_700Bold' },
+  titleMedium: { fontFamily: 'Inter_700Bold' },
+  titleSmall: { fontFamily: 'Inter_700Bold' },
+  bodyLarge: { fontFamily: 'Inter_400Regular' },
+  bodyMedium: { fontFamily: 'Inter_400Regular' },
+  bodySmall: { fontFamily: 'Inter_400Regular' },
+  labelLarge: { fontFamily: 'Inter_700Bold' },
+  labelMedium: { fontFamily: 'Inter_700Bold' },
+  labelSmall: { fontFamily: 'Inter_700Bold' },
+} as const;
+
+// Тема будет формироваться динамически в компоненте App (dark/light) на базе этого конфига
 import { HabitGrid } from './components/HabitGrid';
 import { HabitCalendar } from './components/HabitCalendar';
 import { CreateHabitModal } from './components/CreateHabitModal';
@@ -39,14 +61,16 @@ const getMutedColor = (color: string): string => {
 
 // Типы для навигации
 type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
+type ThemeProps = { isDark: boolean; setIsDark: (v: boolean) => void };
 
-function AppContent() {
+function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
   });
+
 
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,10 +118,11 @@ function AppContent() {
     return () => subscription?.remove();
   }, []);
 
-  // Проверка аутентификации при загрузке
+  // Проверка аутентификации после загрузки шрифтов
   useEffect(() => {
+    if (!fontsLoaded) return;
     checkAuth();
-  }, []);
+  }, [fontsLoaded]);
 
   const checkAuth = async () => {
     if (isAuthenticated()) {
@@ -124,6 +149,14 @@ function AppContent() {
       setLoading(false);
     }
   };
+
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' }}>
+        <ActivityIndicator size="large" color="#00FFFF" />
+      </View>
+    );
+  }
 
   const loadHabits = async () => {
     try {
@@ -370,6 +403,8 @@ function AppContent() {
         <SettingsScreen
           onClose={() => setShowSettings(false)}
           styles={styles}
+          isDark={isDark}
+          onToggleTheme={() => setIsDark(!isDark)}
         />
       );
     }
@@ -1723,9 +1758,22 @@ const styles = StyleSheet.create({
 });
 
 export default function App() {
+  const [isDark, setIsDark] = useState(true);
+  const themed = {
+    ...(isDark ? MD3DarkTheme : MD3LightTheme),
+    colors: {
+      ...(isDark ? MD3DarkTheme.colors : MD3LightTheme.colors),
+      primary: '#00FFFF',
+      background: isDark ? '#000000' : '#FFFFFF',
+      surface: isDark ? '#1a1a1a' : '#f5f5f5',
+      onSurface: isDark ? '#ffffff' : '#000000',
+    },
+    fonts: configureFonts({ config: fontConfig }),
+  } as const;
+
   return (
-    <PaperProvider>
-      <AppContent />
+    <PaperProvider theme={themed}>
+      <AppContentWithTheme isDark={isDark} setIsDark={setIsDark} />
     </PaperProvider>
   );
 }
