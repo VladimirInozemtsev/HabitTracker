@@ -3,11 +3,11 @@ import { View, ScrollView } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { Habit } from '../services/api';
 import { HabitCard } from '../components/HabitCard';
+import { colors, baseStyles } from '../styles';
 
 interface HabitsScreenProps {
   habits: Habit[];
   isTablet: boolean;
-  styles: any;
   onHabitPress: (habit: Habit) => void;
   onSettingsPress: () => void;
   onOpenAddModal: () => void;
@@ -16,14 +16,13 @@ interface HabitsScreenProps {
 export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   habits,
   isTablet,
-  styles,
   onHabitPress,
   onSettingsPress,
   onOpenAddModal
 }) => {
   return (
-    <View style={styles.container}>
-      <Appbar.Header style={styles.appbar}>
+    <View style={baseStyles.container}>
+      <Appbar.Header style={{ backgroundColor: colors.background, elevation: 4 }}>
         <Appbar.Action 
           icon="cog" 
           onPress={onSettingsPress}
@@ -32,8 +31,8 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
         <Appbar.Content 
           title="HabitTracker" 
           subtitle=""
-          titleStyle={styles.appbarTitle}
-          subtitleStyle={styles.appbarSubtitle}
+          titleStyle={{ color: '#fff', fontSize: 20, fontWeight: 'bold' }}
+          subtitleStyle={{ color: '#fff', fontSize: 14, opacity: 0.9 }}
         />
         <Appbar.Action 
           icon="chart-bar" 
@@ -47,14 +46,13 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
         />
       </Appbar.Header>
       
-      <ScrollView style={styles.content}>
-        <View style={styles.habitsList}>
+      <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={{ padding: 0 }}>
           {habits.map((habit) => (
             <HabitCard
               key={habit.id}
               habit={habit}
               isTablet={isTablet}
-              styles={styles}
               onPress={() => onHabitPress(habit)}
             />
           ))}

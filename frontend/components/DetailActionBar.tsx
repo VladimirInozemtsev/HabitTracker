@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 import { Habit } from '../services/api';
 import { SERIES_GOALS } from '../constants/goals';
-import { colors } from '../constants/appStyles';
+import { colors } from '../styles';
 import { calculateCurrentStreak } from '../utils/streak';
 
 interface DetailActionBarProps {

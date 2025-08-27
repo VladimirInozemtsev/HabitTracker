@@ -3,35 +3,34 @@ import { View, TouchableOpacity } from 'react-native';
 import { Card, Text, IconButton } from 'react-native-paper';
 import { Habit } from '../services/api';
 import { HabitGrid } from './HabitGrid';
-import { getHabitColor } from '../constants/colors';
-import { getMutedColor } from '../utils/colors';
+import { getHabitColor } from '../styles';
+import { cardStyles, getHabitStatusStyle, getHabitIconStyle } from '../styles';
 
 interface HabitCardProps {
   habit: Habit;
   isTablet: boolean;
-  styles: any;
   onPress: () => void;
 }
 
 
-export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, styles, onPress }) => {
+export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress }) => {
   const baseColor = habit.color || getHabitColor(habit.id);
   return (
     <Card
       style={[
-        styles.habitCard,
-        isTablet && styles.habitCardTablet
+        cardStyles.habitCard,
+        isTablet && cardStyles.habitCardTablet
       ]}
       onPress={onPress}
     >
       <Card.Content style={[
-        styles.habitCardContent,
-        isTablet && styles.habitCardContentTablet
+        cardStyles.habitCardContent,
+        isTablet && cardStyles.habitCardContentTablet
       ]}>
-        <View style={styles.habitInfo}>
+        <View style={cardStyles.habitInfo}>
           {/* Левый блок: иконка привычки */}
-          <View style={styles.habitHeader}>
-            <View style={styles.habitIconContainer}>
+          <View style={cardStyles.habitHeader}>
+            <View style={getHabitIconStyle(baseColor)}>
               <IconButton
                 icon={habit.icon || 'target'}
                 size={32}
@@ -41,30 +40,20 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, styles, o
             </View>
 
             {/* Центральный блок: название и описание */}
-            <View style={styles.habitTextContainer}>
-              <View style={styles.habitNameContainer}>
-                <Text style={styles.habitName} numberOfLines={1}>{habit.name}</Text>
+            <View style={cardStyles.habitTextContainer}>
+              <View style={cardStyles.habitNameContainer}>
+                <Text style={cardStyles.habitName} numberOfLines={1}>{habit.name}</Text>
               </View>
               {habit.description ? (
-                <View style={styles.habitDescriptionContainer}>
-                  <Text style={styles.habitDescription} numberOfLines={2}>{habit.description}</Text>
+                <View style={cardStyles.habitDescriptionContainer}>
+                  <Text style={cardStyles.habitDescription} numberOfLines={2}>{habit.description}</Text>
                 </View>
               ) : null}
             </View>
 
             {/* Правый блок: статус сегодня */}
-            <View style={styles.habitStatusContainer}>
-              <View
-                style={{
-                  margin: 0,
-                  width: 60,
-                  height: 60,
-                  borderRadius: 8,
-                  backgroundColor: habit.is_completed_today ? baseColor : getMutedColor(baseColor),
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
+            <View style={cardStyles.habitStatusContainer}>
+              <View style={getHabitStatusStyle(baseColor, habit.is_completed_today)}>
                 {habit.is_completed_today && (
                   <IconButton
                     size={35}

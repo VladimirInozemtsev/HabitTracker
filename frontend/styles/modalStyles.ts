@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '../constants/appStyles';
+import { colors } from './baseStyles';
 
 export const modalStyles = StyleSheet.create({
   container: {
@@ -432,5 +432,82 @@ export const modalStyles = StyleSheet.create({
   categoriesButtonText: {
     fontSize: 16,
     color: '#ffffff',
+  },
+  
+  // Стили для модального окна добавления группы
+  groupModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  groupModalContent: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 20,
+    width: '90%',
+    maxWidth: 400,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  groupModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text.primary,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  groupModalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  groupModalButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    marginHorizontal: 5,
+  },
+  groupModalCancelButton: {
+    backgroundColor: colors.surface,
+  },
+  groupModalSaveButton: {
+    backgroundColor: colors.info,
+  },
+  groupModalCancelButtonText: {
+    color: colors.text.secondary,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  groupModalSaveButtonText: {
+    color: colors.text.primary,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  groupColorPicker: {
+    marginBottom: 16,
+  },
+  groupColorLabel: {
+    fontSize: 16,
+    color: colors.text.primary,
+    marginBottom: 8,
+  },
+  groupColorOptions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  groupColorOption: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  groupColorOptionSelected: {
+    borderColor: '#333',
+    borderWidth: 3,
   },
 });

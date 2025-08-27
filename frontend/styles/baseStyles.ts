@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 // Базовые стили для всего приложения HabitTracker
 // СТИЛЬ: Чёрный фон + белый/серый текст + цвета привычек выбирает пользователь
 
@@ -38,7 +40,7 @@ export const colors = {
 };
 
 // Базовые стили компонентов
-export const baseStyles = {
+export const baseStyles = StyleSheet.create({
   // Контейнеры
   container: {
     flex: 1,
@@ -96,89 +98,73 @@ export const baseStyles = {
     fontWeight: '500',
   },
   
+  // Appbar
+  appbar: {
+    backgroundColor: colors.background,
+    elevation: 4,
+  },
+  
+  // Content
+  content: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  
+  // Settings
+  section: {
+    marginVertical: 16,
+  },
+  
+  sectionTitle: {
+    color: colors.text.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    paddingHorizontal: 16,
+  },
+  
+  listItem: {
+    backgroundColor: colors.surface,
+    marginHorizontal: 16,
+    marginVertical: 2,
+    borderRadius: 8,
+  },
+  
+  listItemTitle: {
+    color: colors.text.primary,
+    fontSize: 16,
+  },
+  
   // Поля ввода
   input: {
-    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
-    color: colors.text.primary,
-  },
-  
-  // Иконки
-  icon: {
-    color: colors.text.primary,
-  },
-  
-  iconSecondary: {
-    color: colors.text.secondary,
-  },
-  
-  // Списки
-  listItem: {
     backgroundColor: colors.surface,
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    color: colors.text.primary,
+    fontSize: 16,
   },
   
-  // Навигация
-  navigation: {
+  // Загрузка
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: colors.background,
   },
   
-  // Модалы
-  modal: {
-    backgroundColor: colors.background,
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: colors.text.primary,
   },
-  
-  modalContent: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 20,
-    margin: 20,
-  }
-};
+});
 
-// Отступы
-export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-};
-
-// Скругления
-export const borderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
-};
-
-// Тени
-export const shadows = {
-  sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
+// Функция для получения цвета привычки по ID (fallback)
+export const getHabitColor = (habitId: string): string => {
+  // Простая функция для получения цвета по ID
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#4CAF50', '#FFA726', '#9C27B0', '#607D8B'];
+  const index = habitId.charCodeAt(0) % colors.length;
+  return colors[index];
 };

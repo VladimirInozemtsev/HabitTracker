@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { screenStyles, groupStyles } from '../styles';
 
 interface GroupsScreenProps {
   groups: any[];
@@ -9,7 +10,6 @@ interface GroupsScreenProps {
   onToggleGroupExpansion: (groupId: string) => void;
   onOpenAddGroupModal: () => void;
   onLoadGroups: () => void;
-  styles: any;
 }
 
 export const GroupsScreen: React.FC<GroupsScreenProps> = ({
@@ -18,63 +18,62 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
   groupHabits,
   onToggleGroupExpansion,
   onOpenAddGroupModal,
-  onLoadGroups,
-  styles
+  onLoadGroups
 }) => {
   return (
     <ScrollView 
-      style={styles.screenContainer}
-      contentContainerStyle={styles.screenContentContainer}
+      style={screenStyles.screenContainer}
+      contentContainerStyle={screenStyles.screenContentContainer}
     >
-      <Text style={styles.screenTitle}>Группы привычек</Text>
+      <Text style={screenStyles.screenTitle}>Группы привычек</Text>
       <TouchableOpacity
-        style={styles.addButton}
+        style={screenStyles.addButton}
         onPress={onOpenAddGroupModal}
       >
-        <Text style={styles.addButtonText}>+</Text>
+        <Text style={screenStyles.addButtonText}>+</Text>
       </TouchableOpacity>
       {groups.length > 0 ? (
-        <View style={styles.groupsContainer}>
+        <View style={groupStyles.groupsContainer}>
           {groups.map((group) => {
             const isExpanded = expandedGroups.has(group.id);
             const groupHabitsList = groupHabits[group.id] || [];
             const habitsCount = groupHabitsList.length;
             
             return (
-              <View key={group.id} style={styles.groupCard}>
+              <View key={group.id} style={groupStyles.groupCard}>
                 <TouchableOpacity 
-                  style={styles.groupHeader}
+                  style={groupStyles.groupHeader}
                   onPress={() => onToggleGroupExpansion(group.id)}
                 >
-                  <View style={[styles.groupColor, { backgroundColor: group.color }]} />
-                  <View style={styles.groupInfo}>
-                    <Text style={styles.groupName}>{group.name}</Text>
-                    <Text style={styles.groupDescription}>{group.description || 'Без описания'}</Text>
-                    <Text style={styles.groupCount}>{habitsCount} привычек</Text>
+                  <View style={[groupStyles.groupColor, { backgroundColor: group.color }]} />
+                  <View style={groupStyles.groupInfo}>
+                    <Text style={groupStyles.groupName}>{group.name}</Text>
+                    <Text style={groupStyles.groupDescription}>{group.description || 'Без описания'}</Text>
+                    <Text style={groupStyles.groupCount}>{habitsCount} привычек</Text>
                   </View>
-                  <Text style={[styles.expandIcon, isExpanded && styles.expandIconRotated]}>
+                  <Text style={[groupStyles.expandIcon, isExpanded && groupStyles.expandIconRotated]}>
                     {isExpanded ? '▼' : '▶'}
                   </Text>
                 </TouchableOpacity>
                 
                 {isExpanded && (
-                  <View style={styles.groupHabitsContainer}>
+                  <View style={groupStyles.groupHabitsContainer}>
                     {groupHabitsList.length > 0 ? (
                       groupHabitsList.map((habit) => (
-                        <View key={habit.id} style={styles.groupHabitItem}>
-                          <Text style={styles.groupHabitName}>{habit.name}</Text>
+                        <View key={habit.id} style={groupStyles.groupHabitItem}>
+                          <Text style={groupStyles.groupHabitName}>{habit.name}</Text>
                           <View style={[
-                            styles.groupHabitStatus,
+                            groupStyles.groupHabitStatus,
                             { backgroundColor: habit.is_completed_today ? '#4CAF50' : '#E0E0E0' }
                           ]}>
-                            <Text style={styles.groupHabitStatusText}>
+                            <Text style={groupStyles.groupHabitStatusText}>
                               {habit.is_completed_today ? '✅' : '⭕'}
                             </Text>
                           </View>
                         </View>
                       ))
                     ) : (
-                      <Text style={styles.noHabitsText}>В этой группе пока нет привычек</Text>
+                      <Text style={groupStyles.noHabitsText}>В этой группе пока нет привычек</Text>
                     )}
                   </View>
                 )}
@@ -83,8 +82,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
           })}
         </View>
       ) : (
-        <TouchableOpacity style={styles.loadButton} onPress={onLoadGroups}>
-          <Text style={styles.loadButtonText}>Загрузить группы</Text>
+        <TouchableOpacity style={screenStyles.loadButton} onPress={onLoadGroups}>
+          <Text style={screenStyles.loadButtonText}>Загрузить группы</Text>
         </TouchableOpacity>
       )}
     </ScrollView>

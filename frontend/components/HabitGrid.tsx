@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { colors } from '../constants/appStyles';
+import { colors } from '../styles';
 
 interface HabitGridProps {
   habitId: string;

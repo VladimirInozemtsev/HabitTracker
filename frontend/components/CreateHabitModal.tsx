@@ -4,15 +4,21 @@ import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
 // Импорты из констант
 import { HABIT_ICONS, getAllIcons } from '../constants/icons';
-import { HABIT_COLORS } from '../constants/colors';
 import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '../constants/goals';
 
 // Импорт стилей
 import { modalStyles as styles } from '../styles/modalStyles';
-import { colors, baseStyles } from '../constants/appStyles';
+import { colors, baseStyles } from '../styles';
 
 // Импорт компонентов
 import { CategoriesScreen } from './CategoriesScreen';
+
+// Цвета для привычек (24 ярких неоновых цвета)
+const HABIT_COLORS = [
+  '#FF1744', '#D500F9', '#651FFF', '#3D5AFE', '#2979FF', '#00B0FF', '#00E5FF', '#1DE9B6',
+  '#00E676', '#76FF03', '#C6FF00', '#FFEA00', '#FFC400', '#FF9100', '#FF3D00', '#FF6B6B',
+  '#4ECDC4', '#45B7D1', '#96CEB4', '#4CAF50', '#FFA726', '#9C27B0', '#607D8B', '#E91E63'
+];
 
 interface CreateHabitModalProps {
   visible: boolean;
