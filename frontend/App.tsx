@@ -35,14 +35,13 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     Inter_700Bold,
   });
 
-  const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Используем responsive и navigation из контекста
-  const { responsive, navigation } = useApp();
+  // Используем responsive, navigation и habits из контекста
+  const { responsive, navigation, habits } = useApp();
 
   // Навигация теперь управляется через контекст
   const [userStats, setUserStats] = useState<any>(null);
@@ -59,15 +58,55 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
   // Автоматически обновляем selectedHabit при изменении habits
   useEffect(() => {
-    if (selectedHabit && habits.length > 0) {
-      const updatedHabit = habits.find(h => h.id === selectedHabit.id);
+    if (selectedHabit && habits.habits.length > 0) {
+      const updatedHabit = habits.habits.find(h => h.id === selectedHabit.id);
       if (updatedHabit) {
         setSelectedHabit(updatedHabit);
       }
     }
-  }, [habits]);
+  }, [habits.habits]);
 
   // Responsive теперь управляется через контекст
+
+  // Функция для загрузки групп (перемещаем выше checkAuth)
+  const loadGroups = async () => {
+    try {
+      const data = await api.getGroups();
+      // Проверяем структуру данных (может быть пагинированный ответ)
+      let groupsData;
+      if (data && Array.isArray(data)) {
+        groupsData = data;
+      } else if (data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results)) {
+        groupsData = (data as any).results;
+      } else {
+        groupsData = [];
+      }
+      
+      setGroups(groupsData);
+      
+      // Загружаем привычки для всех групп сразу
+      for (const group of groupsData) {
+        await loadGroupHabits(group.id);
+      }
+    } catch (error) {
+      console.error('Load groups error:', error);
+    }
+  };
+
+  // Функция для загрузки привычек группы
+  const loadGroupHabits = async (groupId: string) => {
+    try {
+      const data: any = await api.getHabitsByGroup(groupId);
+      // Обрабатываем пагинированный ответ
+      const habits = data.results || data;
+      setGroupHabits(prev => ({
+        ...prev,
+        [groupId]: habits
+      }));
+    } catch (error) {
+      console.error('Load group habits error:', error);
+    }
+  };
 
   // Проверка аутентификации после загрузки шрифтов
   useEffect(() => {
@@ -78,7 +117,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   const checkAuth = async () => {
     if (isAuthenticated()) {
       setIsLoggedIn(true);
-      await loadHabits();
+      await habits.loadHabits();
       await loadGroups(); // Загружаем группы при входе
     } else {
       // Автоматический вход с демо-данными
@@ -91,7 +130,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       setLoading(true);
       await api.login('demo', 'demo12345');
       setIsLoggedIn(true);
-      await loadHabits();
+      await habits.loadHabits();
       await loadGroups(); // Загружаем группы при входе
     } catch (error) {
       console.error('Login error:', error);
@@ -109,30 +148,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     );
   }
 
-  const loadHabits = async () => {
-    try {
-      setLoading(true);
-      const data = await api.getHabits();
-      console.log('API Response:', data); // Отладочный лог
-      
-      // Проверяем структуру данных
-      if (data && Array.isArray(data)) {
-        setHabits([...data]); // Принудительно создаем новый массив
-      } else if (data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results)) {
-        // Если данные в формате пагинации
-        setHabits([...(data as any).results]); // Принудительно создаем новый массив
-      } else {
-        console.error('Unexpected data format:', data);
-        setHabits([]);
-      }
-    } catch (error) {
-      console.error('Load habits error:', error);
-      Alert.alert('Ошибка', 'Не удалось загрузить привычки');
-      setHabits([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Загрузка привычек теперь управляется через контекст
 
   const handleHabitToggle = async (habitId: string) => {
     try {
@@ -145,7 +161,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       }
       
       // ВСЕГДА перезагружаем привычки чтобы обновить UI
-      await loadHabits();
+      await habits.loadHabits();
     } catch (error) {
       console.error('Toggle habit error:', error);
       Alert.alert('Ошибка', 'Не удалось отметить привычку');
@@ -184,7 +200,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       }
       
       // Перезагружаем привычки - selectedHabit обновится автоматически через useEffect
-      await loadHabits();
+      await habits.loadHabits();
     } catch (error) {
       console.error('Calendar day toggle error:', error);
       Alert.alert('Ошибка', 'Не удалось изменить статус привычки');
@@ -200,10 +216,9 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
         frequency: 'daily'
       };
       
-      await api.createHabit(data);
+      await habits.addHabit(data);
       
-      // Перезагружаем привычки и группы
-      await loadHabits();
+      // Перезагружаем группы
       await loadGroups();
       
       Alert.alert('Успех', 'Привычка добавлена!');
@@ -226,10 +241,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
         return;
       }
 
-      await api.updateHabit(selectedHabit.id, habitData);
-      
-      // Перезагружаем привычки - selectedHabit обновится автоматически через useEffect
-      await loadHabits();
+      await habits.updateHabit(selectedHabit.id, habitData);
       
       Alert.alert('Успех', `Привычка "${habitData.name}" обновлена!`);
     } catch (error) {
@@ -271,30 +283,6 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     }
   };
 
-  const loadGroups = async () => {
-    try {
-      const data = await api.getGroups();
-      // Проверяем структуру данных (может быть пагинированный ответ)
-      let groupsData;
-      if (data && Array.isArray(data)) {
-        groupsData = data;
-      } else if (data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results)) {
-        groupsData = (data as any).results;
-      } else {
-        groupsData = [];
-      }
-      
-      setGroups(groupsData);
-      
-      // Загружаем привычки для всех групп сразу
-      for (const group of groupsData) {
-        await loadGroupHabits(group.id);
-      }
-    } catch (error) {
-      console.error('Load groups error:', error);
-    }
-  };
-
   const handleAddGroup = async (groupData: { name: string; description: string; color: string }) => {
     try {
       await api.createGroup(groupData);
@@ -306,21 +294,6 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     } catch (error) {
       console.error('Add group error:', error);
       Alert.alert('Ошибка', 'Не удалось добавить группу');
-    }
-  };
-
-  // Функция для загрузки привычек группы
-  const loadGroupHabits = async (groupId: string) => {
-    try {
-      const data: any = await api.getHabitsByGroup(groupId);
-      // Обрабатываем пагинированный ответ
-      const habits = data.results || data;
-      setGroupHabits(prev => ({
-        ...prev,
-        [groupId]: habits
-      }));
-    } catch (error) {
-      console.error('Load group habits error:', error);
     }
   };
 
@@ -368,7 +341,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       case 'habits':
                  return (
            <HabitsScreen
-             habits={habits}
+             habits={habits.habits}
              isTablet={responsive.isTablet}
              onHabitPress={handleHabitPress}
              onSettingsPress={handleSettingsPress}
