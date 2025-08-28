@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 import { Habit } from '../services/api';
-import { SERIES_GOALS } from '../constants/goals';
+import { SERIES_GOALS } from '../config/goals';
 import { colors } from '../styles';
 import { calculateCurrentStreak } from '../utils/streak';
 

@@ -3,7 +3,7 @@ import { View, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 
 // Импорты из констант
-import { HABIT_CATEGORIES } from '../constants/goals';
+import { HABIT_CATEGORIES } from '../config/goals';
 
 // Импорт стилей
 import { modalStyles as styles } from '../styles/modalStyles';

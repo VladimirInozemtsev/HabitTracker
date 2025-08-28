@@ -5,7 +5,7 @@ import { HabitGrid } from '../components/HabitGrid';
 import { HabitCalendar } from '../components/HabitCalendar';
 import { getHabitColor, colors, baseStyles, detailStyles } from '../styles';
 import { Habit } from '../services/api';
-import { HABIT_CATEGORIES, SERIES_GOALS } from '../constants/goals';
+import { HABIT_CATEGORIES, SERIES_GOALS } from '../config/goals';
 import { calculateCurrentStreak } from '../utils/streak';
 
 interface HabitDetailScreenProps {
