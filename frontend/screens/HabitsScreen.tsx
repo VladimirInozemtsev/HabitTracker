@@ -2,13 +2,14 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { Habit } from '../services/api';
-import { HabitCard } from '../components/HabitCard';
+import { HabitCard } from '../components/ui/HabitCard';
 import { colors, baseStyles } from '../styles';
 
 interface HabitsScreenProps {
   habits: Habit[];
   isTablet: boolean;
   onHabitPress: (habit: Habit) => void;
+  onHabitToggle: (habitId: string) => void;
   onSettingsPress: () => void;
   onOpenAddModal: () => void;
 }
@@ -17,6 +18,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   habits,
   isTablet,
   onHabitPress,
+  onHabitToggle,
   onSettingsPress,
   onOpenAddModal
 }) => {
@@ -54,6 +56,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
               habit={habit}
               isTablet={isTablet}
               onPress={() => onHabitPress(habit)}
+              onToggleStatus={() => onHabitToggle(habit.id)}
             />
           ))}
         </View>

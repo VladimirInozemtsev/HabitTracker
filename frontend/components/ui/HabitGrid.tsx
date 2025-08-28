@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { colors } from '../styles';
+import { getMutedColor, formatDate } from '../utils';
 
 interface HabitGridProps {
   habitId: string;
@@ -11,11 +12,7 @@ interface HabitGridProps {
   showLegend?: boolean; // показывать ли легенду
 }
 
-// Функция для создания приглушенного цвета
-const getMutedColor = (color: string): string => {
-  // Добавляем прозрачность к основному цвету (60 = 37.5% непрозрачности)
-  return `${color}60`;
-};
+
 
 export const HabitGrid: React.FC<HabitGridProps> = ({
   habitId,

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Card, Chip, Appbar, IconButton } from 'react-native-paper';
-import { HabitGrid } from '../components/HabitGrid';
-import { HabitCalendar } from '../components/HabitCalendar';
+import { HabitGrid } from '../components/ui/HabitGrid';
+import { HabitCalendar } from '../components/ui/HabitCalendar';
 import { getHabitColor, colors, baseStyles, detailStyles } from '../styles';
 import { Habit } from '../services/api';
 import { HABIT_CATEGORIES, SERIES_GOALS } from '../config/goals';

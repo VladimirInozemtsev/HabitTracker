@@ -8,11 +8,11 @@ import {
   IconButton,
 } from 'react-native-paper';
 import { api, Habit } from './services/api';
+import { getCurrentDate } from './utils/date';
 
 // Импорты компонентов
-import { CreateHabitModal } from './components/CreateHabitModal';
-import { AddGroupModal } from './components/AddGroupModal';
-import { SettingsScreen } from './components/SettingsScreen';
+import { CreateHabitModal, AddGroupModal } from './components/modals';
+import { SettingsScreen } from './screens/SettingsScreen';
 import { colors, navigationStyles } from './styles';
 import { HabitsScreen } from './screens/HabitsScreen';
 import { StatsScreen } from './screens/StatsScreen';
@@ -147,19 +147,41 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
   const handleHabitToggle = async (habitId: string) => {
     try {
-      const response = await api.markHabitComplete(habitId);
+      // Находим привычку в текущем списке
+      const habit = habits.habits.find(h => h.id === habitId);
+      if (!habit) {
+        Alert.alert('Ошибка', 'Привычка не найдена');
+        return;
+      }
+
+      // Получаем текущую дату в локальном часовом поясе
+      const today = getCurrentDate();
+
+      let response;
       
-      // Если привычка уже была выполнена сегодня
-      if (response.completed_today) {
-        // Показываем уведомление
-        Alert.alert('Информация', response.message);
+      // Если привычка уже выполнена сегодня - убираем отметку
+      if (habit.is_completed_today) {
+        response = await api.unmarkHabitComplete(habitId, today);
+      } else {
+        // Если не выполнена - отмечаем как выполненную
+        response = await api.markHabitComplete(habitId, today);
       }
       
-      // ВСЕГДА перезагружаем привычки чтобы обновить UI
+      // Принудительно перезагружаем привычки чтобы обновить UI
       await habits.loadHabits();
+      
+      // Добавляем небольшую задержку и еще одну загрузку для надежности
+      setTimeout(async () => {
+        await habits.loadHabits();
+      }, 500);
+      
+      // Показываем уведомление если есть сообщение
+      if (response.message) {
+        Alert.alert('Информация', response.message);
+      }
     } catch (error) {
       console.error('Toggle habit error:', error);
-      Alert.alert('Ошибка', 'Не удалось отметить привычку');
+      Alert.alert('Ошибка', 'Не удалось изменить статус привычки');
     }
   };
 
@@ -334,15 +356,16 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
     switch (navigation.currentScreen) {
       case 'habits':
-                 return (
-           <HabitsScreen
-             habits={habits.habits}
-             isTablet={responsive.isTablet}
-             onHabitPress={handleHabitPress}
-             onSettingsPress={handleSettingsPress}
-             onOpenAddModal={handleOpenAddModal}
-           />
-         );
+                         return (
+          <HabitsScreen
+            habits={habits.habits}
+            isTablet={responsive.isTablet}
+            onHabitPress={handleHabitPress}
+            onHabitToggle={handleHabitToggle}
+            onSettingsPress={handleSettingsPress}
+            onOpenAddModal={handleOpenAddModal}
+          />
+        );
       
       case 'stats':
         return (

@@ -638,13 +638,74 @@ export const useHabits = () => {
   - Создать `utils/date.ts`, `utils/validation.ts`, `utils/format.ts`
 - **Ожидаемый результат**: Переиспользуемые утилиты
 
-#### Этап 8: Реорганизация компонентов (5% риска)
-- **Цель**: Улучшение структуры компонентов
-- **Задачи**:
-  - Создать подпапки в `components/`: `ui/`, `forms/`, `modals/`
-  - Переместить компоненты по категориям
-  - Обновить импорты
-- **Ожидаемый результат**: Лучшая организация компонентов
+#### Этап 8: Реорганизация компонентов ✅ ЗАВЕРШЕН
+
+**Цель:** Создать логичную структуру папок для компонентов и экранов согласно BlueStone Apps MCP.
+
+**Выполнено:**
+1. **Создание структуры папок:**
+   - `frontend/components/ui/` - базовые UI компоненты
+   - `frontend/components/modals/` - модальные окна
+   - `frontend/components/forms/` - формы (заготовка для будущего)
+
+2. **Перемещение компонентов по категориям:**
+   - **UI компоненты:** `HabitCard`, `HabitGrid`, `HabitCalendar`, `DetailActionBar`
+   - **Модальные окна:** `CreateHabitModal`, `AddGroupModal`
+   - **Экраны:** `SettingsScreen`, `CategoriesScreen` перемещены в `screens/`
+
+3. **Создание индексных файлов:**
+   - `frontend/components/ui/index.ts` - экспорт UI компонентов
+   - `frontend/components/modals/index.ts` - экспорт модальных окон
+   - `frontend/components/index.ts` - главный экспорт компонентов
+   - `frontend/screens/index.ts` - экспорт всех экранов
+
+4. **Обновление импортов:**
+   - Обновлены все импорты в `App.tsx`
+   - Обновлены импорты в `HabitsScreen.tsx`
+   - Обновлены импорты в `HabitDetailScreen.tsx`
+   - Обновлены импорты в `CreateHabitModal.tsx`
+
+**Результат:**
+- ✅ Логичная структура папок
+- ✅ Удобные импорты через индексные файлы
+- ✅ Разделение компонентов по назначению
+- ✅ Готовность к масштабированию
+
+**Структура после реорганизации:**
+```
+frontend/
+├── components/
+│   ├── ui/
+│   │   ├── HabitCard.tsx
+│   │   ├── HabitGrid.tsx
+│   │   ├── HabitCalendar.tsx
+│   │   ├── DetailActionBar.tsx
+│   │   └── index.ts
+│   ├── modals/
+│   │   ├── CreateHabitModal.tsx
+│   │   ├── AddGroupModal.tsx
+│   │   └── index.ts
+│   ├── forms/
+│   └── index.ts
+└── screens/
+    ├── HabitsScreen.tsx
+    ├── HabitDetailScreen.tsx
+    ├── AnalyticsScreen.tsx
+    ├── GroupsScreen.tsx
+    ├── ProfileScreen.tsx
+    ├── StatsScreen.tsx
+    ├── SettingsScreen.tsx
+    ├── CategoriesScreen.tsx
+    └── index.ts
+```
+
+**Файлы изменены:**
+- Созданы папки: `components/ui/`, `components/modals/`, `components/forms/`
+- Перемещены файлы компонентов
+- Созданы индексные файлы
+- Обновлены импорты во всех файлах
+
+---
 
 #### Этап 9: Создание screens/ папки (10% риска)
 - **Цель**: Выделение экранов в отдельную папку

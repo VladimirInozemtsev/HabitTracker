@@ -1,6 +1,8 @@
 // API клиент для подключения к Django backend
 const API_BASE_URL = 'http://localhost:8000/api';
 
+import { getCurrentDate } from '../utils/date';
+
 // Интерфейсы TypeScript для типизации данных
 export interface Habit {
   id: string;
@@ -143,9 +145,20 @@ export const api = {
   },
 
   // Отметить привычку как выполненную
-  markHabitComplete: async (habitId: string): Promise<any> => {
+  markHabitComplete: async (habitId: string, date?: string): Promise<any> => {
+    const today = date || getCurrentDate();
     return apiRequest(`/habits/${habitId}/complete/`, {
       method: 'POST',
+      body: JSON.stringify({ date: today }),
+    });
+  },
+
+  // Убрать отметку выполнения привычки за сегодня
+  unmarkHabitComplete: async (habitId: string, date?: string): Promise<any> => {
+    const today = date || getCurrentDate();
+    return apiRequest(`/habits/${habitId}/complete/`, {
+      method: 'DELETE',
+      body: JSON.stringify({ date: today }),
     });
   },
 

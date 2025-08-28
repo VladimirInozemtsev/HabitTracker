@@ -10,11 +10,7 @@ interface HabitCalendarProps {
   onToggleDay?: (date: string) => void;
 }
 
-// Функция для создания приглушенного цвета
-const getMutedColor = (color: string): string => {
-  // Добавляем прозрачность к основному цвету (60 = 37.5% непрозрачности)
-  return `${color}60`;
-};
+import { getMutedColor } from '../utils/colors';
 
 export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   habitId,

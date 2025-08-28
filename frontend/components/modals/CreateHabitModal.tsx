@@ -11,7 +11,7 @@ import { modalStyles as styles } from '../styles/modalStyles';
 import { colors, baseStyles } from '../styles';
 
 // Импорт компонентов
-import { CategoriesScreen } from './CategoriesScreen';
+import { CategoriesScreen } from '../../screens/CategoriesScreen';
 
 // Цвета для привычек (24 ярких неоновых цвета)
 const HABIT_COLORS = [

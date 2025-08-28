@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { api } from '../services/api';
-import { Habit, CreateHabitData, UpdateHabitData } from '../types';
+import { api, Habit } from '../services/api';
+import { getCurrentDate } from '../utils/date';
 
 export const useHabits = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -14,13 +14,36 @@ export const useHabits = () => {
       setError(null);
       const data = await api.getHabits();
       
+      console.log('useHabits: API response:', data);
+      
+      let habitsData;
       if (data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results)) {
-        setHabits([...(data as any).results]);
+        habitsData = (data as any).results;
       } else if (Array.isArray(data)) {
-        setHabits(data);
+        habitsData = data;
       } else {
-        setHabits([]);
+        habitsData = [];
       }
+      
+      // Исправляем статус is_completed_today на основе данных из logs
+      const correctedHabitsData = habitsData.map((habit: any) => {
+        const today = getCurrentDate();
+        const isCompletedToday = habit.logs?.some((log: any) => 
+          log.date === today && log.status === 'completed'
+        ) || false;
+        
+        // Если статус из API не совпадает с реальными данными, исправляем
+        if (habit.is_completed_today !== isCompletedToday) {
+          return {
+            ...habit,
+            is_completed_today: isCompletedToday
+          };
+        }
+        
+        return habit;
+      });
+      
+      setHabits(correctedHabitsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка загрузки привычек');
       console.error('Error loading habits:', err);
@@ -30,7 +53,7 @@ export const useHabits = () => {
   }, []);
 
   // Добавление новой привычки
-  const addHabit = useCallback(async (habitData: CreateHabitData) => {
+  const addHabit = useCallback(async (habitData: any) => {
     try {
       setLoading(true);
       setError(null);
@@ -47,7 +70,7 @@ export const useHabits = () => {
   }, []);
 
   // Обновление привычки
-  const updateHabit = useCallback(async (id: string, habitData: UpdateHabitData) => {
+  const updateHabit = useCallback(async (id: string, habitData: any) => {
     try {
       setLoading(true);
       setError(null);
@@ -65,41 +88,6 @@ export const useHabits = () => {
     }
   }, []);
 
-  // Удаление привычки
-  const deleteHabit = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      await api.deleteHabit(id);
-      setHabits(prev => prev.filter(habit => habit.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка удаления привычки');
-      console.error('Error deleting habit:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Переключение статуса привычки
-  const toggleHabitStatus = useCallback(async (id: string) => {
-    try {
-      setError(null);
-      const habit = habits.find(h => h.id === id);
-      if (!habit) return;
-
-      const updatedHabit = await api.toggleHabitCompletion(id);
-      setHabits(prev => prev.map(h => 
-        h.id === id ? updatedHabit : h
-      ));
-      return updatedHabit;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка переключения статуса');
-      console.error('Error toggling habit status:', err);
-      throw err;
-    }
-  }, [habits]);
-
   return {
     habits,
     loading,
@@ -107,7 +95,5 @@ export const useHabits = () => {
     loadHabits,
     addHabit,
     updateHabit,
-    deleteHabit,
-    toggleHabitStatus,
   };
 };

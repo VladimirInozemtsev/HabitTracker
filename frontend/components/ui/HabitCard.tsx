@@ -10,10 +10,11 @@ interface HabitCardProps {
   habit: Habit;
   isTablet: boolean;
   onPress: () => void;
+  onToggleStatus?: () => void;
 }
 
 
-export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress }) => {
+export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress, onToggleStatus }) => {
   const baseColor = habit.color || getHabitColor(habit.id);
   return (
     <Card
@@ -51,18 +52,38 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress }
               ) : null}
             </View>
 
-            {/* Правый блок: статус сегодня */}
+            {/* Правый блок: статус сегодня - нажмите чтобы отметить/снять отметку */}
             <View style={cardStyles.habitStatusContainer}>
-              <View style={getHabitStatusStyle(baseColor, habit.is_completed_today)}>
-                {habit.is_completed_today && (
+              <TouchableOpacity
+                style={[
+                  getHabitStatusStyle(baseColor, habit.is_completed_today),
+                  { 
+                    minWidth: 50, 
+                    minHeight: 50, 
+                    justifyContent: 'center', 
+                    alignItems: 'center'
+                  }
+                ]}
+                onPress={onToggleStatus}
+                disabled={!onToggleStatus}
+                activeOpacity={0.7}
+              >
+                {habit.is_completed_today ? (
                   <IconButton
                     size={35}
                     icon="check"
                     iconColor="#ffffff"
                     style={{ margin: 0 }}
                   />
+                ) : (
+                  <IconButton
+                    size={35}
+                    icon="plus"
+                    iconColor="#ffffff"
+                    style={{ margin: 0 }}
+                  />
                 )}
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
