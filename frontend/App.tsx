@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Alert, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, View, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import {
@@ -21,8 +21,10 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { GroupsScreen } from './screens/GroupsScreen';
 import { HabitDetailScreen } from './screens/HabitDetailScreen';
 
-// Типы для навигации
-type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
+// Импорты контекста
+import { AppProvider, useApp } from './context';
+
+// Типы для темы
 type ThemeProps = { isDark: boolean; setIsDark: (v: boolean) => void };
 
 function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
@@ -39,12 +41,10 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Responsive state
-  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
-  const isTablet = screenWidth <= 991;
-  const isMobile = screenWidth <= 640;
+  // Используем responsive и navigation из контекста
+  const { responsive, navigation } = useApp();
 
-  const [currentScreen, setCurrentScreen] = useState<Screen>('habits');
+  // Навигация теперь управляется через контекст
   const [userStats, setUserStats] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
@@ -67,14 +67,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     }
   }, [habits]);
 
-  // Responsive dimensions listener
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({window}) => {
-      setScreenWidth(window.width);
-    });
-
-    return () => subscription?.remove();
-  }, []);
+  // Responsive теперь управляется через контекст
 
   // Проверка аутентификации после загрузки шрифтов
   useEffect(() => {
@@ -159,6 +152,15 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     }
   };
 
+  if (!fontsLoaded || loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+        <Text style={styles.loadingText}>Загрузка...</Text>
+      </View>
+    );
+  }
+
   const handleHabitPress = (habit: any) => {
     setSelectedHabit(habit);
     setShowHabitDetail(true);
@@ -230,7 +232,6 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       await loadHabits();
       
       Alert.alert('Успех', `Привычка "${habitData.name}" обновлена!`);
-      setShowEditModal(false);
     } catch (error) {
       console.error('Edit habit error:', error);
       Alert.alert('Ошибка', 'Не удалось обновить привычку');
@@ -363,17 +364,17 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       );
     }
 
-    switch (currentScreen) {
+    switch (navigation.currentScreen) {
       case 'habits':
-        return (
-          <HabitsScreen
-            habits={habits}
-            isTablet={isTablet}
-            onHabitPress={handleHabitPress}
-            onSettingsPress={handleSettingsPress}
-            onOpenAddModal={handleOpenAddModal}
-          />
-        );
+                 return (
+           <HabitsScreen
+             habits={habits}
+             isTablet={responsive.isTablet}
+             onHabitPress={handleHabitPress}
+             onSettingsPress={handleSettingsPress}
+             onOpenAddModal={handleOpenAddModal}
+           />
+         );
       
       case 'stats':
         return (
@@ -415,15 +416,6 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     }
   };
 
-  if (!fontsLoaded || loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={styles.loadingText}>Загрузка...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       {/* Основной контент */}
@@ -431,95 +423,95 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
       <StatusBar style="auto" />
 
-      {/* Нижняя навигация - скрываем в детальном экране */}
-      {!showHabitDetail && (
-        <View style={[
-          navigationStyles.bottomNavigation,
-          isTablet && navigationStyles.bottomNavigationTablet
-        ]}>
+             {/* Нижняя навигация - скрываем в детальном экране */}
+       {!showHabitDetail && (
+         <View style={[
+           navigationStyles.bottomNavigation,
+           responsive.isTablet && navigationStyles.bottomNavigationTablet
+         ]}>
           <TouchableOpacity
-            style={[
-              navigationStyles.navItem,
-              currentScreen === 'habits' && navigationStyles.navItemActive,
-              isTablet && navigationStyles.navItemTablet
-            ]}
-            onPress={() => setCurrentScreen('habits')}
+                                      style={[
+               navigationStyles.navItem,
+               navigation.currentScreen === 'habits' && navigationStyles.navItemActive,
+               responsive.isTablet && navigationStyles.navItemTablet
+             ]}
+             onPress={() => navigation.navigateTo('habits')}
           >
-            <IconButton
-              icon="target"
-              iconColor={currentScreen === 'habits' ? '#ffffff' : '#666666'}
-              size={24}
-              style={navigationStyles.navIconButton}
-            />
-            <Text style={[navigationStyles.navText, currentScreen === 'habits' && navigationStyles.navTextActive]}>Привычки</Text>
+                         <IconButton
+               icon="target"
+               iconColor={navigation.currentScreen === 'habits' ? '#ffffff' : '#666666'}
+               size={24}
+               style={navigationStyles.navIconButton}
+             />
+             <Text style={[navigationStyles.navText, navigation.currentScreen === 'habits' && navigationStyles.navTextActive]}>Привычки</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+                         style={[
+               navigationStyles.navItem,
+               navigation.currentScreen === 'stats' && navigationStyles.navItemActive,
+               responsive.isTablet && navigationStyles.navItemTablet
+             ]}
+             onPress={() => navigation.navigateTo('stats')}
+          >
+                         <IconButton
+               icon="chart-bar"
+               iconColor={navigation.currentScreen === 'stats' ? '#ffffff' : '#666666'}
+               size={24}
+               style={navigationStyles.navIconButton}
+             />
+             <Text style={[navigationStyles.navText, navigation.currentScreen === 'stats' && navigationStyles.navTextActive]}>Статистика</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
             style={[
               navigationStyles.navItem,
-              currentScreen === 'stats' && navigationStyles.navItemActive,
-              isTablet && navigationStyles.navItemTablet
+                             navigation.currentScreen === 'analytics' && navigationStyles.navItemActive,
+              responsive.isTablet && navigationStyles.navItemTablet
             ]}
-            onPress={() => setCurrentScreen('stats')}
-          >
-            <IconButton
-              icon="chart-bar"
-              iconColor={currentScreen === 'stats' ? '#ffffff' : '#666666'}
-              size={24}
-              style={navigationStyles.navIconButton}
-            />
-            <Text style={[navigationStyles.navText, currentScreen === 'stats' && navigationStyles.navTextActive]}>Статистика</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[
-              navigationStyles.navItem,
-              currentScreen === 'analytics' && navigationStyles.navItemActive,
-              isTablet && navigationStyles.navItemTablet
-            ]}
-            onPress={() => setCurrentScreen('analytics')}
+                         onPress={() => navigation.navigateTo('analytics')}
           >
             <IconButton
               icon="chart-line"
-              iconColor={currentScreen === 'analytics' ? '#ffffff' : '#666666'}
+                             iconColor={navigation.currentScreen === 'analytics' ? '#ffffff' : '#666666'}
               size={24}
               style={navigationStyles.navIconButton}
             />
-            <Text style={[navigationStyles.navText, currentScreen === 'analytics' && navigationStyles.navTextActive]}>Аналитика</Text>
+                         <Text style={[navigationStyles.navText, navigation.currentScreen === 'analytics' && navigationStyles.navTextActive]}>Аналитика</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
             style={[
               navigationStyles.navItem,
-              currentScreen === 'groups' && navigationStyles.navItemActive,
-              isTablet && navigationStyles.navItemTablet
+                             navigation.currentScreen === 'groups' && navigationStyles.navItemActive,
+              responsive.isTablet && navigationStyles.navItemTablet
             ]}
-            onPress={() => setCurrentScreen('groups')}
+                         onPress={() => navigation.navigateTo('groups')}
           >
             <IconButton
               icon="folder"
-              iconColor={currentScreen === 'groups' ? '#ffffff' : '#666666'}
+                             iconColor={navigation.currentScreen === 'groups' ? '#ffffff' : '#666666'}
               size={24}
               style={navigationStyles.navIconButton}
             />
-            <Text style={[navigationStyles.navText, currentScreen === 'groups' && navigationStyles.navTextActive]}>Группы</Text>
+                         <Text style={[navigationStyles.navText, navigation.currentScreen === 'groups' && navigationStyles.navTextActive]}>Группы</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
             style={[
               navigationStyles.navItem,
-              currentScreen === 'profile' && navigationStyles.navItemActive,
-              isTablet && navigationStyles.navItemTablet
+                             navigation.currentScreen === 'profile' && navigationStyles.navItemActive,
+              responsive.isTablet && navigationStyles.navItemTablet
             ]}
-            onPress={() => setCurrentScreen('profile')}
+                         onPress={() => navigation.navigateTo('profile')}
           >
             <IconButton
               icon="account"
-              iconColor={currentScreen === 'profile' ? '#ffffff' : '#666666'}
+                             iconColor={navigation.currentScreen === 'profile' ? '#ffffff' : '#666666'}
               size={24}
               style={navigationStyles.navIconButton}
             />
-            <Text style={[navigationStyles.navText, currentScreen === 'profile' && navigationStyles.navTextActive]}>Профиль</Text>
+                         <Text style={[navigationStyles.navText, navigation.currentScreen === 'profile' && navigationStyles.navTextActive]}>Профиль</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -573,7 +565,9 @@ export default function App() {
 
   return (
     <PaperProvider>
-      <AppContentWithTheme isDark={isDark} setIsDark={setIsDark} />
+      <AppProvider>
+        <AppContentWithTheme isDark={isDark} setIsDark={setIsDark} />
+      </AppProvider>
     </PaperProvider>
   );
 }
