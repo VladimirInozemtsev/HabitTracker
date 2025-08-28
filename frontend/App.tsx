@@ -7,7 +7,7 @@ import {
   Text,
   IconButton,
 } from 'react-native-paper';
-import { api, Habit, isAuthenticated } from './services/api';
+import { api, Habit } from './services/api';
 
 // Импорты компонентов
 import { CreateHabitModal } from './components/CreateHabitModal';
@@ -35,13 +35,12 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     Inter_700Bold,
   });
 
-  const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Аутентификация теперь управляется через контекст
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Используем responsive, navigation и habits из контекста
-  const { responsive, navigation, habits } = useApp();
+  // Используем responsive, navigation, habits и auth из контекста
+  const { responsive, navigation, habits, auth } = useApp();
 
   // Навигация теперь управляется через контекст
   const [userStats, setUserStats] = useState<any>(null);
@@ -115,8 +114,8 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   }, [fontsLoaded]);
 
   const checkAuth = async () => {
-    if (isAuthenticated()) {
-      setIsLoggedIn(true);
+    await auth.checkAuth();
+    if (auth.isLoggedIn) {
       await habits.loadHabits();
       await loadGroups(); // Загружаем группы при входе
     } else {
@@ -127,16 +126,12 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
   const handleLogin = async () => {
     try {
-      setLoading(true);
-      await api.login('demo', 'demo12345');
-      setIsLoggedIn(true);
+      await auth.loginWithDemo();
       await habits.loadHabits();
       await loadGroups(); // Загружаем группы при входе
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Ошибка', 'Не удалось войти в систему');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -168,7 +163,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     }
   };
 
-  if (!fontsLoaded || loading) {
+  if (!fontsLoaded || auth.loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4CAF50" />
@@ -364,12 +359,11 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       
       case 'profile':
         return (
-          <ProfileScreen
-            onLogout={() => {
-              api.logout();
-              setIsLoggedIn(false);
-            }}
-          />
+                     <ProfileScreen
+             onLogout={() => {
+               auth.logout();
+             }}
+           />
         );
       
       case 'groups':
