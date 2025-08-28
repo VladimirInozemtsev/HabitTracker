@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
-import { modalStyles as styles } from '../styles/modalStyles';
+import { modalStyles as styles } from '../../styles/modalStyles';
 
 interface AddGroupModalProps {
   visible: boolean;

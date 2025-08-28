@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { colors } from '../styles';
-import { getMutedColor, formatDate } from '../utils';
+import { colors } from '../../styles';
+import { getMutedColor, formatDate } from '../../utils';
 
 interface HabitGridProps {
   habitId: string;

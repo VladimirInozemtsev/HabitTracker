@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import { colors } from '../styles';
+import { colors } from '../../styles';
 
 interface HabitCalendarProps {
   habitId: string;
@@ -10,7 +10,7 @@ interface HabitCalendarProps {
   onToggleDay?: (date: string) => void;
 }
 
-import { getMutedColor } from '../utils/colors';
+import { getMutedColor } from '../../utils/colors';
 
 export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   habitId,

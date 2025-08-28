@@ -638,74 +638,13 @@ export const useHabits = () => {
   - Создать `utils/date.ts`, `utils/validation.ts`, `utils/format.ts`
 - **Ожидаемый результат**: Переиспользуемые утилиты
 
-#### Этап 8: Реорганизация компонентов ✅ ЗАВЕРШЕН
-
-**Цель:** Создать логичную структуру папок для компонентов и экранов согласно BlueStone Apps MCP.
-
-**Выполнено:**
-1. **Создание структуры папок:**
-   - `frontend/components/ui/` - базовые UI компоненты
-   - `frontend/components/modals/` - модальные окна
-   - `frontend/components/forms/` - формы (заготовка для будущего)
-
-2. **Перемещение компонентов по категориям:**
-   - **UI компоненты:** `HabitCard`, `HabitGrid`, `HabitCalendar`, `DetailActionBar`
-   - **Модальные окна:** `CreateHabitModal`, `AddGroupModal`
-   - **Экраны:** `SettingsScreen`, `CategoriesScreen` перемещены в `screens/`
-
-3. **Создание индексных файлов:**
-   - `frontend/components/ui/index.ts` - экспорт UI компонентов
-   - `frontend/components/modals/index.ts` - экспорт модальных окон
-   - `frontend/components/index.ts` - главный экспорт компонентов
-   - `frontend/screens/index.ts` - экспорт всех экранов
-
-4. **Обновление импортов:**
-   - Обновлены все импорты в `App.tsx`
-   - Обновлены импорты в `HabitsScreen.tsx`
-   - Обновлены импорты в `HabitDetailScreen.tsx`
-   - Обновлены импорты в `CreateHabitModal.tsx`
-
-**Результат:**
-- ✅ Логичная структура папок
-- ✅ Удобные импорты через индексные файлы
-- ✅ Разделение компонентов по назначению
-- ✅ Готовность к масштабированию
-
-**Структура после реорганизации:**
-```
-frontend/
-├── components/
-│   ├── ui/
-│   │   ├── HabitCard.tsx
-│   │   ├── HabitGrid.tsx
-│   │   ├── HabitCalendar.tsx
-│   │   ├── DetailActionBar.tsx
-│   │   └── index.ts
-│   ├── modals/
-│   │   ├── CreateHabitModal.tsx
-│   │   ├── AddGroupModal.tsx
-│   │   └── index.ts
-│   ├── forms/
-│   └── index.ts
-└── screens/
-    ├── HabitsScreen.tsx
-    ├── HabitDetailScreen.tsx
-    ├── AnalyticsScreen.tsx
-    ├── GroupsScreen.tsx
-    ├── ProfileScreen.tsx
-    ├── StatsScreen.tsx
-    ├── SettingsScreen.tsx
-    ├── CategoriesScreen.tsx
-    └── index.ts
-```
-
-**Файлы изменены:**
-- Созданы папки: `components/ui/`, `components/modals/`, `components/forms/`
-- Перемещены файлы компонентов
-- Созданы индексные файлы
-- Обновлены импорты во всех файлах
-
----
+#### Этап 8: Реорганизация компонентов (5% риска)
+- **Цель**: Улучшение структуры компонентов
+- **Задачи**:
+  - Создать подпапки в `components/`: `ui/`, `forms/`, `modals/`
+  - Переместить компоненты по категориям
+  - Обновить импорты
+- **Ожидаемый результат**: Лучшая организация компонентов
 
 #### Этап 9: Создание screens/ папки (10% риска)
 - **Цель**: Выделение экранов в отдельную папку
@@ -736,3 +675,48 @@ frontend/
 - **Типизация**: Полная TypeScript поддержка
 - **Состояние**: Централизованное управление через Context API
 - **Следующий этап**: Создание config/ папки
+
+---
+
+### Этап 8.1: Исправление ошибок импортов ✅ ЗАВЕРШЕН
+
+**Цель:** Исправить ошибки импортов, возникшие после реорганизации компонентов в Этапе 8.
+
+**Проблема:**
+После перемещения компонентов в подпапки (`ui/`, `modals/`) возникли ошибки импортов:
+- `Unable to resolve "../config/icons" from "components\modals\CreateHabitModal.tsx"`
+- Неправильные пути к стилям и утилитам
+
+**Выполнено:**
+1. **Исправлены импорты в модальных окнах:**
+   - `CreateHabitModal.tsx`: `../config/icons` → `../../config/icons`
+   - `CreateHabitModal.tsx`: `../styles/modalStyles` → `../../styles/modalStyles`
+   - `AddGroupModal.tsx`: `../styles/modalStyles` → `../../styles/modalStyles`
+
+2. **Исправлены импорты в UI компонентах:**
+   - `HabitCard.tsx`: `../services/api` → `../../services/api`
+   - `HabitCard.tsx`: `../styles` → `../../styles`
+   - `HabitGrid.tsx`: `../styles` → `../../styles`
+   - `HabitGrid.tsx`: `../utils` → `../../utils`
+   - `HabitCalendar.tsx`: `../styles` → `../../styles`
+   - `HabitCalendar.tsx`: `../utils/colors` → `../../utils/colors`
+   - `DetailActionBar.tsx`: `../services/api` → `../../services/api`
+   - `DetailActionBar.tsx`: `../config/goals` → `../../config/goals`
+   - `DetailActionBar.tsx`: `../styles` → `../../styles`
+   - `DetailActionBar.tsx`: `../utils/streak` → `../../utils/streak`
+
+**Результат:**
+- ✅ Все ошибки импортов исправлены
+- ✅ Приложение успешно запускается
+- ✅ Структура компонентов работает корректно
+- ✅ Готовность к дальнейшей разработке
+
+**Файлы изменены:**
+- `frontend/components/modals/CreateHabitModal.tsx` (исправлены пути импортов)
+- `frontend/components/modals/AddGroupModal.tsx` (исправлены пути импортов)
+- `frontend/components/ui/HabitCard.tsx` (исправлены пути импортов)
+- `frontend/components/ui/HabitGrid.tsx` (исправлены пути импортов)
+- `frontend/components/ui/HabitCalendar.tsx` (исправлены пути импортов)
+- `frontend/components/ui/DetailActionBar.tsx` (исправлены пути импортов)
+
+---

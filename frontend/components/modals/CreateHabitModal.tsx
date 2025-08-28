@@ -3,12 +3,12 @@ import { View, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
 // Импорты из констант
-import { HABIT_ICONS, getAllIcons } from '../config/icons';
-import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '../config/goals';
+import { HABIT_ICONS, getAllIcons } from '../../config/icons';
+import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '../../config/goals';
 
 // Импорт стилей
-import { modalStyles as styles } from '../styles/modalStyles';
-import { colors, baseStyles } from '../styles';
+import { modalStyles as styles } from '../../styles/modalStyles';
+import { colors, baseStyles } from '../../styles';
 
 // Импорт компонентов
 import { CategoriesScreen } from '../../screens/CategoriesScreen';
