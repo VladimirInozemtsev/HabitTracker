@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from './baseStyles';
+import { theme } from '../config/theme';
 
 export const groupStyles = StyleSheet.create({
   // Стили для групп
@@ -7,14 +7,14 @@ export const groupStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   groupCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
   },
   groupColor: {
     width: 20,
@@ -28,17 +28,17 @@ export const groupStyles = StyleSheet.create({
   groupName: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 4,
   },
   groupDescription: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginBottom: 4,
   },
   groupCount: {
     fontSize: 12,
-    color: colors.text.disabled,
+    color: theme.colors.text.disabled,
   },
 
   // Стили для заголовка групп
@@ -57,7 +57,7 @@ export const groupStyles = StyleSheet.create({
   },
   expandIcon: {
     fontSize: 16,
-    color: colors.text.disabled,
+    color: theme.colors.text.disabled,
     marginLeft: 8,
   },
   expandIconRotated: {
@@ -67,7 +67,7 @@ export const groupStyles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: theme.colors.divider,
   },
   groupHabitItem: {
     flexDirection: 'row',
@@ -75,13 +75,13 @@ export const groupStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     marginBottom: 6,
   },
   groupHabitName: {
     fontSize: 14,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     flex: 1,
   },
   groupHabitStatus: {
@@ -96,7 +96,7 @@ export const groupStyles = StyleSheet.create({
   },
   noHabitsText: {
     fontSize: 14,
-    color: colors.text.disabled,
+    color: theme.colors.text.disabled,
     textAlign: 'center',
     fontStyle: 'italic',
     paddingVertical: 12,
@@ -109,7 +109,7 @@ export const groupStyles = StyleSheet.create({
   groupLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 10,
   },
   groupOptions: {
@@ -123,20 +123,20 @@ export const groupStyles = StyleSheet.create({
     marginRight: 8,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    borderColor: theme.colors.divider,
+    backgroundColor: theme.colors.surface,
   },
   groupOptionSelected: {
-    backgroundColor: colors.info,
-    borderColor: colors.info,
+    backgroundColor: theme.colors.info,
+    borderColor: theme.colors.info,
   },
   groupOptionText: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginLeft: 6,
   },
   groupOptionTextSelected: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '600',
   },
   groupColorDot: {
@@ -154,27 +154,27 @@ export const groupStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
     borderRadius: 8,
     padding: 12,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
   },
   groupDropdownButtonText: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
   },
   groupDropdownArrow: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
   },
   groupDropdownList: {
     position: 'absolute',
     top: '100%',
     left: 0,
     right: 0,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
     borderRadius: 8,
     marginTop: 2,
     maxHeight: 200,
@@ -185,18 +185,18 @@ export const groupStyles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: theme.colors.divider,
   },
   groupDropdownItemSelected: {
-    backgroundColor: colors.info,
+    backgroundColor: theme.colors.info,
   },
   groupDropdownItemText: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginLeft: 8,
   },
   groupDropdownItemTextSelected: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '600',
   },
 });

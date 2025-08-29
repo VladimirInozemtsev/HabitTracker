@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from './baseStyles';
+import { theme } from '../config/theme';
 
 export const detailStyles = StyleSheet.create({
   // Стили для панели действий в детальном экране
@@ -14,39 +14,39 @@ export const detailStyles = StyleSheet.create({
   actionButton: {
     margin: 0,
     padding: 8,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.text.primary, // Белый контур
+    borderColor: theme.colors.text.primary, // Белый контур
     height: 40, // Фиксированная высота
     justifyContent: 'center',
     alignItems: 'center',
   },
   seriesGoalButton: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.text.primary, // Белый контур
+    borderColor: theme.colors.text.primary, // Белый контур
     height: 40, // Фиксированная высота
     justifyContent: 'center',
     alignItems: 'center',
   },
   seriesGoalText: {
     fontSize: 14,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '500',
   },
   streakCounter: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.text.primary, // Белый контур
+    borderColor: theme.colors.text.primary, // Белый контур
     height: 40, // Фиксированная высота
     justifyContent: 'center',
   },
@@ -57,7 +57,7 @@ export const detailStyles = StyleSheet.create({
   },
   streakText: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: 'bold',
   },
 
@@ -66,15 +66,15 @@ export const detailStyles = StyleSheet.create({
     padding: 16,
   },
   habitDetailCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     marginBottom: 16,
   },
   habitDetailName: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 8,
   },
   habitDetailDescription: {
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginBottom: 16,
   },
   habitDetailStats: {

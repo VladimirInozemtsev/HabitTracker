@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import { colors } from '../../styles';
+import { theme } from '../../config/theme';
 
 interface HabitCalendarProps {
   habitId: string;
@@ -155,7 +155,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
       <View style={styles.header}>
         <IconButton
           icon="chevron-left"
-          iconColor={colors.text.primary}
+          iconColor={theme.colors.text.primary}
           size={24}
           onPress={goToPreviousMonth}
         />
@@ -164,7 +164,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
         </Text>
         <IconButton
           icon="chevron-right"
-          iconColor={colors.text.primary}
+          iconColor={theme.colors.text.primary}
           size={24}
           onPress={goToNextMonth}
         />
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   monthTitle: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
    weekDay: {
      width: '12%', // Такая же ширина как у дней
      textAlign: 'center',
-     color: colors.text.secondary,
+     color: theme.colors.text.secondary,
      fontSize: 12,
      fontWeight: '500',
    },
@@ -284,27 +284,27 @@ const styles = StyleSheet.create({
   },
   today: {
     borderWidth: 2,
-    borderColor: colors.text.primary,
+    borderColor: theme.colors.text.primary,
   },
   futureDay: {
     backgroundColor: 'transparent',
     borderWidth: 0, // убираем рамку
   },
   dayText: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontSize: 14,
     fontWeight: '400', // базовый нормальный вес
   },
   todayText: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '400', // не делаем жирным, только рамка у контейнера today
   },
   otherMonthText: {
-    color: colors.text.disabled,
+    color: theme.colors.text.disabled,
     fontWeight: '400',
   },
   completedText: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '700', // жирный только для реально выполненных дней текущего месяца
   },
   completionDot: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     textAlign: 'center',
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     fontSize: 12,
     marginTop: 12,
     fontStyle: 'italic',

@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
-import { colors } from './baseStyles';
+import { theme } from '../config/theme';
 
 export const screenStyles = StyleSheet.create({
   // Стили для экранов
   screenContainer: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   screenContentContainer: {
     paddingHorizontal: 0, // Убираем горизонтальные отступы полностью
@@ -17,7 +17,7 @@ export const screenStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     textAlign: 'center',
   },
   screenTitleContainer: {
@@ -35,7 +35,7 @@ export const screenStyles = StyleSheet.create({
   },
   screenText: {
     fontSize: 16,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
   },
   
@@ -47,37 +47,37 @@ export const screenStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   statCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     padding: 20,
     marginBottom: 15,
     width: '48%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
   },
   statNumber: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 8,
   },
   statLabel: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
   },
   loadButton: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     padding: 15,
     borderRadius: 8,
     marginTop: 20,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
     alignItems: 'center',
   },
   loadButtonText: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -88,14 +88,14 @@ export const screenStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   groupCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
   },
   groupColor: {
     width: 20,
@@ -109,37 +109,37 @@ export const screenStyles = StyleSheet.create({
   groupName: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 4,
   },
   groupDescription: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginBottom: 4,
   },
   groupCount: {
     fontSize: 12,
-    color: colors.text.disabled,
+    color: theme.colors.text.disabled,
   },
   
   // Стили для профиля
   profileCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
   },
   profileTitle: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginBottom: 4,
   },
   profileText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
   },
   
   // Стили для заголовка групп

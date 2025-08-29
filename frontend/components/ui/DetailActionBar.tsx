@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 import { Habit } from '../../services/api';
 import { SERIES_GOALS } from '../../config/goals';
-import { colors } from '../../styles';
+import { theme } from '../../config/theme';
 import { calculateCurrentStreak } from '../../utils/streak';
 
 interface DetailActionBarProps {
@@ -21,7 +21,7 @@ export const DetailActionBar: React.FC<DetailActionBarProps> = ({ habit, onEdit 
     <View style={styles.actionBar}> 
       <IconButton
         icon={habit.icon || 'target'}
-        iconColor={colors.text.primary}
+        iconColor={theme.colors.text.primary}
         size={24}
         style={styles.actionButton}
       />
@@ -31,7 +31,7 @@ export const DetailActionBar: React.FC<DetailActionBarProps> = ({ habit, onEdit 
       <View style={styles.streakCounter}>
         <IconButton
           icon="fire"
-          iconColor={colors.text.primary}
+          iconColor={theme.colors.text.primary}
           size={20}
           style={styles.streakIcon}
         />
@@ -39,14 +39,14 @@ export const DetailActionBar: React.FC<DetailActionBarProps> = ({ habit, onEdit 
       </View>
       <IconButton
         icon="pencil"
-        iconColor={colors.text.primary}
+        iconColor={theme.colors.text.primary}
         size={24}
         style={styles.actionButton}
         onPress={() => onEdit(habit)}
       />
       <IconButton
         icon="cog"
-        iconColor={colors.text.primary}
+        iconColor={theme.colors.text.primary}
         size={24}
         style={styles.actionButton}
       />
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   actionButton: {
     margin: 0,
     padding: 8,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ffffff',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   seriesGoalButton: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
   },
   seriesGoalText: {
     fontSize: 14,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '500',
   },
   streakCounter: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   streakText: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: 'bold',
   },
 });

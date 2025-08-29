@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { Habit } from '../services/api';
 import { HabitCard } from '../components/ui/HabitCard';
-import { colors, baseStyles } from '../styles';
+import { theme } from '../config/theme';
 
 interface HabitsScreenProps {
   habits: Habit[];
@@ -23,8 +23,8 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   onOpenAddModal
 }) => {
   return (
-    <View style={baseStyles.container}>
-      <Appbar.Header style={{ backgroundColor: colors.background, elevation: 4 }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
         <Appbar.Action 
           icon="cog" 
           onPress={onSettingsPress}
@@ -48,7 +48,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
         />
       </Appbar.Header>
       
-      <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={{ padding: 0 }}>
           {habits.map((habit) => (
             <HabitCard

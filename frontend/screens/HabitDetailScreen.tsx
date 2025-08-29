@@ -3,7 +3,8 @@ import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Card, Chip, Appbar, IconButton } from 'react-native-paper';
 import { HabitGrid } from '../components/ui/HabitGrid';
 import { HabitCalendar } from '../components/ui/HabitCalendar';
-import { getHabitColor, colors, baseStyles, detailStyles } from '../styles';
+import { detailStyles } from '../styles';
+import { theme, getHabitColor } from '../config/theme';
 import { Habit } from '../services/api';
 import { HABIT_CATEGORIES, SERIES_GOALS } from '../config/goals';
 import { calculateCurrentStreak } from '../utils/streak';
@@ -32,8 +33,8 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
   const currentStreak = calculateCurrentStreak(habit.logs || []);
 
   return (
-    <View style={baseStyles.container}>
-      <Appbar.Header style={{ backgroundColor: colors.background, elevation: 4 }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
         <Appbar.BackAction 
           onPress={onBack} 
           iconColor="#ffffff"
@@ -41,7 +42,7 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
         <Appbar.Content title={habit.name} />
       </Appbar.Header>
       
-      <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={detailStyles.habitDetailContainer}>
           <Card style={detailStyles.habitDetailCard}>
             <Card.Content>

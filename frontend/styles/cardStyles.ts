@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from './baseStyles';
+import { theme } from '../config/theme';
 import { getMutedColor } from '../utils/colors';
 
 export const cardStyles = StyleSheet.create({
@@ -8,11 +8,11 @@ export const cardStyles = StyleSheet.create({
     marginBottom: 10, // Уменьшаем отступы между карточками
     marginHorizontal: 20, // Добавляем небольшие боковые отступы
     elevation: 2,
-    backgroundColor: colors.card, // Dark card background
+    backgroundColor: theme.colors.card, // Темный фон карточки
   },
   habitCardTablet: {
     // Убираем backgroundColor - оставляем только специфичные для планшетов стили
-    // backgroundColor: '#1a1a1a', // Darker background for tablets (991px breakpoint)
+    // backgroundColor: theme.colors.surface, // Более темный фон для планшетов (991px breakpoint)
   },
   habitCardContent: {
     paddingVertical: 0, // Убираем вертикальные отступы полностью
@@ -84,13 +84,13 @@ export const cardStyles = StyleSheet.create({
   habitName: {
     fontFamily: 'Inter_700Bold',
     fontSize: 20, // увеличиваем размер шрифта
-    color: colors.text.primary, // White text for dark theme
+    color: theme.colors.text.primary, // Белый текст для темной темы
     flex: 1,
   },
   habitDescription: {
     fontFamily: 'Inter_400Regular',
     fontSize: 18, // увеличиваем размер шрифта
-    color: colors.text.secondary, // Light grey text for dark theme
+    color: theme.colors.text.secondary, // Светло-серый текст для темной темы
     marginBottom: 0,
   },
   habitMeta: {
@@ -98,7 +98,7 @@ export const cardStyles = StyleSheet.create({
     gap: 8,
   },
   streakChip: {
-    backgroundColor: colors.surface, // Темный фон для чипов
+    backgroundColor: theme.colors.surface, // Темный фон для чипов
   },
   groupChip: {
     backgroundColor: 'transparent',
@@ -117,15 +117,15 @@ export const cardStyles = StyleSheet.create({
     padding: 16,
   },
   habitDetailCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     marginBottom: 16,
   },
   habitDetailName: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 8,
   },
   habitDetailDescription: {
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginBottom: 16,
   },
   habitDetailStats: {
