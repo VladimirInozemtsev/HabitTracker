@@ -1,35 +1,69 @@
-// Конфигурация темы приложения
+// ЕДИНАЯ СИСТЕМА ЦВЕТОВ ДЛЯ HABIT TRACKER
+// Объединяет все цвета из baseStyles.ts + добавляет новые
 export const theme = {
   colors: {
-    // Основные цвета
-    primary: '#4CAF50',
-    secondary: '#2196F3',
-    accent: '#FF9800',
+    // ОСНОВНЫЕ ЦВЕТА
+    primary: '#ffffff',        // Белый (основной акцент) - из baseStyles
+    secondary: '#cccccc',      // Светло-серый (вторичный) - из baseStyles  
+    accent: '#ffffff',         // Основной акцент (белый) - минималистично
     
-    // Фоновые цвета
-    background: '#121212',
-    surface: '#1E1E1E',
-    card: '#2D2D2D',
+    // ФОНОВЫЕ ЦВЕТА (унифицированы)
+    background: '#000000',     // Черный фон (из baseStyles как основной)
+    surface: '#1a1a1a',       // Поверхности карточек (из baseStyles)
+    card: '#272B33',           // Карточки привычек (из baseStyles)
     
-    // Текстовые цвета
+    // ТЕКСТОВЫЕ ЦВЕТА
     text: {
-      primary: '#FFFFFF',
-      secondary: '#B0B0B0',
-      disabled: '#666666',
+      primary: '#ffffff',      // Основной текст (белый)
+      secondary: '#cccccc',    // Вторичный текст (светло-серый)
+      disabled: '#666666',     // Отключенный текст (серый)
     },
     
-    // Цвета статусов
-    success: '#4CAF50',
-    warning: '#FF9800',
-    error: '#F44336',
-    info: '#2196F3',
+    // ГРАНИЦЫ И РАЗДЕЛИТЕЛИ
+    border: '#333333',         // Границы - из baseStyles
+    divider: '#333333',        // Разделители - из baseStyles
     
-    // Цвета навигации
+    // СТАТУСЫ И СОСТОЯНИЯ
+    success: '#ffffff',        // Успех (белый) - минималистично
+    warning: '#ffa726',        // Предупреждение (оранжевый)
+    error: '#ff6b6b',          // Ошибка (красный)
+    info: '#4ecdc4',           // Информация (бирюзовый)
+    
+    // НАВИГАЦИЯ
     navigation: {
-      background: '#1A1A1A',
-      active: '#4CAF50',
-      inactive: '#666666',
+      background: '#1a1a1a',   // Темный фон навигации
+      active: '#ffffff',       // Активный элемент (белый)
+      inactive: '#666666',     // Неактивный элемент (серый)
+      border: '#333333',       // Границы навигации
     },
+    
+    // АКЦЕНТЫ (минималистичные)
+    accent: {
+      primary: '#ffffff',      // Основной акцент (белый)
+      secondary: '#cccccc',    // Вторичный акцент (серый)
+      muted: '#666666',        // Приглушенный (тёмно-серый)
+      cyan: '#00FFFF',         // Неоновый акцент для особых случаев
+      green: '#00FF88',        // Зеленый для успешных действий
+    },
+    
+    // ПАЛИТРА ДЛЯ ИКОНОК НАСТРОЕК
+    icons: {
+      pink: '#FF6B9D',         // Розовый
+      teal: '#4ECDC4',         // Бирюзовый  
+      orange: '#FFA726',       // Оранжевый
+      green: '#66BB6A',        // Зеленый
+      purple: '#AB47BC',       // Фиолетовый
+      red: '#EF5350',          // Красный
+    },
+    
+    // ПАЛИТРА ЦВЕТОВ ПРИВЫЧЕК
+    habitColors: [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#4CAF50', 
+      '#FFA726', '#9C27B0', '#607D8B', '#FF1744', '#D500F9', 
+      '#651FFF', '#3D5AFE', '#2979FF', '#00B0FF', '#00E5FF', 
+      '#1DE9B6', '#00E676', '#76FF03', '#C6FF00', '#FFEA00', 
+      '#FFC400', '#FF9100', '#FF3D00', '#E91E63'
+    ],
   },
   
   // Размеры шрифтов
@@ -85,6 +119,18 @@ export const theme = {
       elevation: 8,
     },
   },
+};
+
+// УТИЛИТЫ ДЛЯ РАБОТЫ С ЦВЕТАМИ (из baseStyles.ts)
+export const getHabitColor = (habitId: string): string => {
+  const colors = theme.colors.habitColors;
+  const index = habitId.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+
+// Дополнительные утилиты для цветов
+export const getIconColor = (iconType: keyof typeof theme.colors.icons): string => {
+  return theme.colors.icons[iconType];
 };
 
 // Типы для темы
