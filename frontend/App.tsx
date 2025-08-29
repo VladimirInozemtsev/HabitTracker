@@ -1,29 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
-import {
-  Provider as PaperProvider,
-  Text,
-  IconButton,
-} from 'react-native-paper';
-import { api, Habit } from './services/api';
-import { getCurrentDate } from './utils/date';
+import { Provider as PaperProvider, Text } from 'react-native-paper';
 
 // Импорты компонентов
-import { CreateHabitModal, AddGroupModal } from './components/ui';
-import { SettingsScreen } from './screens/SettingsScreen';
-import { theme } from './config/theme';
-import { navigationStyles } from './styles';
-import { HabitsScreen } from './screens/HabitsScreen';
-import { StatsScreen } from './screens/StatsScreen';
-import { AnalyticsScreen } from './screens/AnalyticsScreen';
-import { ProfileScreen } from './screens/ProfileScreen';
-import { GroupsScreen } from './screens/GroupsScreen';
-import { HabitDetailScreen } from './screens/HabitDetailScreen';
+import { BottomNavigation, ModalManager } from './src/components/ui';
+import { SettingsScreen } from './src/screens/PostLogin/SettingsScreen';
+import { theme } from './src/theme/theme';
+import { HabitsScreen } from './src/screens/PostLogin/HabitsScreen';
+import { StatsScreen } from './src/screens/PostLogin/StatsScreen';
+import { AnalyticsScreen } from './src/screens/PostLogin/AnalyticsScreen';
+import { ProfileScreen } from './src/screens/PostLogin/ProfileScreen';
+import { GroupsScreen } from './src/screens/PostLogin/GroupsScreen';
+import { HabitDetailScreen } from './src/screens/PostLogin/HabitDetailScreen';
 
-// Импорты контекста
-import { AppProvider, useApp } from './context';
+// Импорты контекста и хуков
+import { AppProvider, useApp } from './src/context';
+import { useAppLogic } from './src/hooks/useAppLogic';
 
 // Типы для темы
 type ThemeProps = { isDark: boolean; setIsDark: (v: boolean) => void };
@@ -36,77 +30,49 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     Inter_700Bold,
   });
 
-  // Аутентификация теперь управляется через контекст
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-
-  // Используем responsive, navigation, habits и auth из контекста
+  // Используем контекст
   const { responsive, navigation, habits, auth } = useApp();
 
-  // Навигация теперь управляется через контекст
-  const [userStats, setUserStats] = useState<any>(null);
-  const [analytics, setAnalytics] = useState<any>(null);
-  const [groups, setGroups] = useState<any[]>([]);
-  const [showAddGroupModal, setShowAddGroupModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  // Используем наш новый хук для всей логики
+  const {
+    // Состояние
+    showAddModal,
+    showSettings,
+    showAddGroupModal,
+    showEditModal,
+    selectedHabit,
+    showHabitDetail,
+    groups,
+    expandedGroups,
+    groupHabits,
+    userStats,
+    analytics,
 
-  // Состояние для детальной страницы привычки
-  const [selectedHabit, setSelectedHabit] = useState<any>(null);
-  const [showHabitDetail, setShowHabitDetail] = useState(false);
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-  const [groupHabits, setGroupHabits] = useState<{[key: string]: any[]}>({});
+    // Сеттеры
+    setShowAddModal,
+    setShowSettings,
+    setShowAddGroupModal,
+    setShowEditModal,
+    setSelectedHabit,
+    setShowHabitDetail,
 
-  // Автоматически обновляем selectedHabit при изменении habits
-  useEffect(() => {
-    if (selectedHabit && habits.habits.length > 0) {
-      const updatedHabit = habits.habits.find(h => h.id === selectedHabit.id);
-      if (updatedHabit) {
-        setSelectedHabit(updatedHabit);
-      }
-    }
-  }, [habits.habits]);
+    // Обработчики
+    handleHabitToggle,
+    handleHabitPress,
+    handleCalendarDayToggle,
+    handleAddHabit,
+    handleEditHabit,
+    handleEditHabitSave,
+    handleOpenAddModal,
+    handleSettingsPress,
+    handleAddGroup,
+    toggleGroupExpansion,
 
-  // Responsive теперь управляется через контекст
-
-  // Функция для загрузки групп (перемещаем выше checkAuth)
-  const loadGroups = async () => {
-    try {
-      const data = await api.getGroups();
-      // Проверяем структуру данных (может быть пагинированный ответ)
-      let groupsData;
-      if (data && Array.isArray(data)) {
-        groupsData = data;
-      } else if (data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results)) {
-        groupsData = (data as any).results;
-      } else {
-        groupsData = [];
-      }
-      
-      setGroups(groupsData);
-      
-      // Загружаем привычки для всех групп сразу
-      for (const group of groupsData) {
-        await loadGroupHabits(group.id);
-      }
-    } catch (error) {
-      console.error('Load groups error:', error);
-    }
-  };
-
-  // Функция для загрузки привычек группы
-  const loadGroupHabits = async (groupId: string) => {
-    try {
-      const data: any = await api.getHabitsByGroup(groupId);
-      // Обрабатываем пагинированный ответ
-      const habits = data.results || data;
-      setGroupHabits(prev => ({
-        ...prev,
-        [groupId]: habits
-      }));
-    } catch (error) {
-      console.error('Load group habits error:', error);
-    }
-  };
+    // Функции загрузки
+    loadGroups,
+    loadUserStats,
+    loadAnalytics,
+  } = useAppLogic();
 
   // Проверка аутентификации после загрузки шрифтов
   useEffect(() => {
@@ -118,9 +84,8 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     await auth.checkAuth();
     if (auth.isLoggedIn) {
       await habits.loadHabits();
-      await loadGroups(); // Загружаем группы при входе
+      await loadGroups();
     } else {
-      // Автоматический вход с демо-данными
       await handleLogin();
     }
   };
@@ -129,62 +94,19 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     try {
       await auth.loginWithDemo();
       await habits.loadHabits();
-      await loadGroups(); // Загружаем группы при входе
+      await loadGroups();
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Ошибка', 'Не удалось войти в систему');
     }
   };
 
   if (!fontsLoaded) {
     return (
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
-          <ActivityIndicator size="large" color={theme.colors.accent.cyan} />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+        <ActivityIndicator size="large" color={theme.colors.accent.cyan} />
       </View>
     );
   }
-
-  // Загрузка привычек теперь управляется через контекст
-
-  const handleHabitToggle = async (habitId: string) => {
-    try {
-      // Находим привычку в текущем списке
-      const habit = habits.habits.find(h => h.id === habitId);
-      if (!habit) {
-        Alert.alert('Ошибка', 'Привычка не найдена');
-        return;
-      }
-
-      // Получаем текущую дату в локальном часовом поясе
-      const today = getCurrentDate();
-
-      let response;
-      
-      // Если привычка уже выполнена сегодня - убираем отметку
-      if (habit.is_completed_today) {
-        response = await api.unmarkHabitComplete(habitId, today);
-      } else {
-        // Если не выполнена - отмечаем как выполненную
-        response = await api.markHabitComplete(habitId, today);
-      }
-      
-      // Принудительно перезагружаем привычки чтобы обновить UI
-      await habits.loadHabits();
-      
-      // Добавляем небольшую задержку и еще одну загрузку для надежности
-      setTimeout(async () => {
-        await habits.loadHabits();
-      }, 500);
-      
-      // Показываем уведомление если есть сообщение
-      if (response.message) {
-        Alert.alert('Информация', response.message);
-      }
-    } catch (error) {
-      console.error('Toggle habit error:', error);
-      Alert.alert('Ошибка', 'Не удалось изменить статус привычки');
-    }
-  };
 
   if (!fontsLoaded || auth.loading) {
     return (
@@ -194,141 +116,6 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       </View>
     );
   }
-
-  const handleHabitPress = (habit: any) => {
-    setSelectedHabit(habit);
-    setShowHabitDetail(true);
-  };
-
-  const handleCalendarDayToggle = async (date: string) => {
-    if (!selectedHabit) return;
-    
-    try {
-      // Проверяем, была ли привычка выполнена в этот день
-      const isCompleted = selectedHabit.logs?.some((log: any) => 
-        log.date === date && log.status === 'completed'
-      );
-      
-      if (isCompleted) {
-        // Если уже выполнена - убираем выполнение
-        await api.unmarkHabitCompleteForDate(selectedHabit.id, date);
-      } else {
-        // Если не выполнена - отмечаем как выполненную на конкретную дату
-        await api.markHabitCompleteForDate(selectedHabit.id, date);
-      }
-      
-      // Перезагружаем привычки - selectedHabit обновится автоматически через useEffect
-      await habits.loadHabits();
-    } catch (error) {
-      console.error('Calendar day toggle error:', error);
-      Alert.alert('Ошибка', 'Не удалось изменить статус привычки');
-    }
-  };
-
-  const handleAddHabit = async (habitData: any) => {
-    try {
-      // Добавляем базовые поля
-      const data = {
-        ...habitData,
-        habit_type: 'boolean',
-        frequency: 'daily'
-      };
-      
-      await habits.addHabit(data);
-      
-      // Перезагружаем группы
-      await loadGroups();
-      
-      Alert.alert('Успех', 'Привычка добавлена!');
-    } catch (error) {
-      console.error('Add habit error:', error);
-      Alert.alert('Ошибка', 'Не удалось добавить привычку');
-    }
-  };
-
-  const handleEditHabit = (habit: any) => {
-    // Открываем модальное окно редактирования
-    setSelectedHabit(habit);
-    setShowEditModal(true);
-  };
-
-  const handleEditHabitSave = async (habitData: any) => {
-    try {
-      if (!selectedHabit?.id) {
-        Alert.alert('Ошибка', 'Привычка не найдена');
-        return;
-      }
-
-      await habits.updateHabit(selectedHabit.id, habitData);
-      
-      Alert.alert('Успех', `Привычка "${habitData.name}" обновлена!`);
-    } catch (error) {
-      console.error('Edit habit error:', error);
-      Alert.alert('Ошибка', 'Не удалось обновить привычку');
-    }
-  };
-
-  // Загружаем группы при открытии модального окна
-  const handleOpenAddModal = async () => {
-    setShowAddModal(true);
-    // Загружаем группы, если их еще нет
-    if (groups.length === 0) {
-      await loadGroups();
-    }
-  };
-
-  // Обработчик для открытия настроек
-  const handleSettingsPress = () => {
-    setShowSettings(true);
-  };
-
-  // Функции загрузки данных для разных экранов
-  const loadUserStats = async () => {
-    try {
-      const stats = await api.getUserStats();
-      setUserStats(stats);
-    } catch (error) {
-      console.error('Load stats error:', error);
-    }
-  };
-
-  const loadAnalytics = async () => {
-    try {
-      const data = await api.getAnalytics();
-      setAnalytics(data);
-    } catch (error) {
-      console.error('Load analytics error:', error);
-    }
-  };
-
-  const handleAddGroup = async (groupData: { name: string; description: string; color: string }) => {
-    try {
-      await api.createGroup(groupData);
-      
-      // Перезагружаем группы
-      await loadGroups();
-      
-      Alert.alert('Успех', 'Группа добавлена!');
-    } catch (error) {
-      console.error('Add group error:', error);
-      Alert.alert('Ошибка', 'Не удалось добавить группу');
-    }
-  };
-
-  // Функция для переключения раскрытия группы
-  const toggleGroupExpansion = (groupId: string) => {
-    const newExpanded = new Set(expandedGroups);
-    if (newExpanded.has(groupId)) {
-      newExpanded.delete(groupId);
-    } else {
-      newExpanded.add(groupId);
-      // Загружаем привычки группы при первом раскрытии
-      if (!groupHabits[groupId]) {
-        loadGroupHabits(groupId);
-      }
-    }
-    setExpandedGroups(newExpanded);
-  };
 
   // Функция для рендеринга экранов
   const renderScreen = () => {
@@ -357,7 +144,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
     switch (navigation.currentScreen) {
       case 'habits':
-                         return (
+        return (
           <HabitsScreen
             habits={habits.habits}
             isTablet={responsive.isTablet}
@@ -383,11 +170,11 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
       
       case 'profile':
         return (
-                     <ProfileScreen
-             onLogout={() => {
-               auth.logout();
-             }}
-           />
+          <ProfileScreen
+            onLogout={() => {
+              auth.logout();
+            }}
+          />
         );
       
       case 'groups':
@@ -414,120 +201,27 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
       <StatusBar style="auto" />
 
-             {/* Нижняя навигация - скрываем в детальном экране */}
-       {!showHabitDetail && (
-         <View style={[
-           navigationStyles.bottomNavigation,
-           responsive.isTablet && navigationStyles.bottomNavigationTablet
-         ]}>
-          <TouchableOpacity
-                                      style={[
-               navigationStyles.navItem,
-               navigation.currentScreen === 'habits' && navigationStyles.navItemActive,
-               responsive.isTablet && navigationStyles.navItemTablet
-             ]}
-             onPress={() => navigation.navigateTo('habits')}
-          >
-                         <IconButton
-               icon="target"
-               iconColor={navigation.currentScreen === 'habits' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
-               size={24}
-               style={navigationStyles.navIconButton}
-             />
-             <Text style={[navigationStyles.navText, navigation.currentScreen === 'habits' && navigationStyles.navTextActive]}>Привычки</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-                         style={[
-               navigationStyles.navItem,
-               navigation.currentScreen === 'stats' && navigationStyles.navItemActive,
-               responsive.isTablet && navigationStyles.navItemTablet
-             ]}
-             onPress={() => navigation.navigateTo('stats')}
-          >
-                         <IconButton
-               icon="chart-bar"
-               iconColor={navigation.currentScreen === 'stats' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
-               size={24}
-               style={navigationStyles.navIconButton}
-             />
-             <Text style={[navigationStyles.navText, navigation.currentScreen === 'stats' && navigationStyles.navTextActive]}>Статистика</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[
-              navigationStyles.navItem,
-                             navigation.currentScreen === 'analytics' && navigationStyles.navItemActive,
-              responsive.isTablet && navigationStyles.navItemTablet
-            ]}
-                         onPress={() => navigation.navigateTo('analytics')}
-          >
-            <IconButton
-              icon="chart-line"
-                             iconColor={navigation.currentScreen === 'analytics' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
-              size={24}
-              style={navigationStyles.navIconButton}
-            />
-                         <Text style={[navigationStyles.navText, navigation.currentScreen === 'analytics' && navigationStyles.navTextActive]}>Аналитика</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[
-              navigationStyles.navItem,
-                             navigation.currentScreen === 'groups' && navigationStyles.navItemActive,
-              responsive.isTablet && navigationStyles.navItemTablet
-            ]}
-                         onPress={() => navigation.navigateTo('groups')}
-          >
-            <IconButton
-              icon="folder"
-                             iconColor={navigation.currentScreen === 'groups' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
-              size={24}
-              style={navigationStyles.navIconButton}
-            />
-                         <Text style={[navigationStyles.navText, navigation.currentScreen === 'groups' && navigationStyles.navTextActive]}>Группы</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[
-              navigationStyles.navItem,
-                             navigation.currentScreen === 'profile' && navigationStyles.navItemActive,
-              responsive.isTablet && navigationStyles.navItemTablet
-            ]}
-                         onPress={() => navigation.navigateTo('profile')}
-          >
-            <IconButton
-              icon="account"
-                             iconColor={navigation.currentScreen === 'profile' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
-              size={24}
-              style={navigationStyles.navIconButton}
-            />
-                         <Text style={[navigationStyles.navText, navigation.currentScreen === 'profile' && navigationStyles.navTextActive]}>Профиль</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      {/* Нижняя навигация */}
+      <BottomNavigation
+        currentScreen={navigation.currentScreen}
+        onNavigate={navigation.navigateTo}
+        isTablet={responsive.isTablet}
+        showHabitDetail={showHabitDetail}
+      />
 
       {/* Модальные окна */}
-      <CreateHabitModal
-        visible={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onSave={handleAddHabit}
+      <ModalManager
+        showAddModal={showAddModal}
+        showEditModal={showEditModal}
+        showAddGroupModal={showAddGroupModal}
+        onCloseAddModal={() => setShowAddModal(false)}
+        onCloseEditModal={() => setShowEditModal(false)}
+        onCloseAddGroupModal={() => setShowAddGroupModal(false)}
+        onSaveHabit={handleAddHabit}
+        onSaveEditHabit={handleEditHabitSave}
+        onSaveGroup={handleAddGroup}
         groups={groups}
-      />
-
-      <CreateHabitModal
-        visible={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSave={handleEditHabitSave}
-        groups={groups}
-        editMode={true}
-        habitData={selectedHabit}
-      />
-
-      <AddGroupModal
-        visible={showAddGroupModal}
-        onClose={() => setShowAddGroupModal(false)}
-        onSave={handleAddGroup}
+        selectedHabit={selectedHabit}
       />
     </View>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { screenStyles } from '../styles';
+import { screenStyles } from '../../theme/styles/screenStyles';
 
 interface AnalyticsScreenProps {
 }

@@ -1,7 +1,8 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { screenStyles, groupStyles } from '../styles';
+import { screenStyles } from '../../theme/styles/screenStyles';
+import { groupStyles } from '../../theme/styles/groupStyles';
 
 interface GroupsScreenProps {
   groups: any[];

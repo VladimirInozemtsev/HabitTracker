@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, Appbar, IconButton, List } from 'react-native-paper';
-import { theme } from '../config/theme';
+import { theme } from '../../theme/theme';
 
 interface SettingsScreenProps {
   onClose: () => void;

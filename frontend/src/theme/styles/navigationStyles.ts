@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../config/theme';
+import { theme } from '../theme';
 
 export const navigationStyles = StyleSheet.create({
   // Стили для нижней навигации

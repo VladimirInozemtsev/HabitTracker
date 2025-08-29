@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import { theme } from '../../src/theme/theme';
-import { navigationStyles } from '../../src/theme/styles/navigationStyles';
-import { Screen } from '../../src/hooks/useNavigation';
+import { theme } from '../../theme/theme';
+import { navigationStyles } from '../../theme/styles/navigationStyles';
+import { Screen } from '../../hooks/useNavigation';
 
 interface NavigationItem {
   id: Screen;

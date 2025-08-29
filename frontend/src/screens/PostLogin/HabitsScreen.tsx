@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { Habit } from '../services/api';
-import { HabitCard } from '../components/ui/HabitCard';
-import { theme } from '../config/theme';
+import { Habit } from '../../services/api';
+import { HabitCard } from '../../components/ui/HabitCard';
+import { theme } from '../../theme/theme';
 
 interface HabitsScreenProps {
   habits: Habit[];

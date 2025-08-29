@@ -3,8 +3,8 @@ import { View, TouchableOpacity } from 'react-native';
 import { Card, Text, IconButton } from 'react-native-paper';
 import { Habit } from '../../services/api';
 import { HabitGrid } from './HabitGrid';
-import { getHabitColor } from '../../styles';
-import { cardStyles, getHabitStatusStyle, getHabitIconStyle } from '../../styles';
+import { getHabitColor } from '../../theme/theme';
+import { cardStyles, getHabitStatusStyle, getHabitIconStyle } from '../../theme/styles/cardStyles';
 
 interface HabitCardProps {
   habit: Habit;

@@ -7,11 +7,11 @@ import { HABIT_ICONS, getAllIcons } from '../../config/icons';
 import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '../../config/goals';
 
 // Импорт стилей
-import { modalStyles as styles } from '../../styles/modalStyles';
-import { theme } from '../../config/theme';
+import { modalStyles as styles } from '../../theme/styles/modalStyles';
+import { theme } from '../../theme/theme';
 
 // Импорт компонентов
-import { CategoriesScreen } from '../../screens/CategoriesScreen';
+import { CategoriesScreen } from '../../screens/PostLogin/CategoriesScreen';
 
 // Цвета для привычек (24 ярких неоновых цвета)
 const HABIT_COLORS = [

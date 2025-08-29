@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { colors, screenStyles } from '../styles';
+import { screenStyles } from '../../theme/styles/screenStyles';
+import { theme } from '../../theme/theme';
 
 interface StatsScreenProps {
   userStats: any;

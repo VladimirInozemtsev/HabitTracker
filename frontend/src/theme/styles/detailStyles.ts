@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../config/theme';
+import { theme } from '../theme';
 
 export const detailStyles = StyleSheet.create({
   // Стили для панели действий в детальном экране

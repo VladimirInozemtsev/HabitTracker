@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../config/theme';
-import { getMutedColor } from '../utils/colors';
+import { theme } from '../theme';
+import { getMutedColor } from '../../utils/colors';
 
 export const cardStyles = StyleSheet.create({
   // Стили для карточек привычек

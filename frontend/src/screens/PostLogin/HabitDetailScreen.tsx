@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Card, Chip, Appbar, IconButton } from 'react-native-paper';
-import { HabitGrid } from '../components/ui/HabitGrid';
-import { HabitCalendar } from '../components/ui/HabitCalendar';
-import { detailStyles } from '../styles';
-import { theme, getHabitColor } from '../config/theme';
-import { Habit } from '../services/api';
-import { HABIT_CATEGORIES, SERIES_GOALS } from '../config/goals';
-import { calculateCurrentStreak } from '../utils/streak';
+import { HabitGrid } from '../../components/ui/HabitGrid';
+import { HabitCalendar } from '../../components/ui/HabitCalendar';
+import { detailStyles } from '../../theme/styles/detailStyles';
+import { theme, getHabitColor } from '../../theme/theme';
+import { Habit } from '../../services/api';
+import { HABIT_CATEGORIES, SERIES_GOALS } from '../../config/goals';
+import { calculateCurrentStreak } from '../../utils/streak';
 
 interface HabitDetailScreenProps {
   habit: Habit;
