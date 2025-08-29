@@ -11,7 +11,7 @@ import { api, Habit } from './services/api';
 import { getCurrentDate } from './utils/date';
 
 // Импорты компонентов
-import { CreateHabitModal, AddGroupModal } from './components/modals';
+import { CreateHabitModal, AddGroupModal } from './components/ui';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { theme } from './config/theme';
 import { navigationStyles } from './styles';
