@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { colors } from './baseStyles';
+import { theme } from '../config/theme';
 
 export const modalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -13,12 +13,12 @@ export const modalStyles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 4,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    borderBottomColor: theme.colors.divider,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
   },
   content: {
     flex: 1,
@@ -30,12 +30,12 @@ export const modalStyles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
+    color: theme.colors.text.primary,
     marginBottom: 12,
   },
   input: {
-    backgroundColor: '#000000',
-    color: '#ffffff',
+    backgroundColor: theme.colors.background,
+    color: theme.colors.text.primary,
     fontWeight: '600',
     marginBottom: 8,
     fontSize: 16,
@@ -47,7 +47,7 @@ export const modalStyles = StyleSheet.create({
   categoryTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#cccccc',
+    color: theme.colors.text.secondary,
     marginTop: 16,
     marginBottom: 8,
     textTransform: 'uppercase',
@@ -68,16 +68,16 @@ export const modalStyles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 8,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: theme.colors.divider,
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconItemSelected: {
-    borderColor: '#ffffff',
+    borderColor: theme.colors.text.primary,
     borderWidth: 2,
-    backgroundColor: '#000000',
+    backgroundColor: theme.colors.background,
   },
   iconButton: {
     margin: 0,
@@ -97,7 +97,7 @@ export const modalStyles = StyleSheet.create({
     borderColor: 'transparent',
   },
   colorItemSelected: {
-    borderColor: '#ffffff',
+    borderColor: theme.colors.text.primary,
     borderWidth: 3,
   },
   groupOptions: {
@@ -112,12 +112,12 @@ export const modalStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
+    borderColor: theme.colors.divider,
+    backgroundColor: theme.colors.surface,
   },
   groupOptionSelected: {
-    backgroundColor: '#00FF88',
-    borderColor: '#00FF88',
+    backgroundColor: theme.colors.accent.green,
+    borderColor: theme.colors.accent.green,
   },
   groupColor: {
     width: 12,
@@ -127,10 +127,10 @@ export const modalStyles = StyleSheet.create({
   },
   groupOptionText: {
     fontSize: 14,
-    color: '#cccccc',
+    color: theme.colors.text.secondary,
   },
   groupOptionTextSelected: {
-    color: '#ffffff',
+    color: theme.colors.text.primary,
     fontWeight: '600',
   },
   advancedToggle: {
@@ -139,13 +139,13 @@ export const modalStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: '#333333',
+    borderTopColor: theme.colors.divider,
     marginTop: 16,
   },
   advancedToggleText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
+    color: theme.colors.text.primary,
   },
   advancedSettings: {
     marginTop: 16,
@@ -160,19 +160,19 @@ export const modalStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
+    borderColor: theme.colors.divider,
+    backgroundColor: theme.colors.surface,
   },
   goalOptionSelected: {
-    backgroundColor: '#000000',
-    borderColor: '#ffffff',
+    backgroundColor: theme.colors.background,
+    borderColor: theme.colors.text.primary,
   },
   goalOptionText: {
     fontSize: 14,
-    color: '#cccccc',
+    color: theme.colors.text.secondary,
   },
   goalOptionTextSelected: {
-    color: '#ffffff',
+    color: theme.colors.text.primary,
     fontWeight: '600',
   },
   trackingOptions: {
@@ -186,25 +186,25 @@ export const modalStyles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#333333',
-    backgroundColor: '#1a1a1a',
+    borderColor: theme.colors.divider,
+    backgroundColor: theme.colors.surface,
     alignItems: 'center',
   },
   trackingOptionSelected: {
-    backgroundColor: '#000000',
-    borderColor: '#ffffff',
+    backgroundColor: theme.colors.background,
+    borderColor: theme.colors.text.primary,
   },
   trackingOptionText: {
     fontSize: 14,
-    color: '#cccccc',
+    color: theme.colors.text.secondary,
   },
   trackingOptionTextSelected: {
-    color: '#ffffff',
+    color: theme.colors.text.primary,
     fontWeight: '600',
   },
   trackingDescription: {
     fontSize: 12,
-    color: '#999999',
+    color: theme.colors.text.disabled,
     fontStyle: 'italic',
   },
   targetControls: {
@@ -215,15 +215,15 @@ export const modalStyles = StyleSheet.create({
   },
   targetDisplay: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: theme.colors.background,
     borderWidth: 1,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.text.primary,
     borderRadius: 8,
     padding: 12,
   },
   targetText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: theme.colors.text.primary,
     textAlign: 'center',
   },
   targetButtons: {
@@ -234,45 +234,45 @@ export const modalStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: '#000000',
+    backgroundColor: theme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   targetButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: theme.colors.text.primary,
   },
   targetDescription: {
     fontSize: 12,
-    color: '#999999',
+    color: theme.colors.text.disabled,
     fontStyle: 'italic',
   },
   reminderButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#000000',
+    backgroundColor: theme.colors.background,
     borderWidth: 1,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.text.primary,
     borderRadius: 8,
     padding: 12,
   },
   reminderButtonText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: theme.colors.text.primary,
   },
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#333333',
+    borderTopColor: theme.colors.divider,
   },
   saveButton: {
-    backgroundColor: '#00FFFF',
+    backgroundColor: theme.colors.accent.cyan,
   },
   // Цвет текста на кнопке Сохранить — чёрный
   saveButtonLabel: {
-    color: '#000000',
+    color: theme.colors.background,
     fontWeight: '700',
   },
   // Стили для центральной иконки с фоном
@@ -281,9 +281,9 @@ export const modalStyles = StyleSheet.create({
     width: '100%',
     position: 'relative',
     borderRadius: 16,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: theme.colors.divider,
     marginBottom: 16,
     justifyContent: 'center',
     alignItems: 'center',
@@ -309,9 +309,9 @@ export const modalStyles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: theme.colors.card,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.text.primary,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
@@ -325,7 +325,7 @@ export const modalStyles = StyleSheet.create({
   // Стили для экрана категорий
   categoryDescription: {
     fontSize: 16,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: 16,
     lineHeight: 22,
@@ -341,15 +341,15 @@ export const modalStyles = StyleSheet.create({
     height: 80,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    borderColor: theme.colors.divider,
+    backgroundColor: theme.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 8,
   },
   categoryItemSelected: {
-    backgroundColor: colors.background,
-    borderColor: '#ffffff',
+    backgroundColor: theme.colors.background,
+    borderColor: theme.colors.text.primary,
   },
   categoryIcon: {
     margin: 0,
@@ -357,12 +357,12 @@ export const modalStyles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
     fontWeight: '500',
   },
   categoryTextSelected: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '600',
   },
   createCustomButton: {
@@ -373,33 +373,33 @@ export const modalStyles = StyleSheet.create({
     height: 80,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ffffff',
-    backgroundColor: colors.background,
+    borderColor: theme.colors.text.primary,
+    backgroundColor: theme.colors.background,
     marginTop: 16,
   },
   createCustomText: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontWeight: '600',
     textAlign: 'center',
   },
   saveButtonText: {
     fontSize: 16,
-    color: '#000000',
+    color: theme.colors.background,
     fontWeight: '600',
     textAlign: 'center',
   },
   saveButtonDisabled: {
-    backgroundColor: '#666666',
+    backgroundColor: theme.colors.text.disabled,
   },
   // Стили для кнопки категорий
   categoriesButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#000000',
+    backgroundColor: theme.colors.background,
     borderWidth: 1,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.text.primary,
     borderRadius: 8,
     padding: 12,
   },
@@ -417,7 +417,7 @@ export const modalStyles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -426,12 +426,12 @@ export const modalStyles = StyleSheet.create({
   },
   categoryPreviewCount: {
     fontSize: 12,
-    color: '#cccccc',
+    color: theme.colors.text.secondary,
     marginLeft: 4,
   },
   categoriesButtonText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: theme.colors.text.primary,
   },
   
   // Стили для модального окна добавления группы
@@ -442,18 +442,18 @@ export const modalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   groupModalContent: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 12,
     padding: 20,
     width: '90%',
     maxWidth: 400,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.divider,
   },
   groupModalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -469,19 +469,19 @@ export const modalStyles = StyleSheet.create({
     marginHorizontal: 5,
   },
   groupModalCancelButton: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
   },
   groupModalSaveButton: {
-    backgroundColor: colors.info,
+    backgroundColor: theme.colors.info,
   },
   groupModalCancelButtonText: {
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
   },
   groupModalSaveButtonText: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
@@ -491,7 +491,7 @@ export const modalStyles = StyleSheet.create({
   },
   groupColorLabel: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     marginBottom: 8,
   },
   groupColorOptions: {

@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Appbar, IconButton, List } from 'react-native-paper';
-import { colors, baseStyles } from '../styles';
+import { theme } from '../config/theme';
+import { baseStyles } from '../styles';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -19,7 +20,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       <Appbar.Header style={baseStyles.appbar}>
         <Appbar.BackAction 
           onPress={onClose} 
-          iconColor={colors.text.primary}
+          iconColor={theme.colors.text.primary}
         />
         <Appbar.Content title="Настройки" />
       </Appbar.Header>
@@ -31,7 +32,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Основные"
-            left={(props) => <List.Icon {...props} icon="cog" color="#FF6B9D" />}
+            left={(props) => <List.Icon {...props} icon="cog" color={theme.colors.icons.pink} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -39,7 +40,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Ежедневные напоминания о проверке"
-            left={(props) => <List.Icon {...props} icon="bell" color="#4ECDC4" />}
+            left={(props) => <List.Icon {...props} icon="bell" color={theme.colors.icons.teal} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -47,7 +48,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Тема"
-            left={(props) => <List.Icon {...props} icon="palette" color="#FFA726" />}
+            left={(props) => <List.Icon {...props} icon="palette" color={theme.colors.icons.orange} />}
             right={() => (
               <IconButton
                 icon={isDark ? 'toggle-switch' : 'toggle-switch-off'}
@@ -60,7 +61,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Архив привычек"
-            left={(props) => <List.Icon {...props} icon="archive" color="#66BB6A" />}
+            left={(props) => <List.Icon {...props} icon="archive" color={theme.colors.icons.green} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -68,7 +69,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Импорт/Экспорт данных"
-            left={(props) => <List.Icon {...props} icon="database-export" color="#AB47BC" />}
+            left={(props) => <List.Icon {...props} icon="database-export" color={theme.colors.icons.purple} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -76,7 +77,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Отсортировать привычки"
-            left={(props) => <List.Icon {...props} icon="sort" color="#EF5350" />}
+            left={(props) => <List.Icon {...props} icon="sort" color={theme.colors.icons.red} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -89,7 +90,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Show Onboarding"
-            left={(props) => <List.Icon {...props} icon="ship-wheel" color="#FFA726" />}
+            left={(props) => <List.Icon {...props} icon="ship-wheel" color={theme.colors.icons.orange} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -97,7 +98,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Show What's New"
-            left={(props) => <List.Icon {...props} icon="newspaper" color="#4ECDC4" />}
+            left={(props) => <List.Icon {...props} icon="newspaper" color={theme.colors.icons.teal} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -105,7 +106,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Обратная связь"
-            left={(props) => <List.Icon {...props} icon="send" color={colors.text.primary} />}
+            left={(props) => <List.Icon {...props} icon="send" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -118,7 +119,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Сайт"
-            left={(props) => <List.Icon {...props} icon="web" color="#66BB6A" />}
+            left={(props) => <List.Icon {...props} icon="web" color={theme.colors.icons.green} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -126,7 +127,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Политика конфиденциальности"
-            left={(props) => <List.Icon {...props} icon="shield-lock" color="#FF6B9D" />}
+            left={(props) => <List.Icon {...props} icon="shield-lock" color={theme.colors.icons.pink} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -134,7 +135,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Условия использования"
-            left={(props) => <List.Icon {...props} icon="file-document" color="#66BB6A" />}
+            left={(props) => <List.Icon {...props} icon="file-document" color={theme.colors.icons.green} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}
@@ -142,7 +143,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Оцените приложение"
-            left={(props) => <List.Icon {...props} icon="star-outline" color="#AB47BC" />}
+            left={(props) => <List.Icon {...props} icon="star-outline" color={theme.colors.icons.purple} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={baseStyles.listItemTitle}
             style={baseStyles.listItem}

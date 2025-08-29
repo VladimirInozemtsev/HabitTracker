@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { colors } from '../../styles';
+import { theme } from '../../config/theme';
 import { getMutedColor, formatDate } from '../../utils';
 
 interface HabitGridProps {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   future: {},
   legend: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: theme.colors.text.secondary,
     marginTop: 8,
     textAlign: 'center',
   },

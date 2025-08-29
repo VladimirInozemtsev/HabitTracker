@@ -13,7 +13,8 @@ import { getCurrentDate } from './utils/date';
 // Импорты компонентов
 import { CreateHabitModal, AddGroupModal } from './components/modals';
 import { SettingsScreen } from './screens/SettingsScreen';
-import { colors, navigationStyles } from './styles';
+import { theme } from './config/theme';
+import { navigationStyles } from './styles';
 import { HabitsScreen } from './screens/HabitsScreen';
 import { StatsScreen } from './screens/StatsScreen';
 import { AnalyticsScreen } from './screens/AnalyticsScreen';
@@ -137,8 +138,8 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' }}>
-        <ActivityIndicator size="large" color="#00FFFF" />
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+          <ActivityIndicator size="large" color={theme.colors.accent.cyan} />
       </View>
     );
   }
@@ -188,7 +189,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   if (!fontsLoaded || auth.loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
+        <ActivityIndicator size="large" color={theme.colors.success} />
         <Text style={styles.loadingText}>Загрузка...</Text>
       </View>
     );
@@ -429,7 +430,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
           >
                          <IconButton
                icon="target"
-               iconColor={navigation.currentScreen === 'habits' ? '#ffffff' : '#666666'}
+               iconColor={navigation.currentScreen === 'habits' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
                size={24}
                style={navigationStyles.navIconButton}
              />
@@ -446,7 +447,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
           >
                          <IconButton
                icon="chart-bar"
-               iconColor={navigation.currentScreen === 'stats' ? '#ffffff' : '#666666'}
+               iconColor={navigation.currentScreen === 'stats' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
                size={24}
                style={navigationStyles.navIconButton}
              />
@@ -463,7 +464,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
           >
             <IconButton
               icon="chart-line"
-                             iconColor={navigation.currentScreen === 'analytics' ? '#ffffff' : '#666666'}
+                             iconColor={navigation.currentScreen === 'analytics' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
               size={24}
               style={navigationStyles.navIconButton}
             />
@@ -480,7 +481,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
           >
             <IconButton
               icon="folder"
-                             iconColor={navigation.currentScreen === 'groups' ? '#ffffff' : '#666666'}
+                             iconColor={navigation.currentScreen === 'groups' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
               size={24}
               style={navigationStyles.navIconButton}
             />
@@ -497,7 +498,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
           >
             <IconButton
               icon="account"
-                             iconColor={navigation.currentScreen === 'profile' ? '#ffffff' : '#666666'}
+                             iconColor={navigation.currentScreen === 'profile' ? theme.colors.navigation.active : theme.colors.navigation.inactive}
               size={24}
               style={navigationStyles.navIconButton}
             />
@@ -535,18 +536,18 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
   },
 });
 
