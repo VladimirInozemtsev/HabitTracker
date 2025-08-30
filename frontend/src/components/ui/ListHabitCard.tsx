@@ -132,7 +132,8 @@ export const ListHabitCard: React.FC<ListHabitCardProps> = ({
               styles.statusSquare, // ← Базовые стили квадрата
               { backgroundColor: getMutedColor(baseColor) }, // ← Приглушенный цвет по умолчанию
               status.completed && { backgroundColor: baseColor }, // ← Цвет привычки если выполнено
-              highlightCurrentDay && status.isToday && styles.todaySquare // ← Белая рамка для сегодня
+              highlightCurrentDay && status.isToday && styles.todaySquare, // ← Белая рамка для сегодня
+              index === 0 && { marginLeft: 0 } // ← У первого квадрата нет отступа слева
             ]}
           />
         ))}
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', // ← Выравнивание по центру
     backgroundColor: theme.colors.surface, // ← Цвет фона карточки (серый)
     borderRadius: 12, // ← Скругление углов
-    padding: 10, // ← Внутренние отступы
+    padding: 5, // ← УБРАЛ: лишние отступы
     marginBottom: 5, // ← Внешние отступы снизу
     elevation: 2, // ← Тень (Android)
     minHeight: 30, // ← Минимальная высота
@@ -162,6 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 8, // ← Скругление углов
     justifyContent: 'center', // ← Выравнивание по центру по горизонтали
     alignItems: 'center', // ← Выравнивание по центру по вертикали
+    marginLeft: 10, // ← ДОБАВЛЕНО: компенсация убранного padding
   },
   // ← Название привычки
   habitName: {
@@ -169,22 +171,24 @@ const styles = StyleSheet.create({
     fontSize: 16, // ← Размер шрифта
     fontWeight: '600', // ← Жирность шрифта
     color: theme.colors.text.primary, // ← Цвет текста (белый)
-    marginLeft: 12, // ← Отступ слева от иконки
+    marginLeft: 2, // ← Отступ слева от иконки
     marginRight: 12, // ← Отступ справа от иконки
-    paddingHorizontal: 8, // ← Горизонтальные отступы для фона
-    paddingVertical: 7, // ← Вертикальные отступы для фона
+    paddingHorizontal: 4, // ← Горизонтальные отступы для фона
+    paddingVertical: 6, // ← Вертикальные отступы для фона
     borderRadius: 6, // ← Скругление углов фона
   },
   // ← Сетка статусов
   statusGrid: {
     flexDirection: 'row', // ← Горизонтальное расположение квадратов
-    gap: 4, // ← Отступы между квадратами
+    justifyContent: 'flex-end', // ← Прижимаем к правому краю
+    marginRight: 10, // ← ДОБАВЛЕНО: компенсация убранного padding
   },
   // ← Квадрат статуса дня
   statusSquare: {
-    width: 24, // ← Ширина квадрата
-    height: 24, // ← Высота квадрата
+    width: 20, // ← Ширина квадрата
+    height: 20, // ← Высота квадрата
     borderRadius: 4, // ← Скругление углов
+    marginLeft: 4, // ← Отступ между квадратами (СИНХРОНИЗИРОВАНО с PeriodSelector)
   },
   // ← Стили для сегодняшнего дня
   todaySquare: {

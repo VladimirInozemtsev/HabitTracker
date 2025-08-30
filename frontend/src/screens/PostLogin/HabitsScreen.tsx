@@ -90,7 +90,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
             </View>
           ) : (
             // ← Список с селектором периода
-            <>
+            <View style={{ paddingHorizontal: 16 }}>
               <PeriodSelector
                 selectedPeriod={selectedPeriod}
                 onPeriodChange={setSelectedPeriod}
@@ -105,7 +105,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
                   highlightCurrentDay={highlightCurrentDay}
                 />
               ))}
-            </>
+            </View>
           )}
         </View>
       </ScrollView>
