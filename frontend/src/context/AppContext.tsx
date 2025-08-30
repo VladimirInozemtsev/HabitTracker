@@ -5,6 +5,7 @@ import { useGroups } from '../hooks/useGroups';
 import { useNavigation, Screen } from '../hooks/useNavigation';
 import { useResponsive } from '../hooks/useResponsive';
 import { ViewType } from '../components/ui/ViewSelector';
+import { getCurrentTheme } from '../theme/theme'; // ← ДОБАВЛЕНО: импорт функции темы
 
 // Типы для контекста
 interface AppContextType {
@@ -18,6 +19,8 @@ interface AppContextType {
   // Глобальные состояния
   isDark: boolean;
   setIsDark: (isDark: boolean) => void;
+  theme: ReturnType<typeof getCurrentTheme>; // ← ДОБАВЛЕНО: текущая тема
+  toggleTheme: () => void; // ← ДОБАВЛЕНО: функция переключения темы
   showAddModal: boolean;
   setShowAddModal: (show: boolean) => void;
   showSettings: boolean;
@@ -70,8 +73,32 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     return 5; // значение по умолчанию
   };
 
+  // ← ДОБАВЛЕНО: загрузка темы из localStorage
+  const loadTheme = (): boolean => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedTheme = window.localStorage.getItem('habitTrackerTheme');
+        return savedTheme ? JSON.parse(savedTheme) : true; // по умолчанию темная тема
+      }
+    } catch (error) {
+      console.error('Error loading theme:', error);
+    }
+    return true; // по умолчанию темная тема
+  };
+
+  // ← ДОБАВЛЕНО: сохранение темы в localStorage
+  const saveTheme = (isDark: boolean) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('habitTrackerTheme', JSON.stringify(isDark));
+      }
+    } catch (error) {
+      console.error('Error saving theme:', error);
+    }
+  };
+
   // Глобальные состояния (пока используем useState, потом можно вынести в отдельные хуки)
-  const [isDark, setIsDark] = React.useState(false);
+  const [isDark, setIsDark] = React.useState(loadTheme()); // ← ИСПРАВЛЕНО: загружаем из localStorage
   const [showAddModal, setShowAddModal] = React.useState(false);
   const [showSettings, setShowSettings] = React.useState(false);
   const [showAddGroupModal, setShowAddGroupModal] = React.useState(false);
@@ -91,6 +118,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     responsive,
     isDark,
     setIsDark,
+    theme: getCurrentTheme(isDark), // ← ИСПРАВЛЕНО: передаем параметр
+    toggleTheme: () => {
+      const newTheme = !isDark;
+      setIsDark(newTheme);
+      saveTheme(newTheme);
+    }, // ← ДОБАВЛЕНО: функция переключения темы с сохранением
     showAddModal,
     setShowAddModal,
     showSettings,
