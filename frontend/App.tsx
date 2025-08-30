@@ -154,7 +154,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
-        <ActivityIndicator size="large" color={theme.colors.accent.cyan} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }

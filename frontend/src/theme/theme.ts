@@ -4,13 +4,12 @@ export const theme = {
   colors: {
     // ОСНОВНЫЕ ЦВЕТА
     primary: '#ffffff',        // Белый (основной акцент) - из baseStyles
-    secondary: '#cccccc',      // Светло-серый (вторичный) - из baseStyles  
-    accent: '#ffffff',         // Основной акцент (белый) - минималистично
+    secondary: '#cccccc',      // Светло-серый (вторичный) - из baseStyles
     
     // ФОНОВЫЕ ЦВЕТА (унифицированы)
     background: '#000000',     // Черный фон (из baseStyles как основной)
     surface: '#1a1a1a',       // Поверхности карточек (из baseStyles)
-    card: '#272B33',           // Карточки привычек (из baseStyles)
+    card: '#1a1a1a',           // Карточки привычек (из baseStyles)
     
     // ТЕКСТОВЫЕ ЦВЕТА
     text: {
@@ -42,8 +41,6 @@ export const theme = {
       primary: '#ffffff',      // Основной акцент (белый)
       secondary: '#cccccc',    // Вторичный акцент (серый)
       muted: '#666666',        // Приглушенный (тёмно-серый)
-      cyan: '#00FFFF',         // Неоновый акцент для особых случаев
-      green: '#00FF88',        // Зеленый для успешных действий
     },
     
     // ПАЛИТРА ДЛЯ ИКОНОК НАСТРОЕК
