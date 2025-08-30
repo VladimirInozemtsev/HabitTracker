@@ -51,6 +51,7 @@ export const theme = {
       green: '#66BB6A',        // Зеленый
       purple: '#AB47BC',       // Фиолетовый
       red: '#EF5350',          // Красный
+      white: '#cccccc',      // Белый
     },
     
     // ПАЛИТРА ЦВЕТОВ ПРИВЫЧЕК

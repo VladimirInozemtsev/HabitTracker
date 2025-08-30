@@ -39,7 +39,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Основные"
-            left={(props) => <List.Icon {...props} icon="cog" color={theme.colors.icons.pink} />}
+            left={(props) => <List.Icon {...props} icon="cog" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -49,7 +49,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Ежедневные напоминания о проверке"
-            left={(props) => <List.Icon {...props} icon="bell" color={theme.colors.icons.teal} />}
+            left={(props) => <List.Icon {...props} icon="bell" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -57,7 +57,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Тема"
-            left={(props) => <List.Icon {...props} icon="palette" color={theme.colors.icons.orange} />}
+            left={(props) => <List.Icon {...props} icon="palette" color={theme.colors.text.primary} />}
             right={() => (
               <IconButton
                 icon={isDark ? 'toggle-switch' : 'toggle-switch-off'}
@@ -70,7 +70,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Архив привычек"
-            left={(props) => <List.Icon {...props} icon="archive" color={theme.colors.icons.green} />}
+            left={(props) => <List.Icon {...props} icon="archive" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -78,7 +78,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Импорт/Экспорт данных"
-            left={(props) => <List.Icon {...props} icon="database-export" color={theme.colors.icons.purple} />}
+            left={(props) => <List.Icon {...props} icon="database-export" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -86,7 +86,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Отсортировать привычки"
-            left={(props) => <List.Icon {...props} icon="sort" color={theme.colors.icons.red} />}
+            left={(props) => <List.Icon {...props} icon="sort" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -99,7 +99,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Show Onboarding"
-            left={(props) => <List.Icon {...props} icon="ship-wheel" color={theme.colors.icons.orange} />}
+            left={(props) => <List.Icon {...props} icon="ship-wheel" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -107,7 +107,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Show What's New"
-            left={(props) => <List.Icon {...props} icon="newspaper" color={theme.colors.icons.teal} />}
+            left={(props) => <List.Icon {...props} icon="newspaper" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -128,7 +128,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Сайт"
-            left={(props) => <List.Icon {...props} icon="web" color={theme.colors.icons.green} />}
+            left={(props) => <List.Icon {...props} icon="web" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -136,7 +136,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Политика конфиденциальности"
-            left={(props) => <List.Icon {...props} icon="shield-lock" color={theme.colors.icons.pink} />}
+            left={(props) => <List.Icon {...props} icon="shield-lock" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -144,7 +144,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Условия использования"
-            left={(props) => <List.Icon {...props} icon="file-document" color={theme.colors.icons.green} />}
+            left={(props) => <List.Icon {...props} icon="file-document" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
@@ -152,7 +152,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Оцените приложение"
-            left={(props) => <List.Icon {...props} icon="star-outline" color={theme.colors.icons.purple} />}
+            left={(props) => <List.Icon {...props} icon="star-outline" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}

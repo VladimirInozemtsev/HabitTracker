@@ -48,7 +48,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
               color={theme.colors.icons.purple}
               trackColor={{
                 false: theme.colors.divider,
-                true: theme.colors.icons.purple,
+                true: theme.colors.divider,
               }}
             />
           )}
@@ -84,8 +84,8 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) =>
 
 interface GeneralSettingsScreenProps {
   onBack: () => void;
-  onSettingsChange?: (settings: { highlightCurrentDay: boolean; weekStartsOn?: string }) => void; // ← ДОБАВЛЕНО: пропс для обновления настроек
-  currentSettings?: { highlightCurrentDay: boolean; weekStartsOn?: string }; // ← ДОБАВЛЕНО: текущие настройки
+  onSettingsChange?: (settings: { highlightCurrentDay: boolean; weekStartsOn?: string; showBottomPanel?: boolean }) => void; // ← ДОБАВЛЕНО: пропс для обновления настроек
+  currentSettings?: { highlightCurrentDay: boolean; weekStartsOn?: string; showBottomPanel?: boolean }; // ← ДОБАВЛЕНО: текущие настройки
 }
 
 export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
@@ -97,7 +97,7 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
   const [settings, setSettings] = React.useState({
     weekStartsMonday: true,
     highlightCurrentDay: currentSettings?.highlightCurrentDay ?? true, // ← ДОБАВЛЕНО: инициализируем переданным значением
-    showBottomPanel: true,
+    showBottomPanel: currentSettings?.showBottomPanel ?? true, // ← ДОБАВЛЕНО: инициализируем переданным значением
     showFilter: true,
     showSeriesCounter: false,
     showSeriesGoal: false,
@@ -120,6 +120,7 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
       setSettings(prev => ({
         ...prev,
         highlightCurrentDay: currentSettings.highlightCurrentDay,
+        showBottomPanel: currentSettings.showBottomPanel ?? true,
       }));
       if (currentSettings.weekStartsOn) {
         setSelectedWeekDay(currentSettings.weekStartsOn);
@@ -152,6 +153,7 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
       if (onSettingsChange) {
         onSettingsChange({
           highlightCurrentDay: newSettings.highlightCurrentDay,
+          showBottomPanel: newSettings.showBottomPanel,
         });
       }
       
@@ -172,6 +174,7 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
       onSettingsChange({
         highlightCurrentDay: settings.highlightCurrentDay,
         weekStartsOn: dayKey,
+        showBottomPanel: settings.showBottomPanel,
       });
     }
   };

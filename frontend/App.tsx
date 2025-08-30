@@ -36,6 +36,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   const [settings, setSettings] = useState({
     highlightCurrentDay: true, // по умолчанию включено
     weekStartsOn: 'monday', // ← ДОБАВЛЕНО: день начала недели
+    showBottomPanel: true, // ← ДОБАВЛЕНО: показывать нижнюю панель
   });
 
   // ← ДОБАВЛЕНО: функции для работы с настройками
@@ -49,6 +50,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
           setSettings({
             highlightCurrentDay: parsedSettings.highlightCurrentDay ?? true,
             weekStartsOn: parsedSettings.weekStartsOn ?? 'monday',
+            showBottomPanel: parsedSettings.showBottomPanel ?? true,
           });
         }
       }
@@ -62,13 +64,14 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     }
   };
 
-  const saveSettings = async (newSettings: { highlightCurrentDay: boolean; weekStartsOn?: string }) => {
+  const saveSettings = async (newSettings: { highlightCurrentDay: boolean; weekStartsOn?: string; showBottomPanel?: boolean }) => {
     try {
       // ВРЕМЕННО: используем localStorage для веб-версии
       if (typeof window !== 'undefined' && window.localStorage) {
         const settingsToSave = {
           highlightCurrentDay: newSettings.highlightCurrentDay,
           weekStartsOn: newSettings.weekStartsOn ?? settings.weekStartsOn,
+          showBottomPanel: newSettings.showBottomPanel ?? settings.showBottomPanel,
         };
         window.localStorage.setItem('habitTrackerSettings', JSON.stringify(settingsToSave));
       }
@@ -228,6 +231,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
             onOpenAddModal={handleOpenAddModal}
             highlightCurrentDay={settings.highlightCurrentDay} // ← ДОБАВЛЕНО: передаем настройку
             weekStartsOn={settings.weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
+            showBottomPanel={settings.showBottomPanel} // ← ДОБАВЛЕНО: передаем настройку панели
           />
         );
         
@@ -309,13 +313,13 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.background, // ← ВОЗВРАЩЕНО: темный фон
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.background, // ← ВОЗВРАЩЕНО: темный фон
   },
   loadingText: {
     marginTop: 10,
