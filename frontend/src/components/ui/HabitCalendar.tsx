@@ -8,6 +8,8 @@ interface HabitCalendarProps {
   color: string;
   completions: Array<string | { id: string; date: string; status: string }>;
   onToggleDay?: (date: string) => void;
+  highlightCurrentDay?: boolean; // ← ДОБАВЛЕНО: пропс для подсветки текущего дня
+  weekStartsOn?: string; // ← ДОБАВЛЕНО: день начала недели
 }
 
 import { getMutedColor } from '../../utils/colors';
@@ -16,7 +18,9 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   habitId,
   color,
   completions,
-  onToggleDay
+  onToggleDay,
+  highlightCurrentDay = true, // ← ДОБАВЛЕНО: по умолчанию включено
+  weekStartsOn = 'monday' // ← ДОБАВЛЕНО: по умолчанию понедельник
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   
@@ -61,12 +65,12 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
      // День недели первого дня (0 = воскресенье, 1 = понедельник)
      const firstDayOfWeek = firstDay.getDay();
      
-     // Корректируем для начала недели с понедельника
-     // Если воскресенье (0), то это 6 дней предыдущего месяца
-     // Если понедельник (1), то это 0 дней предыдущего месяца
-     // Если вторник (2), то это 1 день предыдущего месяца
-     // И так далее...
-     const daysFromPrevMonth = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+           // Корректируем для начала недели с понедельника (календарь всегда стандартный)
+      // Если воскресенье (0), то это 6 дней предыдущего месяца
+      // Если понедельник (1), то это 0 дней предыдущего месяца
+      // Если вторник (2), то это 1 день предыдущего месяца
+      // И так далее...
+      const daysFromPrevMonth = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
      
      const calendar = [];
      
@@ -170,14 +174,14 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
         />
       </View>
 
-      {/* Названия дней недели */}
-      <View style={styles.weekDays}>
-        {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
-          <Text key={index} style={styles.weekDay}>
-            {day}
-          </Text>
-        ))}
-      </View>
+             {/* Названия дней недели - всегда стандартные */}
+       <View style={styles.weekDays}>
+         {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
+           <Text key={index} style={styles.weekDay}>
+             {day}
+           </Text>
+         ))}
+       </View>
 
       {/* Календарная сетка */}
       <View style={styles.calendar}>
@@ -198,6 +202,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
                 !day.isFuture && !day.isCurrentMonth && styles.otherMonthDay,
                 !day.isFuture && day.isToday && styles.today,
                 !day.isFuture && day.isCurrentMonth && isCompleted && { backgroundColor: color },
+                highlightCurrentDay && day.isToday && styles.today, // ← ДОБАВЛЕНО: условная подсветка
               ]}
               onPress={() => {
                 if (day.isFuture) return;

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 // Типы для навигации
-export type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups';
+export type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups' | 'settings' | 'generalSettings';
 
 export const useNavigation = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('habits');
@@ -15,11 +15,16 @@ export const useNavigation = () => {
 
   // Возврат на предыдущий экран
   const goBack = useCallback(() => {
+    console.log('goBack called, previousScreen:', previousScreen, 'currentScreen:', currentScreen);
     if (previousScreen) {
       setCurrentScreen(previousScreen);
       setPreviousScreen(null);
+      console.log('Going back to:', previousScreen);
+    } else {
+      console.log('No previous screen, going to habits');
+      setCurrentScreen('habits');
     }
-  }, [previousScreen]);
+  }, [previousScreen, currentScreen]);
 
   // Переход на главный экран
   const goToHome = useCallback(() => {
@@ -51,6 +56,20 @@ export const useNavigation = () => {
     setCurrentScreen('groups');
   }, [currentScreen]);
 
+  // Переход на настройки
+  const goToSettings = useCallback(() => {
+    setPreviousScreen(currentScreen);
+    setCurrentScreen('settings');
+  }, [currentScreen]);
+
+  // Переход на основные настройки
+  const goToGeneralSettings = useCallback(() => {
+    console.log('goToGeneralSettings called, currentScreen:', currentScreen);
+    setPreviousScreen(currentScreen);
+    setCurrentScreen('generalSettings');
+    console.log('Navigated to generalSettings, previousScreen set to:', currentScreen);
+  }, [currentScreen]);
+
   return {
     currentScreen,
     previousScreen,
@@ -61,5 +80,7 @@ export const useNavigation = () => {
     goToAnalytics,
     goToProfile,
     goToGroups,
+    goToSettings,
+    goToGeneralSettings,
   };
 };

@@ -12,6 +12,8 @@ interface HabitsScreenProps {
   onHabitToggle: (habitId: string) => void;
   onSettingsPress: () => void;
   onOpenAddModal: () => void;
+  highlightCurrentDay?: boolean; // ← ДОБАВЛЕНО: пропс для подсветки текущего дня
+  weekStartsOn?: string; // ← ДОБАВЛЕНО: день начала недели
 }
 
 export const HabitsScreen: React.FC<HabitsScreenProps> = ({
@@ -20,7 +22,9 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   onHabitPress,
   onHabitToggle,
   onSettingsPress,
-  onOpenAddModal
+  onOpenAddModal,
+  highlightCurrentDay = true, // ← ДОБАВЛЕНО: по умолчанию включено
+  weekStartsOn = 'monday' // ← ДОБАВЛЕНО: по умолчанию понедельник
 }) => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -57,6 +61,8 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
               isTablet={isTablet}
               onPress={() => onHabitPress(habit)}
               onToggleStatus={() => onHabitToggle(habit.id)}
+              highlightCurrentDay={highlightCurrentDay} // ← ДОБАВЛЕНО: передаем настройку
+              weekStartsOn={weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
             />
           ))}
         </View>

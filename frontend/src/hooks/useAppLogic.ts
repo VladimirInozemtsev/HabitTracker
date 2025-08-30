@@ -10,7 +10,6 @@ export const useAppLogic = () => {
 
   // Состояние модальных окон
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [showAddGroupModal, setShowAddGroupModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -184,10 +183,7 @@ export const useAppLogic = () => {
     }
   };
 
-  // Обработчик нажатия на настройки
-  const handleSettingsPress = () => {
-    setShowSettings(true);
-  };
+
 
   // Функции загрузки данных для разных экранов
   const loadUserStats = async () => {
@@ -237,7 +233,6 @@ export const useAppLogic = () => {
   return {
     // Состояние
     showAddModal,
-    showSettings,
     showAddGroupModal,
     showEditModal,
     selectedHabit,
@@ -250,7 +245,6 @@ export const useAppLogic = () => {
 
     // Сеттеры
     setShowAddModal,
-    setShowSettings,
     setShowAddGroupModal,
     setShowEditModal,
     setSelectedHabit,
@@ -264,7 +258,6 @@ export const useAppLogic = () => {
     handleEditHabit,
     handleEditHabitSave,
     handleOpenAddModal,
-    handleSettingsPress,
     handleAddGroup,
     toggleGroupExpansion,
 

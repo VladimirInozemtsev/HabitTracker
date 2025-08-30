@@ -7,13 +7,21 @@ interface SettingsScreenProps {
   onClose: () => void;
   isDark?: boolean;
   onToggleTheme?: () => void;
+  onNavigateToGeneralSettings?: () => void;
 }
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClose,
   isDark = true,
   onToggleTheme,
+  onNavigateToGeneralSettings,
 }) => {
+  const handleGeneralSettingsPress = () => {
+    console.log('General Settings pressed!');
+    if (onNavigateToGeneralSettings) {
+      onNavigateToGeneralSettings();
+    }
+  };
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
@@ -35,6 +43,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={styles.listItemTitle}
             style={styles.listItem}
+            onPress={handleGeneralSettingsPress}
+            pressColor={theme.colors.divider}
           />
           
           <List.Item

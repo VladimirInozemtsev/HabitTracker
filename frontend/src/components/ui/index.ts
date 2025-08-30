@@ -10,3 +10,5 @@ export { ModalManager } from './ModalManager';
 // Модальные окна
 export { CreateHabitModal } from './CreateHabitModal';
 export { AddGroupModal } from './AddGroupModal';
+export { Modal } from './Modal';
+export { WeekStartSelector } from './WeekStartSelector';

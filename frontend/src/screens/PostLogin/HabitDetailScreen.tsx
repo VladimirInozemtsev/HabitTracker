@@ -14,13 +14,17 @@ interface HabitDetailScreenProps {
   onBack: () => void;
   onEditHabit: (habit: Habit) => void;
   onCalendarDayToggle: (date: string) => void;
+  highlightCurrentDay?: boolean; // ← ДОБАВЛЕНО: пропс для подсветки текущего дня
+  weekStartsOn?: string; // ← ДОБАВЛЕНО: день начала недели
 }
 
 export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
   habit,
   onBack,
   onEditHabit,
-  onCalendarDayToggle
+  onCalendarDayToggle,
+  highlightCurrentDay = true, // ← ДОБАВЛЕНО: по умолчанию включено
+  weekStartsOn = 'monday' // ← ДОБАВЛЕНО: по умолчанию понедельник
 }) => {
   // Определяем иконку для первой кнопки (иконка деятельности)
   const categoryIcon = habit.icon || "target";
@@ -60,6 +64,8 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
                 completions={habit.logs || []}
                 weeks={25} // показываем 25 недель для детального просмотра
                 showLegend={false}
+                highlightCurrentDay={highlightCurrentDay} // ← ДОБАВЛЕНО: передаем настройку
+                weekStartsOn={weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
               />
               
               {/* Панель действий */}
@@ -105,6 +111,8 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
                 color={habit.color || getHabitColor(habit.id)}
                 completions={habit.logs || []}
                 onToggleDay={onCalendarDayToggle}
+                highlightCurrentDay={highlightCurrentDay} // ← ДОБАВЛЕНО: передаем настройку
+                weekStartsOn={weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
               />
             </Card.Content>
           </Card>

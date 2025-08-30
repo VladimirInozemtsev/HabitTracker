@@ -11,10 +11,12 @@ interface HabitCardProps {
   isTablet: boolean;
   onPress: () => void;
   onToggleStatus?: () => void;
+  highlightCurrentDay?: boolean; // ← ДОБАВЛЕНО: пропс для подсветки текущего дня
+  weekStartsOn?: string; // ← ДОБАВЛЕНО: день начала недели
 }
 
 
-export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress, onToggleStatus }) => {
+export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress, onToggleStatus, highlightCurrentDay = true, weekStartsOn = 'monday' }) => {
   const baseColor = habit.color || getHabitColor(habit.id);
   return (
     <Card
@@ -95,6 +97,8 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress, 
           completions={habit.logs || []}
           weeks={25}
           showLegend={false}
+          highlightCurrentDay={highlightCurrentDay} // ← ДОБАВЛЕНО: передаем настройку
+          weekStartsOn={weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
         />
       </Card.Content>
     </Card>
