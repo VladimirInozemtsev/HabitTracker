@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', // ← Выравнивание по центру
     justifyContent: 'space-between', // ← Распределение пространства
     backgroundColor: theme.colors.surface, // ← Цвет фона
-    paddingHorizontal: 2, // ← Горизонтальные отступы
+    paddingHorizontal: 10, // ← Горизонтальные отступы
     paddingVertical: 12, // ← Вертикальные отступы
     borderRadius: 8, // ← Скругление углов
     minWidth: 100, // ← Минимальная ширина кнопки
