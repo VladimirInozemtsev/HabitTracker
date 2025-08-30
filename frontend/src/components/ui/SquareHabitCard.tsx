@@ -147,7 +147,7 @@ export const SquareHabitCard: React.FC<SquareHabitCardProps> = ({
            style={[
              styles.statusSquare,
              getHabitStatusStyle(baseColor, habit.is_completed_today), // ← Динамические стили статуса
-             { width: 32, height: 32, marginRight: 20 } // ← ПЕРЕЗАПИСЫВАЕМ глобальные стили + отступ
+             { width: 32, height: 32, marginRight: 4 } // ← ПЕРЕЗАПИСЫВАЕМ глобальные стили + отступ
            ]}
           onPress={onToggleStatus} // ← Обработчик нажатия
           disabled={!onToggleStatus} // ← Отключаем если нет функции переключения
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: 6, // ← Скругление углов
     justifyContent: 'center', // ← Выравнивание по центру по горизонтали
     alignItems: 'center', // ← Выравнивание по центру по вертикали
-    marginRight: 20, // ← ИЗМЕНЕНО: увеличил отступ справа с 8 до 12
+    marginRight: 10, // ← ИЗМЕНЕНО: увеличил отступ справа с 8 до 20
   },
   // ← Контейнер текста
   textContainer: {
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   // ← Название привычки
   habitName: {
-    fontSize: 14, // ← Размер шрифта
+    fontSize: 13, // ← Размер шрифта
     fontWeight: '600', // ← Жирность шрифта
     color: theme.colors.text.primary, // ← Цвет текста (белый)
     marginBottom: 2, // ← Отступ снизу
@@ -266,8 +266,8 @@ const styles = StyleSheet.create({
     flex: 1, // ← Равномерное распределение пространства
     aspectRatio: 1, // ← Квадратная форма
     marginHorizontal: 1, // ← Горизонтальные отступы между днями
-    borderRadius: 2, // ← Скругление углов
-    transform: [{ scale: 0.8 }], // ← Уменьшение размера на 10%
+    borderRadius: 4, // ← Скругление углов
+    transform: [{ scale: 0.9 }], // ← Уменьшение размера на 10%
   },
   // ← Стили для сегодняшнего дня
   todaySquare: {

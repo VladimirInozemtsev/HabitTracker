@@ -4,7 +4,7 @@ import { Appbar } from 'react-native-paper';
 import { Habit } from '../../services/api';
 import { HabitCard, ViewSelector, SquareHabitCard, PeriodSelector, ListHabitCard } from '../../components/ui';
 import { theme } from '../../theme/theme';
-import { ViewType } from '../../components/ui/ViewSelector';
+import { useApp } from '../../context/AppContext';
 
 interface HabitsScreenProps {
   habits: Habit[];
@@ -29,10 +29,28 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   weekStartsOn = 'monday', // ← ДОБАВЛЕНО: по умолчанию понедельник
   showBottomPanel = true // ← ДОБАВЛЕНО: по умолчанию показывать
 }) => {
-  // ← ДОБАВЛЕНО: состояние для выбранного вида карточек
-  const [selectedView, setSelectedView] = React.useState<ViewType>('grid');
-  // ← ДОБАВЛЕНО: состояние для выбранного периода (количество дней)
-  const [selectedPeriod, setSelectedPeriod] = React.useState<number>(5);
+  // ← ДОБАВЛЕНО: получаем глобальное состояние из контекста
+  const { selectedView, setSelectedView, selectedPeriod, setSelectedPeriod } = useApp();
+
+  // ← ДОБАВЛЕНО: функция для сохранения периода в localStorage
+  const savePeriodToStorage = async (period: number) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedSettings = window.localStorage.getItem('habitTrackerSettings');
+        const currentSettings = savedSettings ? JSON.parse(savedSettings) : {};
+        const newSettings = { ...currentSettings, selectedPeriod: period };
+        window.localStorage.setItem('habitTrackerSettings', JSON.stringify(newSettings));
+      }
+    } catch (error) {
+      console.error('Error saving period to storage:', error);
+    }
+  };
+
+  // ← ДОБАВЛЕНО: обновляем период и сохраняем в localStorage
+  const handlePeriodChange = (period: number) => {
+    setSelectedPeriod(period);
+    savePeriodToStorage(period);
+  };
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
@@ -91,10 +109,10 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
           ) : (
             // ← Список с селектором периода
             <View style={{ paddingHorizontal: 16 }}>
-              <PeriodSelector
-                selectedPeriod={selectedPeriod}
-                onPeriodChange={setSelectedPeriod}
-              />
+                              <PeriodSelector
+                  selectedPeriod={selectedPeriod}
+                  onPeriodChange={handlePeriodChange}
+                />
               {habits.map((habit) => (
                 <ListHabitCard
                   key={habit.id}

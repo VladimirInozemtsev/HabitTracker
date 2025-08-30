@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useGroups } from '../hooks/useGroups';
 import { useNavigation, Screen } from '../hooks/useNavigation';
 import { useResponsive } from '../hooks/useResponsive';
+import { ViewType } from '../components/ui/ViewSelector';
 
 // Типы для контекста
 interface AppContextType {
@@ -31,6 +32,10 @@ interface AppContextType {
   setSelectedHabit: (habit: any | null) => void;
   expandedGroups: Set<string>;
   setExpandedGroups: (groups: Set<string>) => void;
+  selectedView: ViewType;
+  setSelectedView: (view: ViewType) => void;
+  selectedPeriod: number;
+  setSelectedPeriod: (period: number) => void;
 }
 
 // Создаем контекст
@@ -49,6 +54,22 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const navigation = useNavigation();
   const responsive = useResponsive();
 
+  // ← ДОБАВЛЕНО: загрузка selectedPeriod из localStorage
+  const loadSelectedPeriod = (): number => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedSettings = window.localStorage.getItem('habitTrackerSettings');
+        if (savedSettings) {
+          const parsedSettings = JSON.parse(savedSettings);
+          return parsedSettings.selectedPeriod ?? 5;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading selectedPeriod:', error);
+    }
+    return 5; // значение по умолчанию
+  };
+
   // Глобальные состояния (пока используем useState, потом можно вынести в отдельные хуки)
   const [isDark, setIsDark] = React.useState(false);
   const [showAddModal, setShowAddModal] = React.useState(false);
@@ -58,6 +79,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [showHabitDetail, setShowHabitDetail] = React.useState(false);
   const [selectedHabit, setSelectedHabit] = React.useState<any | null>(null);
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(new Set());
+  const [selectedView, setSelectedView] = React.useState<ViewType>('grid');
+  const [selectedPeriod, setSelectedPeriod] = React.useState(loadSelectedPeriod()); // ← ИСПРАВЛЕНО: загружаем из localStorage
 
   // Значение контекста
   const contextValue: AppContextType = {
@@ -82,6 +105,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedHabit,
     expandedGroups,
     setExpandedGroups,
+    selectedView,
+    setSelectedView,
+    selectedPeriod,
+    setSelectedPeriod,
   };
 
   return (

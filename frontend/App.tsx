@@ -232,6 +232,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
             highlightCurrentDay={settings.highlightCurrentDay} // ← ДОБАВЛЕНО: передаем настройку
             weekStartsOn={settings.weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
             showBottomPanel={settings.showBottomPanel} // ← ДОБАВЛЕНО: передаем настройку панели
+
           />
         );
         
