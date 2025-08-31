@@ -33,7 +33,22 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   });
 
   // ← ДОБАВЛЕНО: получаем тему из контекста
-  const { theme } = useApp();
+  const { 
+    theme,
+    reminderSettings,
+    showReminderNotification,
+    setShowReminderNotification
+  } = useApp();
+
+  // ← ДОБАВЛЕНО: обработчики для уведомлений
+  const handleCheckHabits = () => {
+    setShowReminderNotification(false);
+    navigation.navigateTo('habits');
+  };
+
+  const handleSnoozeReminder = () => {
+    setShowReminderNotification(false);
+  };
 
   // ← ДОБАВЛЕНО: состояние для настроек
   const [settings, setSettings] = useState({

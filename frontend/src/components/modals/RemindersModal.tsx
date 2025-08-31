@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Button, Switch, Portal, Dialog, TextInput, IconButton } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
 import { createRemindersModalStyles } from '../../theme/styles/remindersModalStyles';
+import { TimePickerModal } from './TimePickerModal';
 
 interface RemindersModalProps {
   visible: boolean;
@@ -27,6 +28,7 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
 }) => {
   const { theme } = useApp();
   const [settings, setSettings] = React.useState<ReminderSettings>(currentSettings);
+  const [showTimePicker, setShowTimePicker] = React.useState(false);
   const styles = createRemindersModalStyles(theme);
 
   const daysOfWeek = [
@@ -50,6 +52,14 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
         ? prev.days.filter(d => d !== dayKey)
         : [...prev.days, dayKey]
     }));
+  };
+
+  const handleTimePress = () => {
+    setShowTimePicker(true);
+  };
+
+  const handleTimeSave = (time: string) => {
+    setSettings(prev => ({ ...prev, time }));
   };
 
   const handleSave = () => {
@@ -81,7 +91,11 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
               <Switch
                 value={settings.enabled}
                 onValueChange={handleToggleEnabled}
-                color={theme.colors.primary}
+                color={theme.colors.icons.purple}
+                trackColor={{
+                  false: theme.colors.divider,
+                  true: theme.colors.icons.purple,
+                }}
               />
             </View>
 
@@ -115,14 +129,18 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
             {/* Выбор времени */}
             <View style={styles.timeContainer}>
               <Text style={styles.sectionTitle}>Время напоминания</Text>
-              <View style={styles.timePicker}>
+              <TouchableOpacity 
+                style={styles.timePicker}
+                onPress={handleTimePress}
+                activeOpacity={0.7}
+              >
                 <IconButton
                   icon="clock-outline"
                   size={24}
                   iconColor={theme.colors.text.primary}
                 />
                 <Text style={styles.timeText}>{settings.time}</Text>
-              </View>
+              </TouchableOpacity>
             </View>
 
             {/* Кастомные поля */}
@@ -148,6 +166,17 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
                 multiline
               />
             </View>
+            {/* Кнопка тестирования */}
+            <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
+              <Button
+                mode="outlined"
+                onPress={() => onSave(settings)}
+                textColor={theme.colors.primary}
+                style={{ borderColor: theme.colors.primary }}
+              >
+                🧪 Протестировать уведомление
+              </Button>
+            </View>
           </ScrollView>
         </Dialog.Content>
         <Dialog.Actions style={styles.actionsContainer}>
@@ -167,6 +196,15 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
           </Button>
         </Dialog.Actions>
       </Dialog>
+
+      {/* TimePicker Modal */}
+      <TimePickerModal
+        visible={showTimePicker}
+        onClose={() => setShowTimePicker(false)}
+        onSave={handleTimeSave}
+        currentTime={settings.time}
+        theme={theme}
+      />
     </Portal>
   );
 };

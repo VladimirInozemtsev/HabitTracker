@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useGroups } from '../hooks/useGroups';
 import { useNavigation, Screen } from '../hooks/useNavigation';
 import { useResponsive } from '../hooks/useResponsive';
+import { useReminders } from '../hooks/useReminders';
 import { ViewType } from '../components/ui/ViewSelector';
 import { getCurrentTheme } from '../theme/theme'; // ← ДОБАВЛЕНО: импорт функции темы
 import { ReminderSettings } from '../components/modals/RemindersModal';
@@ -50,6 +51,8 @@ interface AppContextType {
   setSortType: (sortType: string) => void; // ← ДОБАВЛЕНО: функция изменения сортировки
   reminderSettings: ReminderSettings;
   setReminderSettings: (settings: ReminderSettings) => void;
+  showReminderNotification: boolean;
+  setShowReminderNotification: (show: boolean) => void;
 }
 
 // Создаем контекст
@@ -184,6 +187,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [selectedPeriod, setSelectedPeriod] = useState(loadSelectedPeriod()); // ← ИСПРАВЛЕНО: загружаем из localStorage
   const [sortType, setSortType] = useState(loadSortType()); // ← ДОБАВЛЕНО: загружаем из localStorage
   const [reminderSettings, setReminderSettings] = useState(loadReminderSettings()); // ← ДОБАВЛЕНО: загружаем из localStorage
+  const [showReminderNotification, setShowReminderNotification] = useState(false);
 
   // ← ДОБАВЛЕНО: функция изменения сортировки с сохранением
   const handleSetSortType = (newSortType: string) => {
@@ -195,6 +199,27 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   useEffect(() => {
     saveReminderSettings(reminderSettings);
   }, [reminderSettings]);
+
+  // ← ДОБАВЛЕНО: обработчик показа напоминания
+  const handleShowReminder = () => {
+    setShowReminderNotification(true);
+  };
+
+  // ← ДОБАВЛЕНО: обработчик отложить напоминание
+  const handleSnoozeReminder = () => {
+    setShowReminderNotification(false);
+    // Можно добавить логику откладывания на 15 минут
+  };
+
+  // ← ДОБАВЛЕНО: обработчик проверки привычек
+  const handleCheckHabits = () => {
+    setShowReminderNotification(false);
+    // Переходим на главный экран привычек
+    navigation.navigateTo('habits');
+  };
+
+  // ← ДОБАВЛЕНО: используем хук напоминаний
+  useReminders(reminderSettings, handleShowReminder);
 
   // Значение контекста
   const contextValue: AppContextType = {
@@ -237,6 +262,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSortType: handleSetSortType, // ← ДОБАВЛЕНО: функция изменения сортировки
     reminderSettings,
     setReminderSettings,
+    showReminderNotification,
+    setShowReminderNotification,
   };
 
   return (

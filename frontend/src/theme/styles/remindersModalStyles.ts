@@ -11,7 +11,7 @@ export const createRemindersModalStyles = (theme: any) => StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   contentScroll: {
-    maxHeight: 500,
+    maxHeight: 600, // Увеличиваем максимальную высоту
   },
   description: {
     color: theme.colors.text.secondary,
@@ -78,6 +78,7 @@ export const createRemindersModalStyles = (theme: any) => StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: theme.colors.border,
+    marginHorizontal: 16,
   },
   timeText: {
     color: theme.colors.text.primary,
