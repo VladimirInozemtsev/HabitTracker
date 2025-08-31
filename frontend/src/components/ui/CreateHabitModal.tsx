@@ -7,11 +7,11 @@ import { HABIT_ICONS, getAllIcons } from '../../config/icons';
 import { SERIES_GOALS, TRACKING_TYPES, TrackingType, HABIT_CATEGORIES } from '../../config/goals';
 
 // Импорт стилей
-import { modalStyles as styles } from '../../theme/styles/modalStyles';
-import { theme } from '../../theme/theme';
+import { createModalStyles } from '../../theme/styles/modalStyles';
 
 // Импорт компонентов
 import { CategoriesScreen } from '../../screens/PostLogin/CategoriesScreen';
+import { useApp } from '../../context/AppContext';
 
 // Цвета для привычек (24 ярких неоновых цвета)
 const HABIT_COLORS = [
@@ -37,6 +37,12 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
   editMode = false,
   habitData = null
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const styles = createModalStyles(theme);
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
@@ -202,12 +208,13 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               value={name}
               onChangeText={setName}
               placeholder="Название привычки"
-              placeholderTextColor="#666"
+              placeholderTextColor={theme.colors.text.secondary}
+              textColor={theme.colors.text.primary}
+              contentStyle={{ color: theme.colors.text.primary }}
               dense
               mode="outlined"
               outlineColor={theme.colors.text.primary}
               activeOutlineColor={theme.colors.text.primary}
-              contentStyle={{ paddingVertical: 4, color: '#ffffff', fontWeight: '600' }}
             />
             
             <Text style={styles.sectionTitle}>Описание</Text>
@@ -216,13 +223,14 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               value={description}
               onChangeText={setDescription}
               placeholder="Описание привычки"
-              placeholderTextColor="#666"
+              placeholderTextColor={theme.colors.text.secondary}
+              textColor={theme.colors.text.primary}
+              contentStyle={{ color: theme.colors.text.primary }}
               multiline
               dense
               mode="outlined"
               outlineColor={theme.colors.text.primary}
               activeOutlineColor={theme.colors.text.primary}
-              contentStyle={{ paddingVertical: 4, color: '#ffffff', fontWeight: '600' }}
             />
           </View>
 
@@ -264,7 +272,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             <View style={styles.advancedSettings}>
               {/* Series Goal */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Цель серии</Text>
+                                 <Text style={styles.sectionTitle}>Цель серии</Text>
                 <View style={styles.goalOptions}>
                   {SERIES_GOALS.map((goal) => (
                     <TouchableOpacity
@@ -288,7 +296,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
 
               {/* Tracking Type */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Как отслеживать выполнения?</Text>
+                                 <Text style={styles.sectionTitle}>Как отслеживать выполнения?</Text>
                 <View style={styles.trackingOptions}>
                   <TouchableOpacity
                     style={[
@@ -319,7 +327,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <Text style={styles.trackingDescription}>
+                                 <Text style={styles.trackingDescription}>
                   {trackingType === TRACKING_TYPES.step 
                     ? 'Увеличивать на 1 с каждым выполнением'
                     : 'Вводить количество выполнений вручную'
@@ -329,7 +337,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
 
               {/* Daily Target */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Выполнений в день</Text>
+                                 <Text style={styles.sectionTitle}>Выполнений в день</Text>
                 <View style={styles.targetControls}>
                   <View style={styles.targetDisplay}>
                     <Text style={styles.targetText}>{dailyTarget} / День</Text>
@@ -349,14 +357,14 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                     </TouchableOpacity>
                   </View>
                 </View>
-                <Text style={styles.targetDescription}>
+                                 <Text style={styles.targetDescription}>
                   Квадрат будет полностью заполнен при достижении этого числа
                 </Text>
               </View>
 
               {/* Categories */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Категории</Text>
+                                 <Text style={styles.sectionTitle}>Категории</Text>
                 <TouchableOpacity 
                   style={styles.categoriesButton}
                   onPress={() => setShowCategoriesScreen(true)}
@@ -384,7 +392,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                         )}
                       </View>
                     ) : (
-                      <Text style={styles.categoriesButtonText}>Выбрать категории</Text>
+                                             <Text style={styles.categoriesButtonText}>Выбрать категории</Text>
                     )}
                   </View>
                   <IconButton
@@ -397,9 +405,9 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
 
               {/* Reminder */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Напоминание</Text>
+                                 <Text style={styles.sectionTitle}>Напоминание</Text>
                 <TouchableOpacity style={styles.reminderButton}>
-                  <Text style={styles.reminderButtonText}>
+                                     <Text style={styles.reminderButtonText}>
                     {reminderTime || 'Нет'}
                   </Text>
                   <IconButton
@@ -418,9 +426,9 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
           <Button
             mode="contained"
             onPress={handleSave}
-            style={styles.saveButton}
-            disabled={!name.trim()}
-            labelStyle={styles.saveButtonLabel}
+                         style={styles.saveButton}
+             disabled={!name.trim()}
+             labelStyle={styles.saveButtonLabel}
           >
             {editMode ? 'Сохранить изменения' : 'Сохранить'}
           </Button>

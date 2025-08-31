@@ -26,7 +26,7 @@ class HabitViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Habit.objects.filter(user=self.request.user)
+        queryset = Habit.objects.filter(user=self.request.user, is_archived=False)
         
         # Фильтрация по группе
         group_id = self.request.query_params.get('group', None)
@@ -190,4 +190,99 @@ def complete_habit(request, habit_id):
         return Response({'error': 'Привычка не найдена'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(f"Error in complete_habit: {e}")
+        return Response({'error': 'Внутренняя ошибка сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def archive_habit(request, habit_id):
+    """Архивировать привычку"""
+    try:
+        habit = Habit.objects.get(id=habit_id, user=request.user)
+        
+        if habit.is_archived:
+            return Response({'error': 'Привычка уже в архиве'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        habit.archive()
+        
+        return Response({
+            'message': 'Привычка перемещена в архив',
+            'habit_id': str(habit.id)
+        }, status=status.HTTP_200_OK)
+        
+    except Habit.DoesNotExist:
+        return Response({'error': 'Привычка не найдена'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error in archive_habit: {e}")
+        return Response({'error': 'Внутренняя ошибка сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unarchive_habit(request, habit_id):
+    """Восстановить привычку из архива"""
+    try:
+        habit = Habit.objects.get(id=habit_id, user=request.user)
+        
+        if not habit.is_archived:
+            return Response({'error': 'Привычка не в архиве'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        habit.unarchive()
+        
+        return Response({
+            'message': 'Привычка восстановлена из архива',
+            'habit_id': str(habit.id)
+        }, status=status.HTTP_200_OK)
+        
+    except Habit.DoesNotExist:
+        return Response({'error': 'Привычка не найдена'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error in unarchive_habit: {e}")
+        return Response({'error': 'Внутренняя ошибка сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def archived_habits(request):
+    """Получить список архивных привычек"""
+    try:
+        archived_habits = Habit.objects.filter(
+            user=request.user,
+            is_archived=True
+        ).order_by('-archived_at')
+        
+        serializer = HabitSerializer(archived_habits, many=True)
+        
+        return Response({
+            'habits': serializer.data,
+            'count': len(serializer.data)
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        print(f"Error in archived_habits: {e}")
+        return Response({'error': 'Внутренняя ошибка сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['DELETE'])
+@permission_classes([permissions.IsAuthenticated])
+def delete_habit(request, habit_id):
+    """Удалить привычку навсегда"""
+    try:
+        habit = Habit.objects.get(id=habit_id, user=request.user)
+        
+        # Удаляем все связанные логи
+        HabitLog.objects.filter(habit=habit).delete()
+        
+        # Удаляем привычку
+        habit.delete()
+        
+        return Response({
+            'message': 'Привычка удалена навсегда',
+            'habit_id': str(habit_id)
+        }, status=status.HTTP_200_OK)
+        
+    except Habit.DoesNotExist:
+        return Response({'error': 'Привычка не найдена'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error in delete_habit: {e}")
         return Response({'error': 'Внутренняя ошибка сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

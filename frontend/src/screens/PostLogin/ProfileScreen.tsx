@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { screenStyles } from '../../theme/styles/screenStyles';
+import { createScreenStyles } from '../../theme/styles/screenStyles';
+import { useApp } from '../../context/AppContext';
 
 interface ProfileScreenProps {
   onLogout: () => void;
@@ -9,32 +10,36 @@ interface ProfileScreenProps {
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({ 
   onLogout 
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  const styles = createScreenStyles(theme);
+
   return (
     <ScrollView 
-      style={screenStyles.screenContainer}
-      contentContainerStyle={screenStyles.screenContentContainer}
+      style={[styles.screenContainer, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={styles.screenContentContainer}
     >
-      <Text style={screenStyles.screenTitle}>👤 Профиль</Text>
-      <TouchableOpacity style={screenStyles.profileCard}>
-        <Text style={screenStyles.profileTitle}>Пользователь</Text>
-        <Text style={screenStyles.profileText}>demo</Text>
+      <Text style={[styles.screenTitle, { color: theme.colors.text.primary }]}>👤 Профиль</Text>
+      <TouchableOpacity style={[styles.profileCard, { backgroundColor: theme.colors.surface }]}>
+        <Text style={[styles.profileTitle, { color: theme.colors.text.primary }]}>Пользователь</Text>
+        <Text style={[styles.profileText, { color: theme.colors.text.secondary }]}>demo</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={screenStyles.profileCard}>
-        <Text style={screenStyles.profileTitle}>Email</Text>
-        <Text style={screenStyles.profileText}>demo@example.com</Text>
+      <TouchableOpacity style={[styles.profileCard, { backgroundColor: theme.colors.surface }]}>
+        <Text style={[styles.profileTitle, { color: theme.colors.text.primary }]}>Email</Text>
+        <Text style={[styles.profileText, { color: theme.colors.text.secondary }]}>demo@example.com</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={screenStyles.profileCard}>
-        <Text style={screenStyles.profileTitle}>Дата регистрации</Text>
-        <Text style={screenStyles.profileText}>24 августа 2025</Text>
+      <TouchableOpacity style={[styles.profileCard, { backgroundColor: theme.colors.surface }]}>
+        <Text style={[styles.profileTitle, { color: theme.colors.text.primary }]}>Дата регистрации</Text>
+        <Text style={[styles.profileText, { color: theme.colors.text.secondary }]}>24 августа 2025</Text>
       </TouchableOpacity>
       
       <TouchableOpacity 
-        style={[screenStyles.loadButton, { backgroundColor: '#f44336' }]} 
+        style={[styles.loadButton, { backgroundColor: theme.colors.error }]} 
         onPress={onLogout}
       >
-        <Text style={screenStyles.loadButtonText}>Выйти</Text>
+        <Text style={[styles.loadButtonText, { color: theme.colors.background }]}>Выйти</Text>
       </TouchableOpacity>
     </ScrollView>
   );

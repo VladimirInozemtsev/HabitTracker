@@ -1,12 +1,13 @@
-import React from 'react'; // ← Импорт React для создания компонента
+import React, { useState } from 'react'; // ← Импорт React для создания компонента
 import { View, TouchableOpacity, StyleSheet } from 'react-native'; // ← Базовые компоненты React Native
 import { Text } from 'react-native-paper'; // ← UI компоненты из react-native-paper
 import { MaterialIcons } from '@expo/vector-icons'; // ← Иконки Material Design
-import { Habit } from '../../services/api'; // ← Тип данных привычки из API
+import { Habit } from '../../types/habit'; // ← Тип данных привычки из API
 import { getHabitColor } from '../../theme/theme'; // ← Функция получения цвета привычки
-import { getHabitStatusStyle } from '../../theme/styles/cardStyles'; // ← Стили для статуса
-import { theme } from '../../theme/theme'; // ← Объект темы с цветами
+
+import { useApp } from '../../context/AppContext'; // ← Контекст приложения
 import { getMutedColor } from '../../utils/colors'; // ← Функция получения приглушенного цвета
+import { ArchiveMenuModal } from '../modals/ArchiveMenuModal';
 
 // ← Интерфейс пропсов для компонента ListHabitCard
 interface ListHabitCardProps {
@@ -25,6 +26,11 @@ export const ListHabitCard: React.FC<ListHabitCardProps> = ({
   selectedPeriod, // ← Выбранный период
   highlightCurrentDay = true // ← По умолчанию подсвечиваем текущий день
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Состояние для модального окна архивирования
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
   // ← Получаем цвет привычки (из настроек или генерируем по ID)
   const baseColor = habit.color || getHabitColor(habit.id);
   
@@ -78,21 +84,38 @@ export const ListHabitCard: React.FC<ListHabitCardProps> = ({
   
   // ← Рендерим компонент
   return (
-    // ← Основной контейнер карточки (нажимаемый)
-    <TouchableOpacity 
-      style={styles.container} 
-      onPress={onPress}
-    >
+    <>
+      {/* ← Основной контейнер карточки (нажимаемый) */}
+      <TouchableOpacity 
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center' as const,
+          backgroundColor: theme.colors.surface,
+          borderRadius: 12,
+          padding: 5,
+          marginBottom: 5,
+          elevation: 2,
+          minHeight: 30,
+          maxHeight: 50,
+        }} 
+        onPress={onPress}
+        onLongPress={() => setShowArchiveModal(true)}
+        activeOpacity={0.8}
+      >
       {/* ← Иконка статуса слева */}
-             <TouchableOpacity
-         style={[
-           styles.statusIcon,
-           getHabitStatusStyle(baseColor, habit.is_completed_today), // ← Динамические стили статуса
-           { width: 32, height: 32, marginRight: 12 } // ← ПЕРЕЗАПИСЫВАЕМ размеры + отступ
-         ]}
-        onPress={onToggleStatus} // ← Обработчик нажатия
-        disabled={!onToggleStatus} // ← Отключаем если нет функции переключения
-        activeOpacity={0.7} // ← Прозрачность при нажатии
+      <TouchableOpacity
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          justifyContent: 'center' as const,
+          alignItems: 'center' as const,
+          marginRight: 12,
+          backgroundColor: habit.is_completed_today ? baseColor : getMutedColor(baseColor),
+        }}
+        onPress={onToggleStatus}
+        disabled={!onToggleStatus}
+        activeOpacity={0.7}
       >
         {/* ← Показываем галочку если привычка выполнена сегодня */}
         {habit.is_completed_today ? (
@@ -114,8 +137,18 @@ export const ListHabitCard: React.FC<ListHabitCardProps> = ({
       {/* ← Название привычки */}
       <Text 
         style={[
-          styles.habitName,
-          { backgroundColor: getMutedColor(baseColor) } // ← Фон текста = приглушенный цвет привычки
+          {
+            flex: 1,
+            fontSize: 16,
+            fontWeight: '600',
+            color: theme.colors.text.primary,
+            marginLeft: 2,
+            marginRight: 12,
+            paddingHorizontal: 4,
+            paddingVertical: 6,
+            borderRadius: 6,
+          },
+          { backgroundColor: getMutedColor(baseColor) }
         ]} 
         numberOfLines={1}
       >
@@ -123,76 +156,43 @@ export const ListHabitCard: React.FC<ListHabitCardProps> = ({
       </Text>
       
       {/* ← Сетка статусов справа */}
-      <View style={styles.statusGrid}>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginRight: 10,
+      }}>
         {statusGrid.map((status, index) => (
           // ← Квадрат статуса дня
           <View
             key={index}
             style={[
-              styles.statusSquare, // ← Базовые стили квадрата
-              { backgroundColor: getMutedColor(baseColor) }, // ← Приглушенный цвет по умолчанию
-              status.completed && { backgroundColor: baseColor }, // ← Цвет привычки если выполнено
-              highlightCurrentDay && status.isToday && styles.todaySquare, // ← Белая рамка для сегодня
-              index === 0 && { marginLeft: 0 } // ← У первого квадрата нет отступа слева
+              {
+                width: 20,
+                height: 20,
+                borderRadius: 4,
+                marginLeft: 4,
+              },
+              { backgroundColor: getMutedColor(baseColor) },
+              status.completed && { backgroundColor: baseColor },
+              highlightCurrentDay && status.isToday && {
+                borderWidth: 1,
+                borderColor: theme.colors.text.primary,
+              },
+              index === 0 && { marginLeft: 0 }
             ]}
           />
         ))}
       </View>
     </TouchableOpacity>
+
+    {/* Модальное окно архивирования */}
+    <ArchiveMenuModal
+      visible={showArchiveModal}
+      habit={habit}
+      onClose={() => setShowArchiveModal(false)}
+    />
+  </>
   );
 };
 
-// ← Стили компонента
-const styles = StyleSheet.create({
-  // ← Основной контейнер карточки
-  container: {
-    flexDirection: 'row', // ← Горизонтальное расположение элементов
-    alignItems: 'center', // ← Выравнивание по центру
-    backgroundColor: theme.colors.surface, // ← Цвет фона карточки (серый)
-    borderRadius: 12, // ← Скругление углов
-    padding: 5, // ← УБРАЛ: лишние отступы
-    marginBottom: 5, // ← Внешние отступы снизу
-    elevation: 2, // ← Тень (Android)
-    minHeight: 30, // ← Минимальная высота
-    maxHeight: 50, // ← Максимальная высота
-  },
-  // ← Иконка статуса
-  statusIcon: {
-    width: 40, // ← Ширина иконки
-    height: 40, // ← Высота иконки
-    borderRadius: 8, // ← Скругление углов
-    justifyContent: 'center', // ← Выравнивание по центру по горизонтали
-    alignItems: 'center', // ← Выравнивание по центру по вертикали
-    marginLeft: 10, // ← ДОБАВЛЕНО: компенсация убранного padding
-  },
-  // ← Название привычки
-  habitName: {
-    flex: 1, // ← Занимает оставшееся пространство
-    fontSize: 16, // ← Размер шрифта
-    fontWeight: '600', // ← Жирность шрифта
-    color: theme.colors.text.primary, // ← Цвет текста (белый)
-    marginLeft: 2, // ← Отступ слева от иконки
-    marginRight: 12, // ← Отступ справа от иконки
-    paddingHorizontal: 4, // ← Горизонтальные отступы для фона
-    paddingVertical: 6, // ← Вертикальные отступы для фона
-    borderRadius: 6, // ← Скругление углов фона
-  },
-  // ← Сетка статусов
-  statusGrid: {
-    flexDirection: 'row', // ← Горизонтальное расположение квадратов
-    justifyContent: 'flex-end', // ← Прижимаем к правому краю
-    marginRight: 10, // ← ДОБАВЛЕНО: компенсация убранного padding
-  },
-  // ← Квадрат статуса дня
-  statusSquare: {
-    width: 20, // ← Ширина квадрата
-    height: 20, // ← Высота квадрата
-    borderRadius: 4, // ← Скругление углов
-    marginLeft: 4, // ← Отступ между квадратами (СИНХРОНИЗИРОВАНО с PeriodSelector)
-  },
-  // ← Стили для сегодняшнего дня
-  todaySquare: {
-    borderWidth: 1, // ← Ширина рамки
-    borderColor: theme.colors.text.primary, // ← Цвет рамки (белый)
-  },
-});
+

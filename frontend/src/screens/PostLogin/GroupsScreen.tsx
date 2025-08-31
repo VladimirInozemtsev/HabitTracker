@@ -1,8 +1,9 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { screenStyles } from '../../theme/styles/screenStyles';
-import { groupStyles } from '../../theme/styles/groupStyles';
+import { createScreenStyles } from '../../theme/styles/screenStyles';
+import { createGroupStyles } from '../../theme/styles/groupStyles';
+import { useApp } from '../../context/AppContext';
 
 interface GroupsScreenProps {
   groups: any[];
@@ -21,17 +22,22 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
   onOpenAddGroupModal,
   onLoadGroups
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  const styles = createScreenStyles(theme);
+  const groupStyles = createGroupStyles(theme);
+
   return (
     <ScrollView 
-      style={screenStyles.screenContainer}
-      contentContainerStyle={screenStyles.screenContentContainer}
+      style={[styles.screenContainer, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={styles.screenContentContainer}
     >
-      <Text style={screenStyles.screenTitle}>Группы привычек</Text>
+      <Text style={[styles.screenTitle, { color: theme.colors.text.primary }]}>Группы привычек</Text>
       <TouchableOpacity
-        style={screenStyles.addButton}
+        style={[styles.loadButton, { backgroundColor: theme.colors.primary }]}
         onPress={onOpenAddGroupModal}
       >
-        <Text style={screenStyles.addButtonText}>+</Text>
+        <Text style={[styles.loadButtonText, { color: theme.colors.background }]}>+</Text>
       </TouchableOpacity>
       {groups.length > 0 ? (
         <View style={groupStyles.groupsContainer}>
@@ -41,18 +47,18 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
             const habitsCount = groupHabitsList.length;
             
             return (
-              <View key={group.id} style={groupStyles.groupCard}>
+              <View key={group.id} style={[groupStyles.groupCard, { backgroundColor: theme.colors.surface }]}>
                 <TouchableOpacity 
                   style={groupStyles.groupHeader}
                   onPress={() => onToggleGroupExpansion(group.id)}
                 >
                   <View style={[groupStyles.groupColor, { backgroundColor: group.color }]} />
                   <View style={groupStyles.groupInfo}>
-                    <Text style={groupStyles.groupName}>{group.name}</Text>
-                    <Text style={groupStyles.groupDescription}>{group.description || 'Без описания'}</Text>
-                    <Text style={groupStyles.groupCount}>{habitsCount} привычек</Text>
+                    <Text style={[groupStyles.groupName, { color: theme.colors.text.primary }]}>{group.name}</Text>
+                    <Text style={[groupStyles.groupDescription, { color: theme.colors.text.secondary }]}>{group.description || 'Без описания'}</Text>
+                    <Text style={[groupStyles.groupCount, { color: theme.colors.text.secondary }]}>{habitsCount} привычек</Text>
                   </View>
-                  <Text style={[groupStyles.expandIcon, isExpanded && groupStyles.expandIconRotated]}>
+                  <Text style={[groupStyles.expandIcon, isExpanded && groupStyles.expandIconRotated, { color: theme.colors.text.primary }]}>
                     {isExpanded ? '▼' : '▶'}
                   </Text>
                 </TouchableOpacity>
@@ -62,10 +68,10 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                     {groupHabitsList.length > 0 ? (
                       groupHabitsList.map((habit) => (
                         <View key={habit.id} style={groupStyles.groupHabitItem}>
-                          <Text style={groupStyles.groupHabitName}>{habit.name}</Text>
+                          <Text style={[groupStyles.groupHabitName, { color: theme.colors.text.primary }]}>{habit.name}</Text>
                           <View style={[
                             groupStyles.groupHabitStatus,
-                            { backgroundColor: habit.is_completed_today ? '#4CAF50' : '#E0E0E0' }
+                            { backgroundColor: habit.is_completed_today ? theme.colors.success : theme.colors.divider }
                           ]}>
                             <Text style={groupStyles.groupHabitStatusText}>
                               {habit.is_completed_today ? '✅' : '⭕'}
@@ -74,7 +80,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                         </View>
                       ))
                     ) : (
-                      <Text style={groupStyles.noHabitsText}>В этой группе пока нет привычек</Text>
+                      <Text style={[groupStyles.noHabitsText, { color: theme.colors.text.secondary }]}>В этой группе пока нет привычек</Text>
                     )}
                   </View>
                 )}
@@ -83,8 +89,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
           })}
         </View>
       ) : (
-        <TouchableOpacity style={screenStyles.loadButton} onPress={onLoadGroups}>
-          <Text style={screenStyles.loadButtonText}>Загрузить группы</Text>
+        <TouchableOpacity style={[styles.loadButton, { backgroundColor: theme.colors.primary }]} onPress={onLoadGroups}>
+          <Text style={[styles.loadButtonText, { color: theme.colors.background }]}>Загрузить группы</Text>
         </TouchableOpacity>
       )}
     </ScrollView>

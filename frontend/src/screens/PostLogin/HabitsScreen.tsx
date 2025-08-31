@@ -3,7 +3,6 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { Habit } from '../../services/api';
 import { HabitCard, ViewSelector, SquareHabitCard, PeriodSelector, ListHabitCard } from '../../components/ui';
-import { theme } from '../../theme/theme';
 import { useApp } from '../../context/AppContext';
 
 interface HabitsScreenProps {
@@ -30,7 +29,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   showBottomPanel = true // ← ДОБАВЛЕНО: по умолчанию показывать
 }) => {
   // ← ДОБАВЛЕНО: получаем глобальное состояние из контекста
-  const { selectedView, setSelectedView, selectedPeriod, setSelectedPeriod } = useApp();
+  const { selectedView, setSelectedView, selectedPeriod, setSelectedPeriod, theme } = useApp();
 
   // ← ДОБАВЛЕНО: функция для сохранения периода в localStorage
   const savePeriodToStorage = async (period: number) => {
@@ -57,23 +56,23 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
         <Appbar.Action 
           icon="cog" 
           onPress={onSettingsPress}
-          iconColor="#fff"
+          iconColor={theme.colors.text.primary}
         />
         <Appbar.Content 
           title="HabitTracker" 
           subtitle=""
-          titleStyle={{ color: '#fff', fontSize: 20, fontWeight: 'bold' }}
-          subtitleStyle={{ color: '#fff', fontSize: 14, opacity: 0.9 }}
+          titleStyle={{ color: theme.colors.text.primary, fontSize: 20, fontWeight: 'bold' }}
+          subtitleStyle={{ color: theme.colors.text.primary, fontSize: 14, opacity: 0.9 }}
         />
         <Appbar.Action 
           icon="chart-bar" 
           onPress={() => {}}
-          iconColor="#fff"
+          iconColor={theme.colors.text.primary}
         />
         <Appbar.Action 
           icon="plus" 
           onPress={onOpenAddModal}
-          iconColor="#fff"
+          iconColor={theme.colors.text.primary}
         />
       </Appbar.Header>
       

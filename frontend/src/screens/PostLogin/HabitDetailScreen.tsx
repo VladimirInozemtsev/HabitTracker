@@ -3,11 +3,12 @@ import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Card, Chip, Appbar, IconButton } from 'react-native-paper';
 import { HabitGrid } from '../../components/ui/HabitGrid';
 import { HabitCalendar } from '../../components/ui/HabitCalendar';
-import { detailStyles } from '../../theme/styles/detailStyles';
-import { theme, getHabitColor } from '../../theme/theme';
+import { createDetailStyles } from '../../theme/styles/detailStyles';
+import { getHabitColor } from '../../theme/theme';
 import { Habit } from '../../services/api';
 import { HABIT_CATEGORIES, SERIES_GOALS } from '../../config/goals';
 import { calculateCurrentStreak } from '../../utils/streak';
+import { useApp } from '../../context/AppContext';
 
 interface HabitDetailScreenProps {
   habit: Habit;
@@ -26,6 +27,12 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
   highlightCurrentDay = true, // ← ДОБАВЛЕНО: по умолчанию включено
   weekStartsOn = 'monday' // ← ДОБАВЛЕНО: по умолчанию понедельник
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const detailStyles = createDetailStyles(theme);
+
   // Определяем иконку для первой кнопки (иконка деятельности)
   const categoryIcon = habit.icon || "target";
   
@@ -41,9 +48,9 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
         <Appbar.BackAction 
           onPress={onBack} 
-          iconColor="#ffffff"
+          iconColor={theme.colors.text.primary}
         />
-        <Appbar.Content title={habit.name} />
+        <Appbar.Content title={habit.name} titleStyle={{ color: theme.colors.text.primary }} />
       </Appbar.Header>
       
       <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -72,7 +79,7 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
               <View style={detailStyles.actionBar}>
                 <IconButton
                   icon={categoryIcon}
-                  iconColor="#ffffff"
+                  iconColor={theme.colors.text.primary}
                   size={24}
                   style={detailStyles.actionButton}
                 />
@@ -84,7 +91,7 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
                 <View style={detailStyles.streakCounter}>
                   <IconButton
                     icon="fire"
-                    iconColor="#ffffff"
+                    iconColor={theme.colors.text.primary}
                     size={20}
                     style={detailStyles.streakIcon}
                   />
@@ -92,14 +99,14 @@ export const HabitDetailScreen: React.FC<HabitDetailScreenProps> = ({
                 </View>
                 <IconButton
                   icon="pencil"
-                  iconColor="#ffffff"
+                  iconColor={theme.colors.text.primary}
                   size={24}
                   style={detailStyles.actionButton}
                   onPress={() => onEditHabit(habit)}
                 />
                 <IconButton
                   icon="cog"
-                  iconColor="#ffffff"
+                  iconColor={theme.colors.text.primary}
                   size={24}
                   style={detailStyles.actionButton}
                 />

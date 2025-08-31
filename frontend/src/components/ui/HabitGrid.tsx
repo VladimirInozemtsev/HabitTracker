@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { theme } from '../../theme/theme';
+import { useApp } from '../../context/AppContext';
 import { getMutedColor } from '../../utils/colors';
 // import { formatDate } from '../../utils/format'; // ← УДАЛЕНО: не используется
 
@@ -15,8 +15,6 @@ interface HabitGridProps {
   weekStartsOn?: string; // ← ДОБАВЛЕНО: день начала недели
 }
 
-
-
 export const HabitGrid: React.FC<HabitGridProps> = ({
   habitId,
   color,
@@ -26,6 +24,9 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
   highlightCurrentDay = true, // ← ДОБАВЛЕНО: по умолчанию включено
   weekStartsOn = 'monday' // ← ДОБАВЛЕНО: по умолчанию понедельник
 }) => {
+  const { theme } = useApp();
+  const styles = createStyles(theme);
+  
   // Обновляем дату при каждом рендере
   const [currentDate, setCurrentDate] = React.useState(new Date());
   
@@ -180,7 +181,7 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     // компенсируем внутренний паддинг карточки, чтобы сетка занимала всю ширину
     marginHorizontal: -16, // больше компенсация для полного растяжения
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   },
   today: {
     borderWidth: 2,
-    borderColor: '#ffffff', // ← ДОБАВЛЕНО: белая рамка для текущего дня
+    borderColor: theme.colors.text.primary, // ← ДОБАВЛЕНО: цвет рамки из темы
   },
   // пустых дней нет — базовый цвет задаётся в day
   future: {},

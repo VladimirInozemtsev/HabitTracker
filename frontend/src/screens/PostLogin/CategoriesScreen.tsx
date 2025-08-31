@@ -6,7 +6,8 @@ import { Text, IconButton } from 'react-native-paper';
 import { HABIT_CATEGORIES } from '../../config/goals';
 
 // Импорт стилей
-import { modalStyles as styles } from '../../theme/styles/modalStyles';
+import { createModalStyles } from '../../theme/styles/modalStyles';
+import { useApp } from '../../context/AppContext';
 
 interface CategoriesScreenProps {
   visible: boolean;
@@ -21,6 +22,12 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
   onSave,
   selectedCategories = []
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const styles = createModalStyles(theme);
+
   const [selected, setSelected] = useState<string[]>(selectedCategories);
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -47,7 +54,7 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
         <View style={styles.header}>
           <IconButton
             icon="close"
-            iconColor={undefined}
+            iconColor={theme.colors.text.primary}
             size={24}
             onPress={onClose}
           />
@@ -77,7 +84,7 @@ export const CategoriesScreen: React.FC<CategoriesScreenProps> = ({
                 >
                   <IconButton
                     icon={category.icon}
-                    iconColor={undefined}
+                    iconColor={theme.colors.text.primary}
                     size={24}
                     style={styles.categoryIcon}
                   />

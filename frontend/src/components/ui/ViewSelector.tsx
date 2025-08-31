@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { theme } from '../../theme/theme';
+import { useApp } from '../../context/AppContext';
 
 export type ViewType = 'grid' | 'square' | 'list';
 
@@ -14,6 +14,8 @@ export const ViewSelector: React.FC<ViewSelectorProps> = ({
   selectedView,
   onViewChange,
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
   const views: { type: ViewType; icon: string }[] = [
     { type: 'grid', icon: 'grid-view' },
     { type: 'square', icon: 'crop-square' },
@@ -21,13 +23,31 @@ export const ViewSelector: React.FC<ViewSelectorProps> = ({
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={{
+      flexDirection: 'row',
+      backgroundColor: theme.colors.surface,
+      borderRadius: 15,
+      padding: 4,
+      marginHorizontal: 120,
+      marginVertical: 4,
+      borderWidth: 0,
+      elevation: 0,
+    }}>
       {views.map((view) => (
         <TouchableOpacity
           key={view.type}
           style={[
-            styles.iconButton,
-            selectedView === view.type && styles.activeIconButton,
+            {
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              borderRadius: 12,
+            },
+            selectedView === view.type && {
+              backgroundColor: 'transparent',
+            },
           ]}
           onPress={() => onViewChange(view.type)}
         >
@@ -46,26 +66,4 @@ export const ViewSelector: React.FC<ViewSelectorProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.surface, // ← ИЗМЕНЕНО: серый фон
-    borderRadius: 15,
-    padding: 4,
-    marginHorizontal: 120, // ← ИЗМЕНЕНО: увеличил отступы для заужения
-    marginVertical: 4,
-    borderWidth: 0, // ← ИЗМЕНЕНО: убрал границу
-    elevation: 0, // ← ИЗМЕНЕНО: убрал тень
-  },
-  iconButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-  },
-  activeIconButton: {
-    backgroundColor: 'transparent', // ← ИЗМЕНЕНО: прозрачный фон для активной кнопки
-  },
-});
+

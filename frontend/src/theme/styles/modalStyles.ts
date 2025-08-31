@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../theme';
 
-export const modalStyles = StyleSheet.create({
+export const createModalStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
@@ -34,7 +33,7 @@ export const modalStyles = StyleSheet.create({
     marginBottom: 12,
   },
   input: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     color: theme.colors.text.primary,
     fontWeight: '600',
     marginBottom: 8,
@@ -77,7 +76,7 @@ export const modalStyles = StyleSheet.create({
   iconItemSelected: {
     borderColor: theme.colors.text.primary,
     borderWidth: 2,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
   },
   iconButton: {
     margin: 0,
@@ -164,7 +163,7 @@ export const modalStyles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   goalOptionSelected: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     borderColor: theme.colors.text.primary,
   },
   goalOptionText: {
@@ -191,7 +190,7 @@ export const modalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   trackingOptionSelected: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     borderColor: theme.colors.text.primary,
   },
   trackingOptionText: {
@@ -215,7 +214,7 @@ export const modalStyles = StyleSheet.create({
   },
   targetDisplay: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.text.primary,
     borderRadius: 8,
@@ -234,7 +233,7 @@ export const modalStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -252,7 +251,7 @@ export const modalStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.text.primary,
     borderRadius: 8,
@@ -268,9 +267,9 @@ export const modalStyles = StyleSheet.create({
     borderTopColor: theme.colors.divider,
   },
   saveButton: {
-    backgroundColor: theme.colors.accent.cyan,
+    backgroundColor: theme.colors.primary,
   },
-  // Цвет текста на кнопке Сохранить — чёрный
+  // Цвет текста на кнопке Сохранить
   saveButtonLabel: {
     color: theme.colors.background,
     fontWeight: '700',
@@ -309,7 +308,7 @@ export const modalStyles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.card,
+    backgroundColor: theme.colors.background,
     borderWidth: 2,
     borderColor: theme.colors.text.primary,
     justifyContent: 'center',
@@ -397,7 +396,7 @@ export const modalStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.text.primary,
     borderRadius: 8,

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Card, Text, IconButton } from 'react-native-paper';
 import { Habit } from '../../services/api';
 import { HabitGrid } from './HabitGrid';
 import { getHabitColor } from '../../theme/theme';
-import { cardStyles, getHabitStatusStyle, getHabitIconStyle } from '../../theme/styles/cardStyles';
+import { createCardStyles, getHabitStatusStyle, getHabitIconStyle } from '../../theme/styles/cardStyles';
+import { useApp } from '../../context/AppContext';
+import { ArchiveMenuModal } from '../modals/ArchiveMenuModal';
 
 interface HabitCardProps {
   habit: Habit;
@@ -17,15 +19,26 @@ interface HabitCardProps {
 
 
 export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress, onToggleStatus, highlightCurrentDay = true, weekStartsOn = 'monday' }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Состояние для модального окна архивирования
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  
+  // Создаем стили с текущей темой
+  const cardStyles = createCardStyles(theme);
   const baseColor = habit.color || getHabitColor(habit.id);
   return (
-    <Card
-      style={[
-        cardStyles.habitCard,
-        isTablet && cardStyles.habitCardTablet
-      ]}
-      onPress={onPress}
-    >
+    <>
+      <TouchableOpacity
+        style={[
+          cardStyles.habitCard,
+          isTablet && cardStyles.habitCardTablet
+        ]}
+        onPress={onPress}
+        onLongPress={() => setShowArchiveModal(true)}
+        activeOpacity={0.8}
+      >
       <Card.Content style={[
         cardStyles.habitCardContent,
         isTablet && cardStyles.habitCardContentTablet
@@ -101,7 +114,15 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, isTablet, onPress, 
           weekStartsOn={weekStartsOn} // ← ДОБАВЛЕНО: передаем настройку дня недели
         />
       </Card.Content>
-    </Card>
+      </TouchableOpacity>
+
+      {/* Модальное окно архивирования */}
+      <ArchiveMenuModal
+        visible={showArchiveModal}
+        habit={habit}
+        onClose={() => setShowArchiveModal(false)}
+      />
+    </>
   );
 };
 

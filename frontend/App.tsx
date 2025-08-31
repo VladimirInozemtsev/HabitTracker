@@ -9,13 +9,13 @@ import { Provider as PaperProvider, Text } from 'react-native-paper';
 import { BottomNavigation, ModalManager } from './src/components/ui';
 import { SettingsScreen } from './src/screens/PostLogin/SettingsScreen';
 import { GeneralSettingsScreen } from './src/screens/PostLogin/GeneralSettingsScreen';
-import { theme } from './src/theme/theme';
 import { HabitsScreen } from './src/screens/PostLogin/HabitsScreen';
 import { StatsScreen } from './src/screens/PostLogin/StatsScreen';
 import { AnalyticsScreen } from './src/screens/PostLogin/AnalyticsScreen';
 import { ProfileScreen } from './src/screens/PostLogin/ProfileScreen';
 import { GroupsScreen } from './src/screens/PostLogin/GroupsScreen';
 import { HabitDetailScreen } from './src/screens/PostLogin/HabitDetailScreen';
+import { ArchiveScreen } from './src/screens/PostLogin/ArchiveScreen';
 
 // Импорты контекста и хуков
 import { AppProvider, useApp } from './src/context';
@@ -31,6 +31,9 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+
+  // ← ДОБАВЛЕНО: получаем тему из контекста
+  const { theme } = useApp();
 
   // ← ДОБАВЛЕНО: состояние для настроек
   const [settings, setSettings] = useState({
@@ -156,7 +159,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+      <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
@@ -164,9 +167,9 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 
   if (!fontsLoaded || auth.loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
         <ActivityIndicator size="large" color={theme.colors.success} />
-        <Text style={styles.loadingText}>Загрузка...</Text>
+        <Text style={[styles.loadingText, { color: theme.colors.text.primary }]}>Загрузка...</Text>
       </View>
     );
   }
@@ -194,11 +197,13 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
         return (
           <SettingsScreen
             onClose={() => navigation.goBack()}
-            isDark={isDark}
-            onToggleTheme={() => setIsDark(!isDark)}
             onNavigateToGeneralSettings={() => {
               console.log('Navigating to General Settings...');
               navigation.goToGeneralSettings();
+            }}
+            onNavigateToArchive={() => {
+              console.log('Navigating to Archive...');
+              navigation.goToArchive();
             }}
           />
         );
@@ -218,6 +223,12 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
             }}
             currentSettings={settings} // ← ДОБАВЛЕНО: передаем текущие настройки
           />
+        );
+
+      case 'archive':
+        console.log('Rendering ArchiveScreen');
+        return (
+          <ArchiveScreen onBack={() => navigation.goBack()} />
         );
       
             case 'habits':
@@ -279,7 +290,7 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Основной контент */}
       {renderScreen()}
 
@@ -314,18 +325,15 @@ function AppContentWithTheme({ isDark, setIsDark }: ThemeProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background, // ← ВОЗВРАЩЕНО: темный фон
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background, // ← ВОЗВРАЩЕНО: темный фон
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: theme.colors.text.primary,
   },
 });
 

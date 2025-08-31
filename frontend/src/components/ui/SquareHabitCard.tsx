@@ -1,12 +1,13 @@
-import React from 'react'; // ← Импорт React для создания компонента
+import React, { useState } from 'react'; // ← Импорт React для создания компонента
 import { View, TouchableOpacity, StyleSheet } from 'react-native'; // ← Базовые компоненты React Native
 import { Text } from 'react-native-paper'; // ← UI компоненты из react-native-paper
 import { MaterialIcons } from '@expo/vector-icons'; // ← Иконки Material Design
-import { Habit } from '../../services/api'; // ← Тип данных привычки из API
+import { Habit } from '../../types/habit'; // ← Тип данных привычки из API
 import { getHabitColor } from '../../theme/theme'; // ← Функция получения цвета привычки
-import { getHabitStatusStyle, getHabitIconStyle } from '../../theme/styles/cardStyles'; // ← Стили для статуса и иконки
-import { theme } from '../../theme/theme'; // ← Объект темы с цветами
+import { getHabitIconStyle } from '../../theme/styles/cardStyles'; // ← Стили для иконки
+import { useApp } from '../../context/AppContext'; // ← Контекст приложения
 import { getMutedColor } from '../../utils/colors'; // ← Функция получения приглушенного цвета
+import { ArchiveMenuModal } from '../modals/ArchiveMenuModal';
 
 // ← Интерфейс пропсов для компонента SquareHabitCard
 interface SquareHabitCardProps {
@@ -25,6 +26,11 @@ export const SquareHabitCard: React.FC<SquareHabitCardProps> = ({
   highlightCurrentDay = true, // ← По умолчанию подсвечиваем текущий день
   weekStartsOn = 'monday' // ← По умолчанию неделя начинается с понедельника
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Состояние для модального окна архивирования
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
   // ← Получаем цвет привычки (из настроек или генерируем по ID)
   const baseColor = habit.color || getHabitColor(habit.id);
   
@@ -138,67 +144,108 @@ export const SquareHabitCard: React.FC<SquareHabitCardProps> = ({
 
   // ← Рендерим компонент
   return (
-    // ← Основной контейнер карточки (нажимаемый)
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <>
+      {/* ← Основной контейнер карточки (нажимаемый) */}
+      <TouchableOpacity style={{
+        backgroundColor: theme.colors.surface,
+        borderRadius: 12,
+        padding: 12,
+        margin: 8,
+        width: 140,
+        height: 140,
+        elevation: 2,
+      }} onPress={onPress} onLongPress={() => setShowArchiveModal(true)} activeOpacity={0.8}>
       {/* ← Хедер карточки */}
-      <View style={styles.header}>
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center' as const,
+        marginBottom: 8,
+      }}>
         {/* ← Квадрат статуса слева (нажимаемый) */}
-                 <TouchableOpacity
-           style={[
-             styles.statusSquare,
-             getHabitStatusStyle(baseColor, habit.is_completed_today), // ← Динамические стили статуса
-             { width: 32, height: 32, marginRight: 4 } // ← ПЕРЕЗАПИСЫВАЕМ глобальные стили + отступ
-           ]}
-          onPress={onToggleStatus} // ← Обработчик нажатия
-          disabled={!onToggleStatus} // ← Отключаем если нет функции переключения
-          activeOpacity={0.7} // ← Прозрачность при нажатии
+        <TouchableOpacity
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 6,
+            justifyContent: 'center' as const,
+            alignItems: 'center' as const,
+            marginRight: 4,
+            backgroundColor: habit.is_completed_today ? baseColor : getMutedColor(baseColor),
+          }}
+          onPress={onToggleStatus}
+          disabled={!onToggleStatus}
+          activeOpacity={0.7}
         >
-                     {/* ← Показываем галочку если привычка выполнена сегодня */}
-           {habit.is_completed_today ? (
-             <MaterialIcons
-               name="check"
-               size={16}
-               color="#ffffff"
-             />
-           ) : (
-             // ← Показываем иконку привычки если не выполнена
-                           <MaterialIcons
-                name={habit.icon as any || 'target'}
-                size={16}
-                color="#ffffff"
-              />
-           )}
+          {/* ← Показываем галочку если привычка выполнена сегодня */}
+          {habit.is_completed_today ? (
+            <MaterialIcons
+              name="check"
+              size={16}
+              color="#ffffff"
+            />
+          ) : (
+            // ← Показываем иконку привычки если не выполнена
+            <MaterialIcons
+              name={habit.icon as any || 'target'}
+              size={16}
+              color="#ffffff"
+            />
+          )}
         </TouchableOpacity>
 
         {/* ← Текстовая часть хедера */}
-        <View style={styles.textContainer}>
+        <View style={{
+          flex: 1,
+        }}>
           {/* ← Название привычки */}
-          <Text style={styles.habitName} numberOfLines={1}>
+          <Text style={{
+            fontSize: 13,
+            fontWeight: '600',
+            color: theme.colors.text.primary,
+            marginBottom: 2,
+          }} numberOfLines={1}>
             {habit.name}
           </Text>
           {/* ← Месяц и год */}
-          <Text style={styles.monthText}>
+          <Text style={{
+            fontSize: 12,
+            color: theme.colors.text.secondary,
+          }}>
             {currentMonth} {currentYear}
           </Text>
         </View>
       </View>
 
       {/* ← Сетка активности */}
-      <View style={styles.gridContainer}>
+      <View style={{
+        flex: 1,
+      }}>
         {/* ← Итерируемся по неделям */}
         {activityGrid.map((week: any[], weekIndex: number) => (
           // ← Контейнер недели
-          <View key={weekIndex} style={styles.weekRow}>
+          <View key={weekIndex} style={{
+            flexDirection: 'row' as const,
+            marginBottom: 1,
+          }}>
             {/* ← Итерируемся по дням недели */}
             {week.map((day: any, dayIndex: number) => (
               // ← Квадрат дня
               <View
                 key={dayIndex}
                 style={[
-                  styles.daySquare, // ← Базовые стили квадрата
-                  { backgroundColor: getMutedColor(baseColor) }, // ← Приглушенный цвет по умолчанию
-                  day.completed && { backgroundColor: baseColor }, // ← Цвет привычки если выполнено
-                  highlightCurrentDay && day.isToday && styles.todaySquare // ← Белая рамка для сегодня
+                  {
+                    flex: 1,
+                    aspectRatio: 1,
+                    marginHorizontal: 1,
+                    borderRadius: 4,
+                    transform: [{ scale: 0.9 }],
+                  },
+                  { backgroundColor: getMutedColor(baseColor) },
+                  day.completed && { backgroundColor: baseColor },
+                  highlightCurrentDay && day.isToday && {
+                    borderWidth: 1,
+                    borderColor: theme.colors.text.primary,
+                  }
                 ]}
               />
             ))}
@@ -206,72 +253,15 @@ export const SquareHabitCard: React.FC<SquareHabitCardProps> = ({
         ))}
       </View>
     </TouchableOpacity>
+
+    {/* Модальное окно архивирования */}
+    <ArchiveMenuModal
+      visible={showArchiveModal}
+      habit={habit}
+      onClose={() => setShowArchiveModal(false)}
+    />
+  </>
   );
 };
 
-// ← Стили компонента
-const styles = StyleSheet.create({
-  // ← Основной контейнер карточки
-  container: {
-    backgroundColor: theme.colors.surface, // ← Цвет фона (серый)
-    borderRadius: 12, // ← Скругление углов
-    padding: 12, // ← Внутренние отступы
-    margin: 8, // ← Внешние отступы
-    width: 140, // ← Ширина карточки
-    height: 140, // ← Высота карточки (квадратная форма)
-    elevation: 2, // ← Тень (Android)
-  },
-  // ← Хедер карточки
-  header: {
-    flexDirection: 'row', // ← Горизонтальное расположение элементов
-    alignItems: 'center', // ← Выравнивание по центру
-    marginBottom: 8, // ← Отступ снизу
-  },
-  // ← Квадрат статуса
-  statusSquare: {
-    width: 20, // ← Ширина квадрата
-    height: 20, // ← Высота квадрата
-    borderRadius: 6, // ← Скругление углов
-    justifyContent: 'center', // ← Выравнивание по центру по горизонтали
-    alignItems: 'center', // ← Выравнивание по центру по вертикали
-    marginRight: 10, // ← ИЗМЕНЕНО: увеличил отступ справа с 8 до 20
-  },
-  // ← Контейнер текста
-  textContainer: {
-    flex: 1, // ← Занимает оставшееся пространство
-  },
-  // ← Название привычки
-  habitName: {
-    fontSize: 13, // ← Размер шрифта
-    fontWeight: '600', // ← Жирность шрифта
-    color: theme.colors.text.primary, // ← Цвет текста (белый)
-    marginBottom: 2, // ← Отступ снизу
-  },
-  // ← Текст месяца и года
-  monthText: {
-    fontSize: 12, // ← Размер шрифта
-    color: theme.colors.text.secondary, // ← Цвет текста (серый)
-  },
-  // ← Контейнер сетки
-  gridContainer: {
-    flex: 1, // ← Занимает оставшееся пространство
-  },
-  // ← Строка недели
-  weekRow: {
-    flexDirection: 'row', // ← Горизонтальное расположение дней
-    marginBottom: 1, // ← Отступ между неделями
-  },
-  // ← Квадрат дня
-  daySquare: {
-    flex: 1, // ← Равномерное распределение пространства
-    aspectRatio: 1, // ← Квадратная форма
-    marginHorizontal: 1, // ← Горизонтальные отступы между днями
-    borderRadius: 4, // ← Скругление углов
-    transform: [{ scale: 0.9 }], // ← Уменьшение размера на 10%
-  },
-  // ← Стили для сегодняшнего дня
-  todaySquare: {
-    borderWidth: 1, // ← Ширина рамки
-    borderColor: theme.colors.text.primary, // ← Цвет рамки (белый)
-  },
-});
+

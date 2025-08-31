@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Modal as RNModal, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { theme } from '../../theme/theme';
+import { useApp } from '../../context/AppContext';
 
 interface ModalProps {
   visible: boolean;
@@ -18,6 +18,12 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   showCloseButton = true,
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const styles = createModalStyles(theme);
+  
   return (
     <RNModal
       visible={visible}
@@ -49,7 +55,7 @@ export const Modal: React.FC<ModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createModalStyles = (theme: any) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -69,7 +75,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: theme.colors.divider,
   },
   title: {
     fontSize: 18,

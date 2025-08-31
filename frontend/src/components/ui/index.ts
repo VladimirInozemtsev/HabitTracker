@@ -16,3 +16,4 @@ export { ViewSelector } from './ViewSelector';
 export { SquareHabitCard } from './SquareHabitCard';
 export { PeriodSelector } from './PeriodSelector';
 export { ListHabitCard } from './ListHabitCard';
+export { ArchiveHabitCard } from './ArchiveHabitCard';

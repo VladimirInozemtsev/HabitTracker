@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { theme } from '../../theme/theme';
+import { useApp } from '../../context/AppContext';
 
 interface WeekStartSelectorProps {
   selectedDay: string;
@@ -22,26 +22,57 @@ export const WeekStartSelector: React.FC<WeekStartSelectorProps> = ({
   selectedDay,
   onDaySelect,
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
   return (
-    <View style={styles.container}>
-      <Text style={styles.instruction}>
+    <View style={{
+      flex: 1,
+    }}>
+      <Text style={{
+        fontSize: 16,
+        color: theme.colors.text.secondary,
+        textAlign: 'center',
+        marginBottom: 24,
+      }}>
         Выберите день, с которого начинается неделя
       </Text>
       
-      <View style={styles.daysList}>
+      <View style={{
+        gap: 12,
+      }}>
         {weekDays.map((day) => (
           <TouchableOpacity
             key={day.key}
             style={[
-              styles.dayItem,
-              selectedDay === day.key && styles.selectedDayItem,
+              {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                backgroundColor: theme.colors.surface,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: theme.colors.divider,
+              },
+              selectedDay === day.key && {
+                borderColor: theme.colors.icons.purple,
+                backgroundColor: theme.colors.surface,
+              },
             ]}
             onPress={() => onDaySelect(day.key)}
           >
             <Text
               style={[
-                styles.dayLabel,
-                selectedDay === day.key && styles.selectedDayLabel,
+                {
+                  fontSize: 16,
+                  color: theme.colors.text.primary,
+                },
+                selectedDay === day.key && {
+                  color: theme.colors.icons.purple,
+                  fontWeight: '600',
+                },
               ]}
             >
               {day.label}
@@ -51,7 +82,9 @@ export const WeekStartSelector: React.FC<WeekStartSelectorProps> = ({
                 name="check"
                 size={20}
                 color={theme.colors.icons.purple}
-                style={styles.checkIcon}
+                style={{
+                  marginLeft: 8,
+                }}
               />
             )}
           </TouchableOpacity>
@@ -61,43 +94,4 @@ export const WeekStartSelector: React.FC<WeekStartSelectorProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  instruction: {
-    fontSize: 16,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  daysList: {
-    gap: 12,
-  },
-  dayItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: theme.colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  selectedDayItem: {
-    borderColor: theme.colors.icons.purple,
-    backgroundColor: theme.colors.surface,
-  },
-  dayLabel: {
-    fontSize: 16,
-    color: theme.colors.text.primary,
-  },
-  selectedDayLabel: {
-    color: theme.colors.icons.purple,
-    fontWeight: '600',
-  },
-  checkIcon: {
-    marginLeft: 8,
-  },
-});
+

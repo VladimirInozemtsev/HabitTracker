@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 import { Habit } from '../../services/api';
 import { SERIES_GOALS } from '../../config/goals';
-import { theme } from '../../theme/theme';
+import { useApp } from '../../context/AppContext';
 import { calculateCurrentStreak } from '../../utils/streak';
 
 interface DetailActionBarProps {
@@ -12,10 +12,13 @@ interface DetailActionBarProps {
 }
 
 export const DetailActionBar: React.FC<DetailActionBarProps> = ({ habit, onEdit }) => {
+  const { theme } = useApp();
   const currentStreak = calculateCurrentStreak(habit.logs || []);
   const seriesGoalText = habit.series_goal
     ? SERIES_GOALS.find(g => g.value === habit.series_goal)?.label || 'Нет цели серии'
     : 'Нет цели серии';
+
+  const styles = createStyles(theme);
 
   return (
     <View style={styles.actionBar}> 
@@ -54,7 +57,7 @@ export const DetailActionBar: React.FC<DetailActionBarProps> = ({ habit, onEdit 
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   actionBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.border,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
@@ -80,7 +83,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.border,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ffffff',
+    borderColor: theme.colors.border,
     height: 40,
     justifyContent: 'center',
   },

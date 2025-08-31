@@ -1,27 +1,36 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { Text, Appbar, IconButton, List } from 'react-native-paper';
-import { theme } from '../../theme/theme';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { Text, Appbar, List, Switch } from 'react-native-paper';
+import { useApp } from '../../context/AppContext';
 
 interface SettingsScreenProps {
   onClose: () => void;
-  isDark?: boolean;
-  onToggleTheme?: () => void;
   onNavigateToGeneralSettings?: () => void;
+  onNavigateToArchive?: () => void;
 }
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClose,
-  isDark = true,
-  onToggleTheme,
   onNavigateToGeneralSettings,
+  onNavigateToArchive,
 }) => {
+  // Получаем тему из контекста
+  const { isDark, toggleTheme, theme } = useApp();
+
   const handleGeneralSettingsPress = () => {
     console.log('General Settings pressed!');
     if (onNavigateToGeneralSettings) {
       onNavigateToGeneralSettings();
     }
   };
+
+  const handleArchivePress = () => {
+    console.log('Archive pressed!');
+    if (onNavigateToArchive) {
+      onNavigateToArchive();
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
@@ -35,133 +44,138 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         {/* Секция "Приложение" */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Приложение</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Приложение</Text>
           
           <List.Item
             title="Основные"
             left={(props) => <List.Icon {...props} icon="cog" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
             onPress={handleGeneralSettingsPress}
-            pressColor={theme.colors.divider}
           />
           
           <List.Item
             title="Ежедневные напоминания о проверке"
             left={(props) => <List.Icon {...props} icon="bell" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Тема"
             left={(props) => <List.Icon {...props} icon="palette" color={theme.colors.text.primary} />}
             right={() => (
-              <IconButton
-                icon={isDark ? 'toggle-switch' : 'toggle-switch-off'}
-                onPress={onToggleTheme}
+              <Switch
+                value={isDark}
+                onValueChange={toggleTheme}
+                color={theme.colors.icons.purple}
+                trackColor={{
+                  false: theme.colors.divider,
+                  true: theme.colors.icons.purple,
+                }}
               />
             )}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Архив привычек"
             left={(props) => <List.Icon {...props} icon="archive" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            onPress={handleArchivePress}
           />
           
           <List.Item
             title="Импорт/Экспорт данных"
             left={(props) => <List.Icon {...props} icon="database-export" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Отсортировать привычки"
             left={(props) => <List.Icon {...props} icon="sort" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
         </View>
 
         {/* Секция "Помощь" */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Помощь</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Помощь</Text>
           
           <List.Item
             title="Show Onboarding"
             left={(props) => <List.Icon {...props} icon="ship-wheel" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Show What's New"
             left={(props) => <List.Icon {...props} icon="newspaper" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Обратная связь"
             left={(props) => <List.Icon {...props} icon="send" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
         </View>
 
         {/* Секция "Информация о приложении" */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Информация о приложении</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Информация о приложении</Text>
           
           <List.Item
             title="Сайт"
             left={(props) => <List.Icon {...props} icon="web" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Политика конфиденциальности"
             left={(props) => <List.Icon {...props} icon="shield-lock" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Условия использования"
             left={(props) => <List.Icon {...props} icon="file-document" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
           
           <List.Item
             title="Оцените приложение"
             left={(props) => <List.Icon {...props} icon="star-outline" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={styles.listItemTitle}
-            style={styles.listItem}
+            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
+            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
           />
         </View>
 
         {/* Версия приложения */}
         <View style={styles.section}>
-          <Text style={styles.textSecondary}>HabitTracker 1.0.0</Text>
+          <Text style={[styles.textSecondary, { color: theme.colors.text.secondary }]}>HabitTracker 1.0.0</Text>
         </View>
       </ScrollView>
     </View>
@@ -176,20 +190,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: theme.colors.text.primary,
     marginBottom: 12,
   },
   listItem: {
-    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     marginBottom: 4,
   },
   listItemTitle: {
-    color: theme.colors.text.primary,
     fontSize: 16,
   },
   textSecondary: {
-    color: theme.colors.text.secondary,
     fontSize: 14,
     textAlign: 'center',
     marginTop: 8,

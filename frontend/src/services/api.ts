@@ -205,6 +205,33 @@ export const api = {
   getHabitsByGroup: async (groupId: string): Promise<any[]> => {
     return apiRequest(`/habits/?group=${groupId}`);
   },
+
+  // Архивировать привычку
+  archiveHabit: async (habitId: string): Promise<any> => {
+    console.log('API: Archiving habit with ID:', habitId);
+    return apiRequest(`/habits/${habitId}/archive/`, {
+      method: 'POST',
+    });
+  },
+
+  // Восстановить привычку из архива
+  unarchiveHabit: async (habitId: string): Promise<any> => {
+    return apiRequest(`/habits/${habitId}/unarchive/`, {
+      method: 'POST',
+    });
+  },
+
+  // Получить архивные привычки
+  getArchivedHabits: async (): Promise<any> => {
+    return apiRequest('/habits/archived/');
+  },
+
+  // Удалить привычку навсегда
+  deleteHabit: async (habitId: string): Promise<any> => {
+    return apiRequest(`/habits/${habitId}/delete/`, {
+      method: 'DELETE',
+    });
+  },
 };
 
 // Проверка аутентификации

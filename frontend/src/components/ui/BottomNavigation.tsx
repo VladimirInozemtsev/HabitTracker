@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import { theme } from '../../theme/theme';
-import { navigationStyles } from '../../theme/styles/navigationStyles';
+import { createNavigationStyles } from '../../theme/styles/navigationStyles';
 import { Screen } from '../../hooks/useNavigation';
+import { useApp } from '../../context/AppContext';
 
 interface NavigationItem {
   id: Screen;
@@ -32,6 +32,12 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   isTablet,
   showHabitDetail,
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const navigationStyles = createNavigationStyles(theme);
+
   // Скрываем навигацию в детальном экране
   if (showHabitDetail) {
     return null;

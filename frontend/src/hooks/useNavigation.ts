@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 // Типы для навигации
-export type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups' | 'settings' | 'generalSettings';
+export type Screen = 'habits' | 'stats' | 'analytics' | 'profile' | 'groups' | 'settings' | 'generalSettings' | 'archive';
 
 export const useNavigation = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('habits');
@@ -70,6 +70,14 @@ export const useNavigation = () => {
     console.log('Navigated to generalSettings, previousScreen set to:', currentScreen);
   }, [currentScreen]);
 
+  // Переход на архив
+  const goToArchive = useCallback(() => {
+    console.log('goToArchive called, currentScreen:', currentScreen);
+    setPreviousScreen(currentScreen);
+    setCurrentScreen('archive');
+    console.log('Navigated to archive, previousScreen set to:', currentScreen);
+  }, [currentScreen]);
+
   return {
     currentScreen,
     previousScreen,
@@ -82,5 +90,6 @@ export const useNavigation = () => {
     goToGroups,
     goToSettings,
     goToGeneralSettings,
+    goToArchive,
   };
 };

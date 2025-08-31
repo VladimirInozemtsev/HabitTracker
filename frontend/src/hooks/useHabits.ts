@@ -88,6 +88,78 @@ export const useHabits = () => {
     }
   }, []);
 
+  // Архивирование привычки
+  const archiveHabit = useCallback(async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.archiveHabit(id);
+      
+      // Удаляем привычку из списка активных
+      setHabits(prev => prev.filter(habit => habit.id !== id));
+      
+      return response;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка архивирования привычки');
+      console.error('Error archiving habit:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Восстановление привычки из архива
+  const unarchiveHabit = useCallback(async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.unarchiveHabit(id);
+      
+      // Перезагружаем список привычек, чтобы включить восстановленную
+      await loadHabits();
+      
+      return response;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка восстановления привычки');
+      console.error('Error unarchiving habit:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [loadHabits]);
+
+  // Загрузка архивных привычек
+  const loadArchivedHabits = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await api.getArchivedHabits();
+      return data.habits || [];
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка загрузки архивных привычек');
+      console.error('Error loading archived habits:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Удаление привычки навсегда
+  const deleteHabit = useCallback(async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.deleteHabit(id);
+      return response;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка удаления привычки');
+      console.error('Error deleting habit:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     habits,
     loading,
@@ -95,5 +167,9 @@ export const useHabits = () => {
     loadHabits,
     addHabit,
     updateHabit,
+    archiveHabit,
+    unarchiveHabit,
+    loadArchivedHabits,
+    deleteHabit,
   };
 };

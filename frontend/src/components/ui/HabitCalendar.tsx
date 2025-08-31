@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import { theme } from '../../theme/theme';
+import { useApp } from '../../context/AppContext';
 
 interface HabitCalendarProps {
   habitId: string;
@@ -22,6 +22,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   highlightCurrentDay = true, // ← ДОБАВЛЕНО: по умолчанию включено
   weekStartsOn = 'monday' // ← ДОБАВЛЕНО: по умолчанию понедельник
 }) => {
+  const { theme } = useApp(); // Получаем тему из контекста
   const [currentDate, setCurrentDate] = useState(new Date());
   
   // Автоматически переключаемся на текущий месяц при загрузке
@@ -163,7 +164,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
           size={24}
           onPress={goToPreviousMonth}
         />
-        <Text style={styles.monthTitle}>
+        <Text style={[styles.monthTitle, { color: theme.colors.text.primary }]}>
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </Text>
         <IconButton
@@ -177,7 +178,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
              {/* Названия дней недели - всегда стандартные */}
        <View style={styles.weekDays}>
          {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
-           <Text key={index} style={styles.weekDay}>
+           <Text key={index} style={[styles.weekDay, { color: theme.colors.text.secondary }]}>
              {day}
            </Text>
          ))}
@@ -200,9 +201,9 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
                 styles.day,
                 day.isFuture && styles.futureDay,
                 !day.isFuture && !day.isCurrentMonth && styles.otherMonthDay,
-                !day.isFuture && day.isToday && styles.today,
+                !day.isFuture && day.isToday && { borderWidth: 2, borderColor: theme.colors.text.primary },
                 !day.isFuture && day.isCurrentMonth && isCompleted && { backgroundColor: color },
-                highlightCurrentDay && day.isToday && styles.today, // ← ДОБАВЛЕНО: условная подсветка
+                highlightCurrentDay && day.isToday && { borderWidth: 2, borderColor: theme.colors.text.primary }, // ← ДОБАВЛЕНО: условная подсветка
               ]}
               onPress={() => {
                 if (day.isFuture) return;
@@ -216,9 +217,10 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
             >
               <Text style={[
                 styles.dayText,
-                !day.isCurrentMonth && styles.otherMonthText,
-                day.isToday && styles.todayText,
-                day.isCurrentMonth && isCompleted && styles.completedText,
+                { color: theme.colors.text.primary },
+                !day.isCurrentMonth && { color: theme.colors.text.disabled },
+                day.isToday && { color: theme.colors.text.primary },
+                day.isCurrentMonth && isCompleted && { color: theme.colors.text.primary, fontWeight: '700' },
               ]}>
                 {day.day}
               </Text>
@@ -228,7 +230,7 @@ export const HabitCalendar: React.FC<HabitCalendarProps> = ({
       </View>
 
       {/* Подсказка */}
-      <Text style={styles.hint}>
+      <Text style={[styles.hint, { color: theme.colors.text.secondary }]}>
         Tap dates to add or remove completions
       </Text>
       
@@ -248,7 +250,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   monthTitle: {
-    color: theme.colors.text.primary,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -262,7 +263,6 @@ const styles = StyleSheet.create({
    weekDay: {
      width: '12%', // Такая же ширина как у дней
      textAlign: 'center',
-     color: theme.colors.text.secondary,
      fontSize: 12,
      fontWeight: '500',
    },
@@ -289,27 +289,22 @@ const styles = StyleSheet.create({
   },
   today: {
     borderWidth: 2,
-    borderColor: theme.colors.text.primary,
   },
   futureDay: {
     backgroundColor: 'transparent',
     borderWidth: 0, // убираем рамку
   },
   dayText: {
-    color: theme.colors.text.primary,
     fontSize: 14,
     fontWeight: '400', // базовый нормальный вес
   },
   todayText: {
-    color: theme.colors.text.primary,
     fontWeight: '400', // не делаем жирным, только рамка у контейнера today
   },
   otherMonthText: {
-    color: theme.colors.text.disabled,
     fontWeight: '400',
   },
   completedText: {
-    color: theme.colors.text.primary,
     fontWeight: '700', // жирный только для реально выполненных дней текущего месяца
   },
   completionDot: {
@@ -321,7 +316,6 @@ const styles = StyleSheet.create({
   },
   hint: {
     textAlign: 'center',
-    color: theme.colors.text.secondary,
     fontSize: 12,
     marginTop: 12,
     fontStyle: 'italic',

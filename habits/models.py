@@ -93,6 +93,7 @@ class Habit(models.Model):
     # Статус
     is_active = models.BooleanField(default=True, verbose_name='Активна')
     is_archived = models.BooleanField(default=False, verbose_name='Архивирована')
+    archived_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата архивирования')
     
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True)
@@ -161,6 +162,21 @@ class Habit(models.Model):
                 temp_streak = 0
         
         return max(longest_streak, temp_streak)
+
+    def archive(self):
+        """Архивировать привычку"""
+        from django.utils import timezone
+        self.is_archived = True
+        self.archived_at = timezone.now()
+        self.is_active = False
+        self.save()
+
+    def unarchive(self):
+        """Восстановить привычку из архива"""
+        self.is_archived = False
+        self.archived_at = None
+        self.is_active = True
+        self.save()
 
 
 class HabitLog(models.Model):

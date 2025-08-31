@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
-import { modalStyles as styles } from '../../theme/styles/modalStyles';
+import { createModalStyles } from '../../theme/styles/modalStyles';
+import { useApp } from '../../context/AppContext';
 
 interface AddGroupModalProps {
   visible: boolean;
@@ -14,6 +15,12 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({
   onClose,
   onSave
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const styles = createModalStyles(theme);
+
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
   const [selectedColor, setSelectedColor] = useState('#4CAF50');

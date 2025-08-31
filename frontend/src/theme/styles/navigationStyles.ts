@@ -1,19 +1,18 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../theme';
 
-export const navigationStyles = StyleSheet.create({
+export const createNavigationStyles = (theme: any) => StyleSheet.create({
   // Стили для нижней навигации
   bottomNavigation: {
     flexDirection: 'row',
-    backgroundColor: theme.colors.surface, // Темный фон для навигации
+    backgroundColor: theme.colors.navigation.background,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.divider,
+    borderTopColor: theme.colors.navigation.border,
     paddingVertical: 10,
     paddingHorizontal: 5,
   },
   bottomNavigationTablet: {
     marginBottom: 3,
-    backgroundColor: theme.colors.background, // Черный фон для планшетов
+    backgroundColor: theme.colors.navigation.background,
   },
   navItem: {
     flex: 1,
@@ -25,15 +24,15 @@ export const navigationStyles = StyleSheet.create({
     borderRadius: 8,
   },
   navItemTablet: {
-    backgroundColor: theme.colors.background, // Черный фон для элементов навигации планшетов
+    backgroundColor: theme.colors.navigation.background,
   },
   navIcon: {
     fontSize: 20,
     marginBottom: 4,
-    color: theme.colors.text.secondary,
+    color: theme.colors.navigation.inactive,
   },
   navIconActive: {
-    color: theme.colors.text.primary,
+    color: theme.colors.navigation.active,
   },
   navIconButton: {
     margin: 0,
@@ -41,10 +40,10 @@ export const navigationStyles = StyleSheet.create({
   },
   navText: {
     fontSize: 12,
-    color: theme.colors.text.secondary,
+    color: theme.colors.navigation.inactive,
   },
   navTextActive: {
-    color: theme.colors.text.primary,
+    color: theme.colors.navigation.active,
     fontWeight: 'bold',
   },
 });

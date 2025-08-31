@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../theme';
 import { getMutedColor } from '../../utils/colors';
 
-export const cardStyles = StyleSheet.create({
+export const createCardStyles = (theme: any) => StyleSheet.create({
   // Стили для карточек привычек
   habitCard: {
     marginBottom: 10, // Уменьшаем отступы между карточками
@@ -137,12 +136,23 @@ export const cardStyles = StyleSheet.create({
 
 // Функция для генерации стилей статуса с цветом
 export const getHabitStatusStyle = (baseColor: string, isCompleted: boolean) => ({
-  ...cardStyles.habitStatusIndicator,
+  margin: 0,
+  width: 60,
+  height: 60,
+  borderRadius: 8,
+  justifyContent: 'center' as const,
+  alignItems: 'center' as const,
   backgroundColor: isCompleted ? baseColor : getMutedColor(baseColor),
 });
 
 // Функция для генерации стилей иконки с цветом (если нужен цветной фон)
 export const getHabitIconStyle = (baseColor: string) => ({
-  ...cardStyles.habitIconContainer,
+  marginRight: 0,
+  width: 60,
+  height: 60,
+  borderRadius: 8,
+  borderWidth: 0,
   backgroundColor: getMutedColor(baseColor), // Всегда приглушенный цвет для иконки
+  alignItems: 'center' as const,
+  justifyContent: 'center' as const,
 });

@@ -12,6 +12,8 @@ export interface Habit {
   tracking_type: 'step' | 'boolean' | 'time';
   daily_target?: number;
   reminder_time?: string;
+  is_archived?: boolean;
+  archived_at?: string;
   group?: {
     id: string;
     name: string;
@@ -44,4 +46,15 @@ export interface CreateHabitData {
 // Данные для обновления привычки
 export interface UpdateHabitData extends Partial<CreateHabitData> {
   id: string;
+}
+
+// API ответы для архивирования
+export interface ArchiveHabitResponse {
+  message: string;
+  habit_id: string;
+}
+
+export interface ArchivedHabitsResponse {
+  habits: Habit[];
+  count: number;
 }

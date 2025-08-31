@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../theme';
 
-export const groupStyles = StyleSheet.create({
+export const createGroupStyles = (theme: any) => StyleSheet.create({
   // Стили для групп
   groupsContainer: {
     paddingHorizontal: 10,

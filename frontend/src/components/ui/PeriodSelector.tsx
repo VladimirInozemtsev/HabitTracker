@@ -2,7 +2,7 @@ import React, { useState } from 'react'; // ← Импорт React для соз
 import { View, TouchableOpacity, StyleSheet } from 'react-native'; // ← Базовые компоненты React Native
 import { Text } from 'react-native-paper'; // ← UI компоненты из react-native-paper
 import { MaterialIcons } from '@expo/vector-icons'; // ← Иконки Material Design
-import { theme } from '../../theme/theme'; // ← Объект темы с цветами
+import { useApp } from '../../context/AppContext'; // ← Контекст приложения
 import { Modal } from './Modal'; // ← Импорт модального окна
 
 // ← Интерфейс пропсов для компонента PeriodSelector
@@ -16,6 +16,8 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
   selectedPeriod, // ← Выбранный период
   onPeriodChange // ← Функция изменения
 }) => {
+  // Получаем тему из контекста
+  const { theme } = useApp();
   // ← Состояние для отображения модального окна
   const [showPeriodModal, setShowPeriodModal] = useState(false);
   
@@ -76,10 +78,29 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
   // ← Рендерим компонент
   return (
     <>
-      <View style={styles.container}>
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 16,
+        paddingHorizontal: 16,
+      }}>
         {/* ← Кнопка выбора периода слева */}
-        <TouchableOpacity style={styles.periodButton} onPress={() => setShowPeriodModal(true)}>
-          <Text style={styles.periodButtonText}>
+        <TouchableOpacity style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: theme.colors.surface,
+          paddingHorizontal: 10,
+          paddingVertical: 12,
+          borderRadius: 8,
+          minWidth: 100,
+        }} onPress={() => setShowPeriodModal(true)}>
+          <Text style={{
+            fontSize: 16,
+            fontWeight: '600',
+            color: theme.colors.text.primary,
+          }}>
             {getPeriodText()}
           </Text>
           <MaterialIcons
@@ -90,18 +111,36 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
         </TouchableOpacity>
         
         {/* ← Строка дат справа */}
-        <View style={styles.dateRow}>
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          flex: 1,
+          marginLeft: 16,
+        }}>
           {dateRange.map((date, index) => (
             <View key={index} style={[
-              styles.dateItem,
-              index === 0 && { marginLeft: 0 } // ← У первого элемента нет отступа слева
+              {
+                alignItems: 'center',
+                width: 20,
+                marginLeft: 4,
+              },
+              index === 0 && { marginLeft: 0 }
             ]}>
               {/* ← Название дня недели */}
-              <Text style={styles.dayName}>
+              <Text style={{
+                fontSize: 12,
+                color: theme.colors.text.primary,
+                marginBottom: 2,
+                fontWeight: '500',
+              }}>
                 {date.dayName}
               </Text>
               {/* ← Номер дня месяца */}
-              <Text style={styles.dayNumber}>
+              <Text style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: theme.colors.text.primary,
+              }}>
                 {date.dayNumber}
               </Text>
             </View>
@@ -115,19 +154,38 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
         onClose={() => setShowPeriodModal(false)}
         title="Выберите период"
       >
-        <View style={styles.modalContent}>
+        <View style={{
+          paddingVertical: 8,
+        }}>
           {[1, 2, 3, 4, 5, 6, 7].map((period) => (
             <TouchableOpacity
               key={period}
               style={[
-                styles.periodOption,
-                selectedPeriod === period && styles.periodOptionActive
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                  marginBottom: 4,
+                },
+                selectedPeriod === period && {
+                  backgroundColor: theme.colors.surface,
+                }
               ]}
               onPress={() => handlePeriodSelect(period)}
             >
               <Text style={[
-                styles.periodOptionText,
-                selectedPeriod === period && styles.periodOptionTextActive
+                {
+                  fontSize: 16,
+                  color: theme.colors.text.primary,
+                  fontWeight: '500',
+                },
+                selectedPeriod === period && {
+                  color: theme.colors.icons.purple,
+                  fontWeight: '600',
+                }
               ]}>
                 {period === 1 ? 'Сегодня' : `Последние ${period} ${period === 1 ? 'день' : period < 5 ? 'дня' : 'дней'}`}
               </Text>
@@ -146,86 +204,4 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
   );
 };
 
-// ← Стили компонента
-const styles = StyleSheet.create({
-  // ← Основной контейнер (горизонтальная компоновка)
-  container: {
-    flexDirection: 'row', // ← Горизонтальное расположение
-    alignItems: 'center', // ← Выравнивание по центру
-    justifyContent: 'space-between', // ← Распределение пространства
-    marginBottom: 16, // ← Отступ снизу
-    paddingHorizontal: 16, // ← Горизонтальные отступы
-  },
-  // ← Кнопка выбора периода (слева)
-  periodButton: {
-    flexDirection: 'row', // ← Горизонтальное расположение
-    alignItems: 'center', // ← Выравнивание по центру
-    justifyContent: 'space-between', // ← Распределение пространства
-    backgroundColor: theme.colors.surface, // ← Цвет фона
-    paddingHorizontal: 10, // ← Горизонтальные отступы
-    paddingVertical: 12, // ← Вертикальные отступы
-    borderRadius: 8, // ← Скругление углов
-    minWidth: 100, // ← Минимальная ширина кнопки
-  },
-  // ← Текст кнопки периода
-  periodButtonText: {
-    fontSize: 16, // ← Размер шрифта
-    fontWeight: '600', // ← Жирность шрифта
-    color: theme.colors.text.primary, // ← Цвет текста (белый)
-  },
-  // ← Строка дат (справа) - ПРИЖИМАЕМ К ПРАВОМУ КРАЮ
-  dateRow: {
-    flexDirection: 'row', // ← Горизонтальное расположение
-    justifyContent: 'flex-end', // ← Прижимаем к правому краю
-    flex: 1, // ← Занимает оставшееся пространство
-    marginLeft: 16, // ← Отступ слева от кнопки
-  },
-  // ← Элемент даты - ФИКСИРОВАННАЯ ШИРИНА
-  dateItem: {
-    alignItems: 'center', // ← Выравнивание по центру
-    width: 20, // ← Ширина как у клеточек в ListHabitCard
-    marginLeft: 4, // ← Отступ между элементами (СИНХРОНИЗИРОВАНО с ListHabitCard)
-  },
-  // ← Название дня недели
-  dayName: {
-    fontSize: 12, // ← Размер шрифта
-    color: theme.colors.text.primary, // ← Цвет текста (белый)
-    marginBottom: 2, // ← Отступ снизу
-    fontWeight: '500', // ← Жирность шрифта
-  },
-  // ← Номер дня месяца
-  dayNumber: {
-    fontSize: 14, // ← Размер шрифта
-    fontWeight: '600', // ← Жирность шрифта
-    color: theme.colors.text.primary, // ← Цвет текста (белый)
-  },
-  // ← Контент модального окна
-  modalContent: {
-    paddingVertical: 8, // ← Вертикальные отступы
-  },
-  // ← Опция периода в модальном окне
-  periodOption: {
-    flexDirection: 'row', // ← Горизонтальное расположение
-    alignItems: 'center', // ← Выравнивание по центру
-    justifyContent: 'space-between', // ← Распределение пространства
-    paddingVertical: 16, // ← Вертикальные отступы
-    paddingHorizontal: 20, // ← Горизонтальные отступы
-    borderRadius: 8, // ← Скругление углов
-    marginBottom: 4, // ← Отступ снизу
-  },
-  // ← Активная опция периода
-  periodOptionActive: {
-    backgroundColor: theme.colors.surface, // ← Цвет фона активной опции
-  },
-  // ← Текст опции периода
-  periodOptionText: {
-    fontSize: 16, // ← Размер шрифта
-    color: theme.colors.text.primary, // ← Цвет текста (белый)
-    fontWeight: '500', // ← Жирность шрифта
-  },
-  // ← Текст активной опции периода
-  periodOptionTextActive: {
-    color: theme.colors.icons.purple, // ← Цвет текста активной опции (фиолетовый)
-    fontWeight: '600', // ← Жирность шрифта
-  },
-});
+

@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../theme';
 
-export const detailStyles = StyleSheet.create({
+export const createDetailStyles = (theme: any) => StyleSheet.create({
   // Стили для панели действий в детальном экране
   actionBar: {
     flexDirection: 'row',

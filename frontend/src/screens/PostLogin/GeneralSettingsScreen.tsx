@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, IconButton, Switch, Card } from 'react-native-paper';
-import { theme } from '../../theme/theme';
-import { screenStyles } from '../../theme/styles/screenStyles';
+import { createScreenStyles } from '../../theme/styles/screenStyles';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Modal, WeekStartSelector } from '../../components/ui';
+import { useApp } from '../../context/AppContext'; // ← ДОБАВЛЕНО: импорт контекста
 
 // Удален старый WeekStartModal - заменен на универсальный Modal + WeekStartSelector
 
@@ -27,20 +27,44 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   showArrow = false,
   showSwitch = false,
 }) => {
+  const { theme } = useApp();
+  
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={!onPress && !onToggle}
-      style={styles.settingsItem}
+      style={{
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.divider,
+      }}
     >
-      <View style={styles.settingsItemContent}>
-        <View style={styles.settingsItemText}>
-          <Text style={styles.settingsItemTitle}>{title}</Text>
+      <View style={{
+        flexDirection: 'row' as const,
+        alignItems: 'center' as const,
+        justifyContent: 'space-between' as const,
+        paddingVertical: 16,
+        paddingHorizontal: 16,
+      }}>
+        <View style={{
+          flex: 1,
+          marginRight: 16,
+        }}>
+          <Text style={{
+            fontSize: 16,
+            color: theme.colors.text.primary,
+            marginBottom: 2,
+          }}>{title}</Text>
           {subtitle && (
-            <Text style={styles.settingsItemSubtitle}>{subtitle}</Text>
+            <Text style={{
+              fontSize: 14,
+              color: theme.colors.text.secondary,
+            }}>{subtitle}</Text>
           )}
         </View>
-        <View style={styles.settingsItemControl}>
+        <View style={{
+          flexDirection: 'row' as const,
+          alignItems: 'center' as const,
+        }}>
           {showSwitch && (
             <Switch
               value={value}
@@ -57,7 +81,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
               name="chevron-right"
               size={20}
               color={theme.colors.text.secondary}
-              style={{ marginLeft: 8 }}  // ← ЗАМЕНА: используем обычную иконку вместо IconButton
+              style={{ marginLeft: 8 }}
             />
           )}
         </View>
@@ -72,10 +96,24 @@ interface SettingsSectionProps {
 }
 
 const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) => {
+  const { theme } = useApp();
+  
   return (
-    <View style={styles.settingsSection}>
-      <Text style={styles.settingsSectionTitle}>{title}</Text>
-      <Card style={styles.settingsSectionCard}>
+    <View style={{
+      marginBottom: 24,
+    }}>
+      <Text style={{
+        fontSize: 16,
+        fontWeight: '600' as const,
+        color: theme.colors.text.primary,
+        marginBottom: 8,
+        paddingHorizontal: 4,
+      }}>{title}</Text>
+      <Card style={{
+        backgroundColor: theme.colors.surface,
+        borderRadius: 12,
+        elevation: 2,
+      }}>
         {children}
       </Card>
     </View>
@@ -93,6 +131,12 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
   onSettingsChange,
   currentSettings,
 }) => {
+  // Получаем тему из контекста
+  const { theme, isDark, toggleTheme } = useApp();
+  
+  // Создаем стили с текущей темой
+  const styles = createStyles(theme);
+
   // Состояние настроек (потом вынесем в хук)
   const [settings, setSettings] = React.useState({
     weekStartsMonday: true,
@@ -297,7 +341,7 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
   );
 };
 
-const styles = {
+const createStyles = (theme: any) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
@@ -372,6 +416,6 @@ const styles = {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
   },
-};
+});
 
 // Старые стили модала удалены - теперь используется универсальный Modal

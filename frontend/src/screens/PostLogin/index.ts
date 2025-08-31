@@ -8,3 +8,4 @@ export { AnalyticsScreen } from './AnalyticsScreen';
 export { CategoriesScreen } from './CategoriesScreen';
 export { HabitDetailScreen } from './HabitDetailScreen';
 export { StatsScreen } from './StatsScreen';
+export { ArchiveScreen } from './ArchiveScreen';

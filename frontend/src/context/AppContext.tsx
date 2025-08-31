@@ -16,6 +16,12 @@ interface AppContextType {
   navigation: ReturnType<typeof useNavigation>;
   responsive: ReturnType<typeof useResponsive>;
   
+  // Функции архивирования (доступные через habits)
+  loadArchivedHabits: () => Promise<any>;
+  unarchiveHabit: (id: string) => Promise<any>;
+  archiveHabit: (id: string) => Promise<any>;
+  deleteHabit: (id: string) => Promise<any>;
+  
   // Глобальные состояния
   isDark: boolean;
   setIsDark: (isDark: boolean) => void;
@@ -116,6 +122,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     groups,
     navigation,
     responsive,
+    loadArchivedHabits: habits.loadArchivedHabits,
+    unarchiveHabit: habits.unarchiveHabit,
+    archiveHabit: habits.archiveHabit,
+    deleteHabit: habits.deleteHabit,
     isDark,
     setIsDark,
     theme: getCurrentTheme(isDark), // ← ИСПРАВЛЕНО: передаем параметр
