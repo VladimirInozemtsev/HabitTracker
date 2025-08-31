@@ -3,7 +3,8 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text, Appbar, List, Switch } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
 import { SortHabitsModal } from '../../components/modals/SortHabitsModal';
-import { getSortTypeLabel } from '../../utils/sortHabits';
+import { RemindersModal } from '../../components/modals/RemindersModal';
+import { getSortTypeLabel, SortType } from '../../utils/sortHabits';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -17,10 +18,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onNavigateToArchive,
 }) => {
   // Получаем тему из контекста
-  const { isDark, toggleTheme, theme, sortType, setSortType } = useApp();
+  const { isDark, setIsDark, theme, sortType, setSortType, reminderSettings, setReminderSettings } = useApp();
   
   // ← ДОБАВЛЕНО: состояние для модального окна сортировки
   const [showSortModal, setShowSortModal] = React.useState(false);
+  const [showRemindersModal, setShowRemindersModal] = React.useState(false);
 
   const handleGeneralSettingsPress = () => {
     console.log('General Settings pressed!');
@@ -46,6 +48,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const handleSortApply = (newSortType: string) => {
     setSortType(newSortType);
     setShowSortModal(false);
+  };
+
+  const handleRemindersPress = () => {
+    setShowRemindersModal(true);
+  };
+
+  const handleRemindersSave = (settings: any) => {
+    setReminderSettings(settings);
   };
 
   return (
@@ -78,6 +88,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
             style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            onPress={handleRemindersPress}
           />
           
           <List.Item
@@ -86,7 +97,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             right={() => (
               <Switch
                 value={isDark}
-                onValueChange={toggleTheme}
+                onValueChange={setIsDark}
                 color={theme.colors.icons.purple}
                 trackColor={{
                   false: theme.colors.divider,
@@ -117,6 +128,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           
           <List.Item
             title="Отсортировать привычки"
+            description={getSortTypeLabel(sortType as SortType)}
             left={(props) => <List.Icon {...props} icon="sort" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
@@ -204,6 +216,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         currentSortType={sortType}
         onApply={handleSortApply}
       />
+
+      {/* Модальное окно напоминаний */}
+      <RemindersModal
+        visible={showRemindersModal}
+        onClose={() => setShowRemindersModal(false)}
+        onSave={handleRemindersSave}
+        currentSettings={reminderSettings}
+      />
     </View>
   );
 };
@@ -231,3 +251,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
+

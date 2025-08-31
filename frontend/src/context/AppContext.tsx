@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useHabits } from '../hooks/useHabits';
 import { useAuth } from '../hooks/useAuth';
 import { useGroups } from '../hooks/useGroups';
@@ -6,6 +6,7 @@ import { useNavigation, Screen } from '../hooks/useNavigation';
 import { useResponsive } from '../hooks/useResponsive';
 import { ViewType } from '../components/ui/ViewSelector';
 import { getCurrentTheme } from '../theme/theme'; // ← ДОБАВЛЕНО: импорт функции темы
+import { ReminderSettings } from '../components/modals/RemindersModal';
 
 // Типы для контекста
 interface AppContextType {
@@ -47,6 +48,8 @@ interface AppContextType {
   setSelectedPeriod: (period: number) => void;
   sortType: string; // ← ДОБАВЛЕНО: тип сортировки
   setSortType: (sortType: string) => void; // ← ДОБАВЛЕНО: функция изменения сортировки
+  reminderSettings: ReminderSettings;
+  setReminderSettings: (settings: ReminderSettings) => void;
 }
 
 // Создаем контекст
@@ -54,7 +57,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 // Провайдер контекста
 interface AppProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
@@ -129,24 +132,69 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  // ← ДОБАВЛЕНО: загрузка настроек напоминаний из localStorage
+  const loadReminderSettings = (): ReminderSettings => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedSettings = window.localStorage.getItem('reminderSettings');
+        if (savedSettings) {
+          return JSON.parse(savedSettings);
+        }
+      }
+      return {
+        enabled: false,
+        days: ['mon', 'tue', 'wed', 'thu', 'fri'],
+        time: '18:00',
+        title: 'Проверка привычек',
+        message: 'Не забудьте проверить свои привычки!'
+      };
+    } catch (error) {
+      console.error('Error loading reminder settings:', error);
+      return {
+        enabled: false,
+        days: ['mon', 'tue', 'wed', 'thu', 'fri'],
+        time: '18:00',
+        title: 'Проверка привычек',
+        message: 'Не забудьте проверить свои привычки!'
+      };
+    }
+  };
+
+  // ← ДОБАВЛЕНО: сохранение настроек напоминаний в localStorage
+  const saveReminderSettings = (settings: ReminderSettings) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('reminderSettings', JSON.stringify(settings));
+      }
+    } catch (error) {
+      console.error('Error saving reminder settings:', error);
+    }
+  };
+
   // Глобальные состояния (пока используем useState, потом можно вынести в отдельные хуки)
-  const [isDark, setIsDark] = React.useState(loadTheme()); // ← ИСПРАВЛЕНО: загружаем из localStorage
-  const [showAddModal, setShowAddModal] = React.useState(false);
-  const [showSettings, setShowSettings] = React.useState(false);
-  const [showAddGroupModal, setShowAddGroupModal] = React.useState(false);
-  const [showEditModal, setShowEditModal] = React.useState(false);
-  const [showHabitDetail, setShowHabitDetail] = React.useState(false);
-  const [selectedHabit, setSelectedHabit] = React.useState<any | null>(null);
-  const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(new Set());
-  const [selectedView, setSelectedView] = React.useState<ViewType>('grid');
-  const [selectedPeriod, setSelectedPeriod] = React.useState(loadSelectedPeriod()); // ← ИСПРАВЛЕНО: загружаем из localStorage
-  const [sortType, setSortType] = React.useState(loadSortType()); // ← ДОБАВЛЕНО: загружаем из localStorage
+  const [isDark, setIsDark] = useState(loadTheme()); // ← ИСПРАВЛЕНО: загружаем из localStorage
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showAddGroupModal, setShowAddGroupModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showHabitDetail, setShowHabitDetail] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<any | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [selectedView, setSelectedView] = useState<ViewType>('grid');
+  const [selectedPeriod, setSelectedPeriod] = useState(loadSelectedPeriod()); // ← ИСПРАВЛЕНО: загружаем из localStorage
+  const [sortType, setSortType] = useState(loadSortType()); // ← ДОБАВЛЕНО: загружаем из localStorage
+  const [reminderSettings, setReminderSettings] = useState(loadReminderSettings()); // ← ДОБАВЛЕНО: загружаем из localStorage
 
   // ← ДОБАВЛЕНО: функция изменения сортировки с сохранением
   const handleSetSortType = (newSortType: string) => {
     setSortType(newSortType);
     saveSortType(newSortType);
   };
+
+  // ← ДОБАВЛЕНО: эффект для сохранения настроек напоминаний
+  useEffect(() => {
+    saveReminderSettings(reminderSettings);
+  }, [reminderSettings]);
 
   // Значение контекста
   const contextValue: AppContextType = {
@@ -187,6 +235,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedPeriod,
     sortType, // ← ДОБАВЛЕНО: тип сортировки
     setSortType: handleSetSortType, // ← ДОБАВЛЕНО: функция изменения сортировки
+    reminderSettings,
+    setReminderSettings,
   };
 
   return (

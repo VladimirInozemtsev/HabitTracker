@@ -1,9 +1,10 @@
-// Экспорт всех стилей из папки styles
+export * from './baseStyles';
+export * from './cardStyles';
+export * from './detailStyles';
+export * from './groupStyles';
+export * from './modalStyles';
 export * from './navigationStyles';
 export * from './screenStyles';
-export * from './cardStyles';
-export * from './modalStyles';
-export * from './groupStyles';
-export * from './detailStyles';
 export * from './archiveStyles';
 export * from './sortModalStyles';
+export * from './remindersModalStyles';

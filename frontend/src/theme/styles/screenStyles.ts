@@ -1,152 +1,93 @@
 import { StyleSheet } from 'react-native';
 
 export const createScreenStyles = (theme: any) => StyleSheet.create({
-  // Стили для экранов
   screenContainer: {
     flex: 1,
-    padding: 20,
+    padding: 16,
     backgroundColor: theme.colors.background,
   },
   screenContentContainer: {
-    paddingHorizontal: 0, // Убираем горизонтальные отступы полностью
+    paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   screenTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
     color: theme.colors.text.primary,
-    textAlign: 'center',
+    marginBottom: 16,
   },
-  screenTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  screenTitleIcon: {
-    margin: 0,
-    padding: 0,
-    marginRight: 8,
-    alignSelf: 'center',
-    marginTop: 2,
-  },
-  screenText: {
+  screenSubtitle: {
     fontSize: 16,
     color: theme.colors.text.secondary,
+    marginBottom: 24,
     textAlign: 'center',
   },
-  
-  // Стили для статистики
-  statsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-  },
-  statCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 15,
-    width: '48%',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.divider,
-  },
-  statNumber: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: theme.colors.text.primary,
-    marginBottom: 8,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-  },
-  loadButton: {
-    backgroundColor: theme.colors.surface,
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.divider,
-    alignItems: 'center',
-  },
-  loadButtonText: {
-    color: theme.colors.text.primary,
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  
-  // Стили для групп
-  groupsContainer: {
-    paddingHorizontal: 10,
-  },
-  groupCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.divider,
-  },
-  groupColor: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 12,
-  },
-  groupInfo: {
+  content: {
     flex: 1,
   },
-  groupName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-    marginBottom: 4,
-  },
-  groupDescription: {
-    fontSize: 14,
-    color: theme.colors.text.secondary,
-    marginBottom: 4,
-  },
-  groupCount: {
-    fontSize: 12,
-    color: theme.colors.text.disabled,
-  },
-  
-  // Стили для профиля
-  profileCard: {
+  sectionHeader: {
     backgroundColor: theme.colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: theme.colors.divider,
-  },
-  profileTitle: {
-    fontSize: 14,
-    color: theme.colors.text.secondary,
-    marginBottom: 4,
-  },
-  profileText: {
-    fontSize: 16,
-    fontWeight: '600',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
     color: theme.colors.text.primary,
   },
-  
-  // Стили для заголовка групп
+  listItemTitle: {
+    fontSize: 16,
+    color: theme.colors.text.primary,
+  },
+  listItemDescription: {
+    fontSize: 14,
+    color: theme.colors.text.secondary,
+  },
+  loadButton: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  loadButtonText: {
+    color: theme.colors.onPrimary,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: theme.colors.error,
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  emptyText: {
+    color: theme.colors.text.secondary,
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 32,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 24,
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.colors.primary,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: theme.colors.text.secondary,
+    marginTop: 4,
+  },
   groupsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    marginBottom: 16,
   },
 });
