@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
+import { getMutedColor } from '../../theme/theme';
 
 interface HabitCalendarProps {
   habitId: string;
@@ -11,8 +12,6 @@ interface HabitCalendarProps {
   highlightCurrentDay?: boolean; // ← ДОБАВЛЕНО: пропс для подсветки текущего дня
   weekStartsOn?: string; // ← ДОБАВЛЕНО: день начала недели
 }
-
-import { getMutedColor } from '../../utils/colors';
 
 export const HabitCalendar: React.FC<HabitCalendarProps> = ({
   habitId,

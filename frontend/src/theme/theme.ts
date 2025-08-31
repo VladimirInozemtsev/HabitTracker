@@ -261,6 +261,13 @@ export const getIconColor = (iconType: keyof typeof theme.colors.icons): string 
   return theme.colors.icons[iconType];
 };
 
+/**
+ * Создает приглушенный цвет с прозрачностью
+ */
+export const getMutedColor = (color: string): string => {
+  return `${color}60`;
+};
+
 // Типы для темы
 export type Theme = typeof darkTheme;
 export type ThemeColors = typeof darkTheme.colors;

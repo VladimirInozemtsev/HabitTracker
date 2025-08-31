@@ -1,19 +1,6 @@
-// Экспорт всех утилит
-
-// Утилиты для работы с датами
+// Экспорт утилит
 export * from './date';
-
-// Утилиты для работы с цветами
-export * from './colors';
-
-// Утилиты для работы с сериями
-export * from './streak';
-
-// Утилиты для валидации
-export * from './validation';
-
-// Утилиты для форматирования
 export * from './format';
-
-// Утилиты для сортировки
+export * from './validation';
+export * from './streak';
 export * from './sortHabits';

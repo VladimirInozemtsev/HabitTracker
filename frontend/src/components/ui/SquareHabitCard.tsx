@@ -6,7 +6,7 @@ import { Habit } from '../../types/habit'; // ← Тип данных привы
 import { getHabitColor } from '../../theme/theme'; // ← Функция получения цвета привычки
 import { getHabitIconStyle } from '../../theme/styles/cardStyles'; // ← Стили для иконки
 import { useApp } from '../../context/AppContext'; // ← Контекст приложения
-import { getMutedColor } from '../../utils/colors'; // ← Функция получения приглушенного цвета
+import { getMutedColor } from '../../theme/theme'; // ← Функция получения приглушенного цвета
 import { ArchiveMenuModal } from '../modals/ArchiveMenuModal';
 
 // ← Интерфейс пропсов для компонента SquareHabitCard

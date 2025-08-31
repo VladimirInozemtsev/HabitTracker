@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
-import { getMutedColor } from '../../utils/colors';
+import { getMutedColor } from '../../theme/theme';
 // import { formatDate } from '../../utils/format'; // ← УДАЛЕНО: не используется
 
 interface HabitGridProps {
