@@ -14,3 +14,6 @@ export * from './validation';
 
 // Утилиты для форматирования
 export * from './format';
+
+// Утилиты для сортировки
+export * from './sortHabits';

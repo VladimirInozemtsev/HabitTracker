@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { Habit } from '../../services/api';
+import { Habit } from '../../types/habit';
 import { HabitCard, ViewSelector, SquareHabitCard, PeriodSelector, ListHabitCard } from '../../components/ui';
 import { useApp } from '../../context/AppContext';
+import { sortHabits } from '../../utils/sortHabits';
 
 interface HabitsScreenProps {
   habits: Habit[];
@@ -29,7 +30,10 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
   showBottomPanel = true // ← ДОБАВЛЕНО: по умолчанию показывать
 }) => {
   // ← ДОБАВЛЕНО: получаем глобальное состояние из контекста
-  const { selectedView, setSelectedView, selectedPeriod, setSelectedPeriod, theme } = useApp();
+  const { selectedView, setSelectedView, selectedPeriod, setSelectedPeriod, sortType, theme } = useApp();
+
+  // ← ДОБАВЛЕНО: применяем сортировку к привычкам
+  const sortedHabits = sortHabits(habits, sortType as any);
 
   // ← ДОБАВЛЕНО: функция для сохранения периода в localStorage
   const savePeriodToStorage = async (period: number) => {
@@ -80,7 +84,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
         <View style={{ padding: 0 }}>
           {selectedView === 'grid' ? (
             // ← Обычные карточки
-            habits.map((habit) => (
+            sortedHabits.map((habit) => (
               <HabitCard
                 key={habit.id}
                 habit={habit}
@@ -94,7 +98,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
           ) : selectedView === 'square' ? (
             // ← Квадратные карточки в сетке
             <View style={styles.gridContainer}>
-              {habits.map((habit) => (
+              {sortedHabits.map((habit) => (
                 <SquareHabitCard
                   key={habit.id}
                   habit={habit}
@@ -112,7 +116,7 @@ export const HabitsScreen: React.FC<HabitsScreenProps> = ({
                   selectedPeriod={selectedPeriod}
                   onPeriodChange={handlePeriodChange}
                 />
-              {habits.map((habit) => (
+              {sortedHabits.map((habit) => (
                 <ListHabitCard
                   key={habit.id}
                   habit={habit}

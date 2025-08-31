@@ -6,3 +6,4 @@ export * from './modalStyles';
 export * from './groupStyles';
 export * from './detailStyles';
 export * from './archiveStyles';
+export * from './sortModalStyles';

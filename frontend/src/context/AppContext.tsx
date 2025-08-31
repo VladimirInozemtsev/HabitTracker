@@ -45,6 +45,8 @@ interface AppContextType {
   setSelectedView: (view: ViewType) => void;
   selectedPeriod: number;
   setSelectedPeriod: (period: number) => void;
+  sortType: string; // ← ДОБАВЛЕНО: тип сортировки
+  setSortType: (sortType: string) => void; // ← ДОБАВЛЕНО: функция изменения сортировки
 }
 
 // Создаем контекст
@@ -92,6 +94,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     return true; // по умолчанию темная тема
   };
 
+  // ← ДОБАВЛЕНО: загрузка типа сортировки из localStorage
+  const loadSortType = (): string => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedSortType = window.localStorage.getItem('habitTrackerSortType');
+        return savedSortType || 'name_asc'; // по умолчанию по названию А-Я
+      }
+    } catch (error) {
+      console.error('Error loading sortType:', error);
+    }
+    return 'name_asc'; // по умолчанию по названию А-Я
+  };
+
   // ← ДОБАВЛЕНО: сохранение темы в localStorage
   const saveTheme = (isDark: boolean) => {
     try {
@@ -100,6 +115,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       }
     } catch (error) {
       console.error('Error saving theme:', error);
+    }
+  };
+
+  // ← ДОБАВЛЕНО: сохранение типа сортировки в localStorage
+  const saveSortType = (sortType: string) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('habitTrackerSortType', JSON.stringify(sortType));
+      }
+    } catch (error) {
+      console.error('Error saving sortType:', error);
     }
   };
 
@@ -114,6 +140,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(new Set());
   const [selectedView, setSelectedView] = React.useState<ViewType>('grid');
   const [selectedPeriod, setSelectedPeriod] = React.useState(loadSelectedPeriod()); // ← ИСПРАВЛЕНО: загружаем из localStorage
+  const [sortType, setSortType] = React.useState(loadSortType()); // ← ДОБАВЛЕНО: загружаем из localStorage
+
+  // ← ДОБАВЛЕНО: функция изменения сортировки с сохранением
+  const handleSetSortType = (newSortType: string) => {
+    setSortType(newSortType);
+    saveSortType(newSortType);
+  };
 
   // Значение контекста
   const contextValue: AppContextType = {
@@ -152,6 +185,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedView,
     selectedPeriod,
     setSelectedPeriod,
+    sortType, // ← ДОБАВЛЕНО: тип сортировки
+    setSortType: handleSetSortType, // ← ДОБАВЛЕНО: функция изменения сортировки
   };
 
   return (

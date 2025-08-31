@@ -2,6 +2,8 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text, Appbar, List, Switch } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
+import { SortHabitsModal } from '../../components/modals/SortHabitsModal';
+import { getSortTypeLabel } from '../../utils/sortHabits';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -15,7 +17,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onNavigateToArchive,
 }) => {
   // Получаем тему из контекста
-  const { isDark, toggleTheme, theme } = useApp();
+  const { isDark, toggleTheme, theme, sortType, setSortType } = useApp();
+  
+  // ← ДОБАВЛЕНО: состояние для модального окна сортировки
+  const [showSortModal, setShowSortModal] = React.useState(false);
 
   const handleGeneralSettingsPress = () => {
     console.log('General Settings pressed!');
@@ -29,6 +34,18 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     if (onNavigateToArchive) {
       onNavigateToArchive();
     }
+  };
+
+  // ← ДОБАВЛЕНО: обработчик для открытия модального окна сортировки
+  const handleSortPress = () => {
+    console.log('Sort habits pressed!');
+    setShowSortModal(true);
+  };
+
+  // ← ДОБАВЛЕНО: обработчик для применения сортировки
+  const handleSortApply = (newSortType: string) => {
+    setSortType(newSortType);
+    setShowSortModal(false);
   };
 
   return (
@@ -104,6 +121,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
             style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            onPress={handleSortPress}
           />
         </View>
 
@@ -178,6 +196,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <Text style={[styles.textSecondary, { color: theme.colors.text.secondary }]}>HabitTracker 1.0.0</Text>
         </View>
       </ScrollView>
+
+      {/* Модальное окно сортировки */}
+      <SortHabitsModal
+        visible={showSortModal}
+        onClose={() => setShowSortModal(false)}
+        currentSortType={sortType}
+        onApply={handleSortApply}
+      />
     </View>
   );
 };
