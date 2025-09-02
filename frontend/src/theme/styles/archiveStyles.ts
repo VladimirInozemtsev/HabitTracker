@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const createArchiveStyles = (theme: any) => StyleSheet.create({
   // Контейнер архивной карточки
   archiveCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -69,7 +69,7 @@ export const createArchiveStyles = (theme: any) => StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.icons.purple,
     alignItems: 'center',
   },
 

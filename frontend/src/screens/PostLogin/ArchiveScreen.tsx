@@ -68,7 +68,7 @@ export const ArchiveScreen: React.FC<ArchiveScreenProps> = ({ onBack }) => {
         paddingHorizontal: 16,
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: theme.colors.divider,
+        borderBottomColor: theme.colors.card,
       }}>
         <IconButton
           icon="arrow-left"

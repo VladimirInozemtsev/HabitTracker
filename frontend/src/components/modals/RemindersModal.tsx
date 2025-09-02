@@ -75,18 +75,18 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
         style={{ backgroundColor: theme.colors.surface }}
       >
         <Dialog.Title style={styles.modalTitle}>
-          Ежедневные напоминания о проверке
+          Напоминания о проверке
         </Dialog.Title>
         <Dialog.Content style={styles.modalContent}>
           <ScrollView style={styles.contentScroll}>
             <Text style={styles.description}>
-              Настройте ежедневное уведомление, чтобы напоминать о выполнении привычек.
+              Настройте уведомление.
             </Text>
 
             {/* Переключатель включения */}
             <View style={styles.toggleContainer}>
               <Text style={styles.toggleLabel}>
-                Включить ежедневные напоминания о проверке
+                Включить напоминания
               </Text>
               <Switch
                 value={settings.enabled}
@@ -154,6 +154,7 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
                 style={styles.textInput}
                 textColor={theme.colors.text.primary}
                 contentStyle={{ color: theme.colors.text.primary }}
+                underlineColor="transparent"
               />
               
               <TextInput
@@ -164,18 +165,8 @@ export const RemindersModal: React.FC<RemindersModalProps> = ({
                 textColor={theme.colors.text.primary}
                 contentStyle={{ color: theme.colors.text.primary }}
                 multiline
+                underlineColor="transparent"
               />
-            </View>
-            {/* Кнопка тестирования */}
-            <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
-              <Button
-                mode="outlined"
-                onPress={() => onSave(settings)}
-                textColor={theme.colors.primary}
-                style={{ borderColor: theme.colors.primary }}
-              >
-                🧪 Протестировать уведомление
-              </Button>
             </View>
           </ScrollView>
         </Dialog.Content>

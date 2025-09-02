@@ -65,7 +65,7 @@ export const createDetailStyles = (theme: any) => StyleSheet.create({
     padding: 16,
   },
   habitDetailCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.card,
     marginBottom: 16,
   },
   habitDetailName: {

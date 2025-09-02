@@ -147,7 +147,7 @@ export const SquareHabitCard: React.FC<SquareHabitCardProps> = ({
     <>
       {/* ← Основной контейнер карточки (нажимаемый) */}
       <TouchableOpacity style={{
-        backgroundColor: theme.colors.surface,
+        backgroundColor: theme.colors.card,
         borderRadius: 12,
         padding: 12,
         margin: 8,

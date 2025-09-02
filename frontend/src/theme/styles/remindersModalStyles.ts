@@ -23,7 +23,7 @@ export const createRemindersModalStyles = (theme: any) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
     paddingHorizontal: 16,
   },
   toggleLabel: {
@@ -33,7 +33,7 @@ export const createRemindersModalStyles = (theme: any) => StyleSheet.create({
     marginRight: 16,
   },
   daysContainer: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   sectionTitle: {
     color: theme.colors.text.primary,
@@ -67,14 +67,14 @@ export const createRemindersModalStyles = (theme: any) => StyleSheet.create({
     width: 32,
   },
   timeContainer: {
-    marginBottom: 24,
+    marginBottom: 12,
   },
   timePicker: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    paddingVertical: 8,
+    backgroundColor: theme.colors.card,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: theme.colors.border,
@@ -86,17 +86,20 @@ export const createRemindersModalStyles = (theme: any) => StyleSheet.create({
     marginLeft: 12,
   },
   customFieldsContainer: {
-    marginBottom: 16,
+    marginBottom: 8,
   },
   textInput: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.card,
     marginBottom: 12,
     marginHorizontal: 16,
+    height: 60,
+    borderRadius: 8,
   },
   actionsContainer: {
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingBottom: 8,
+    paddingTop: 8,
   },
   actionButton: {
     flex: 1,

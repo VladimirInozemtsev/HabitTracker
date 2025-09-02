@@ -115,5 +115,3 @@ export const AddGroupModal: React.FC<AddGroupModalProps> = ({
     </Modal>
   );
 };
-
-

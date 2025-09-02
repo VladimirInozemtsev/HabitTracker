@@ -1,94 +1,12 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
-import { Text, IconButton, Switch, Card } from 'react-native-paper';
+import { Text, IconButton } from 'react-native-paper';
 import { createScreenStyles } from '../../theme/styles/screenStyles';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Modal, WeekStartSelector } from '../../components/ui';
-import { useApp } from '../../context/AppContext'; // ← ДОБАВЛЕНО: импорт контекста
+import { Modal, WeekStartSelector } from '../../components/modals';
+import { useApp } from '../../context/AppContext';
+import { SettingsItemCard } from '../../components/ui';
 
 // Удален старый WeekStartModal - заменен на универсальный Modal + WeekStartSelector
-
-interface SettingsItemProps {
-  title: string;
-  subtitle?: string;
-  value?: boolean;
-  onToggle?: (value: boolean) => void;
-  onPress?: () => void;
-  showArrow?: boolean;
-  showSwitch?: boolean;
-}
-
-const SettingsItem: React.FC<SettingsItemProps> = ({
-  title,
-  subtitle,
-  value,
-  onToggle,
-  onPress,
-  showArrow = false,
-  showSwitch = false,
-}) => {
-  const { theme } = useApp();
-  
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={!onPress && !onToggle}
-      style={{
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.divider,
-      }}
-    >
-      <View style={{
-        flexDirection: 'row' as const,
-        alignItems: 'center' as const,
-        justifyContent: 'space-between' as const,
-        paddingVertical: 16,
-        paddingHorizontal: 16,
-      }}>
-        <View style={{
-          flex: 1,
-          marginRight: 16,
-        }}>
-          <Text style={{
-            fontSize: 16,
-            color: theme.colors.text.primary,
-            marginBottom: 2,
-          }}>{title}</Text>
-          {subtitle && (
-            <Text style={{
-              fontSize: 14,
-              color: theme.colors.text.secondary,
-            }}>{subtitle}</Text>
-          )}
-        </View>
-        <View style={{
-          flexDirection: 'row' as const,
-          alignItems: 'center' as const,
-        }}>
-          {showSwitch && (
-            <Switch
-              value={value}
-              onValueChange={onToggle}
-              color={theme.colors.icons.purple}
-              trackColor={{
-                false: theme.colors.divider,
-                true: theme.colors.divider,
-              }}
-            />
-          )}
-          {showArrow && (
-            <MaterialIcons
-              name="chevron-right"
-              size={20}
-              color={theme.colors.text.secondary}
-              style={{ marginLeft: 8 }}
-            />
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-};
 
 interface SettingsSectionProps {
   title: string;
@@ -97,25 +15,12 @@ interface SettingsSectionProps {
 
 const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) => {
   const { theme } = useApp();
+  const styles = createScreenStyles(theme);
   
   return (
-    <View style={{
-      marginBottom: 24,
-    }}>
-      <Text style={{
-        fontSize: 16,
-        fontWeight: '600' as const,
-        color: theme.colors.text.primary,
-        marginBottom: 8,
-        paddingHorizontal: 4,
-      }}>{title}</Text>
-      <Card style={{
-        backgroundColor: theme.colors.surface,
-        borderRadius: 12,
-        elevation: 2,
-      }}>
-        {children}
-      </Card>
+    <View style={styles.settingsSection}>
+      <Text style={styles.settingsSectionTitle}>{title}</Text>
+      {children}
     </View>
   );
 };
@@ -132,10 +37,10 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
   currentSettings,
 }) => {
   // Получаем тему из контекста
-  const { theme, isDark, toggleTheme } = useApp();
+  const { theme } = useApp();
   
   // Создаем стили с текущей темой
-  const styles = createStyles(theme);
+  const styles = createScreenStyles(theme);
 
   // Состояние настроек (потом вынесем в хук)
   const [settings, setSettings] = React.useState({
@@ -242,86 +147,86 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Основные настройки */}
         <SettingsSection title="Основные">
-          <SettingsItem
+          <SettingsItemCard
             title={`Неделя начинается с ${getWeekDayName(selectedWeekDay)}`}
             onPress={handleWeekStartPress}
-            showArrow={true}
+            showArrow
           />
-          <SettingsItem
+          <SettingsItemCard
             title="Подсвечивать текущий день"
             value={settings.highlightCurrentDay}
             onToggle={() => handleSettingToggle('highlightCurrentDay')}
-            showSwitch={true}
+            showSwitch
           />
         </SettingsSection>
 
         {/* Режимы просмотра панели */}
         <SettingsSection title="Режимы просмотра панели">
-          <SettingsItem
+          <SettingsItemCard
             title="Показать нижнюю панель"
             value={settings.showBottomPanel}
             onToggle={() => handleSettingToggle('showBottomPanel')}
-            showSwitch={true}
+            showSwitch
           />
-          <SettingsItem
+          <SettingsItemCard
             title="Показать фильтр"
             value={settings.showFilter}
             onToggle={() => handleSettingToggle('showFilter')}
-            showSwitch={true}
+            showSwitch
           />
         </SettingsSection>
 
         {/* PRO Настройка панели */}
         <SettingsSection title="PRO Настройка панели">
-          <SettingsItem
+          <SettingsItemCard
             title="Показывать счётчик серий"
             value={settings.showSeriesCounter}
             onToggle={() => handleSettingToggle('showSeriesCounter')}
-            showSwitch={true}
+            showSwitch
           />
-          <SettingsItem
+          <SettingsItemCard
             title="Показывать цель серии"
             value={settings.showSeriesGoal}
             onToggle={() => handleSettingToggle('showSeriesGoal')}
-            showSwitch={true}
+            showSwitch
           />
-          <SettingsItem
+          <SettingsItemCard
             title="Показывать метки месяцев"
             value={settings.showMonthLabels}
             onToggle={() => handleSettingToggle('showMonthLabels')}
-            showSwitch={true}
+            showSwitch
           />
-          <SettingsItem
+          <SettingsItemCard
             title="Показывать метки дней"
             value={settings.showDayLabels}
             onToggle={() => handleSettingToggle('showDayLabels')}
-            showSwitch={true}
+            showSwitch
           />
-          <SettingsItem
+          <SettingsItemCard
             title="Показывать категории"
             value={settings.showCategories}
             onToggle={() => handleSettingToggle('showCategories')}
-            showSwitch={true}
+            showSwitch
           />
         </SettingsSection>
 
         {/* Home Screen Widgets */}
         <SettingsSection title="Home Screen Widgets">
-          <SettingsItem
+          <SettingsItemCard
             title="Legacy (Performance) Mode"
             value={settings.legacyMode}
             onToggle={() => handleSettingToggle('legacyMode')}
-            showSwitch={true}
+            showSwitch
           />
         </SettingsSection>
 
         {/* Отладка */}
         <SettingsSection title="Отладка">
-          <SettingsItem
+          <SettingsItemCard
             title="Разрешить анализ ошибок"
             value={settings.allowErrorAnalysis}
             onToggle={() => handleSettingToggle('allowErrorAnalysis')}
-            showSwitch={true}
+            showSwitch
           />
         </SettingsSection>
       </ScrollView>
@@ -341,81 +246,4 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
   );
 };
 
-const createStyles = (theme: any) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    paddingHorizontal: 16,
-    paddingTop: 5,        // ← ИЗМЕНЕНО: было 16, стало 5 (уменьшена высота сверху)
-    paddingBottom: 5,     // ← ИЗМЕНЕНО: было 16, стало 5 (уменьшена высота снизу)
-    backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
-  },
-  backButton: {
-    marginRight: 8,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold' as const,
-    color: theme.colors.text.primary,
-    flex: 1,
-  },
-  headerSpacer: {
-    width: 56, // Компенсируем кнопку назад
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  settingsSection: {
-    marginBottom: 24,
-  },
-  settingsSectionTitle: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: theme.colors.text.primary,
-    marginBottom: 8,
-    paddingHorizontal: 4,
-  },
-  settingsSectionCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 12,
-    elevation: 2,
-  },
-  settingsItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
-  },
-  settingsItemContent: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  settingsItemText: {
-    flex: 1,
-    marginRight: 16,
-  },
-  settingsItemTitle: {
-    fontSize: 16,
-    color: theme.colors.text.primary,
-    marginBottom: 2,
-  },
-  settingsItemSubtitle: {
-    fontSize: 14,
-    color: theme.colors.text.secondary,
-  },
-  settingsItemControl: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-  },
-});
-
-// Старые стили модала удалены - теперь используется универсальный Modal
+// Стили теперь централизованы в screenStyles.ts

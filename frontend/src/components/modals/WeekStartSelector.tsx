@@ -93,5 +93,3 @@ export const WeekStartSelector: React.FC<WeekStartSelectorProps> = ({
     </View>
   );
 };
-
-

@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'; // ← Баз
 import { Text } from 'react-native-paper'; // ← UI компоненты из react-native-paper
 import { MaterialIcons } from '@expo/vector-icons'; // ← Иконки Material Design
 import { useApp } from '../../context/AppContext'; // ← Контекст приложения
-import { Modal } from './Modal'; // ← Импорт модального окна
+import { Modal } from '../modals/Modal'; // ← Импорт модального окна
 
 // ← Интерфейс пропсов для компонента PeriodSelector
 interface PeriodSelectorProps {

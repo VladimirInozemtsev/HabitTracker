@@ -4,6 +4,7 @@ import { getMutedColor } from '../theme';
 export const createCardStyles = (theme: any) => StyleSheet.create({
   // Стили для карточек привычек
   habitCard: {
+    borderRadius: 14, // Добавлено скругление
     marginBottom: 10, // Уменьшаем отступы между карточками
     marginHorizontal: 20, // Добавляем небольшие боковые отступы
     elevation: 2,

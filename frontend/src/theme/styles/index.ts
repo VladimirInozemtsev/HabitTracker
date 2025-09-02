@@ -1,4 +1,3 @@
-export * from './baseStyles';
 export * from './cardStyles';
 export * from './detailStyles';
 export * from './groupStyles';

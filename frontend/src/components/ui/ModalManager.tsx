@@ -1,6 +1,5 @@
 import React from 'react';
-import { CreateHabitModal } from './CreateHabitModal';
-import { AddGroupModal } from './AddGroupModal';
+import { CreateHabitModal, AddGroupModal } from '../modals';
 
 interface ModalManagerProps {
   // Состояние модальных окон

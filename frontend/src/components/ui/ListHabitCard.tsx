@@ -90,7 +90,7 @@ export const ListHabitCard: React.FC<ListHabitCardProps> = ({
         style={{
           flexDirection: 'row',
           alignItems: 'center' as const,
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.colors.card,
           borderRadius: 12,
           padding: 5,
           marginBottom: 5,

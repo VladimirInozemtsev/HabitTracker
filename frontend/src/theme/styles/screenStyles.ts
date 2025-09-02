@@ -90,4 +90,99 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  // Стили для GeneralSettingsScreen
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 5,
+    paddingBottom: 5,
+    backgroundColor: theme.colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
+  },
+  backButton: {
+    marginRight: 8,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: theme.colors.text.primary,
+    flex: 1,
+  },
+  headerSpacer: {
+    width: 56, // Компенсируем кнопку назад
+  },
+  // Стили для SettingsSection
+  settingsSection: {
+    marginBottom: 24,
+  },
+  settingsSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  settingsSectionCard: {
+    backgroundColor: theme.colors.card,
+    borderRadius: 12,
+    elevation: 2,
+  },
+  settingsItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
+  },
+  settingsItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  settingsItemText: {
+    flex: 1,
+    marginRight: 16,
+  },
+  settingsItemTitle: {
+    fontSize: 16,
+    color: theme.colors.text.primary,
+    marginBottom: 2,
+  },
+  settingsItemSubtitle: {
+    fontSize: 14,
+    color: theme.colors.text.secondary,
+  },
+  settingsItemControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingsItemCard: {
+    backgroundColor: theme.colors.card,
+    borderRadius: 12,
+    elevation: 2,
+    marginHorizontal: 16,
+  },
+  // Стили для SettingsScreen (листовые элементы)
+  settingsListItem: {
+    borderRadius: 12,
+    marginBottom: 4,
+    marginHorizontal: 16,
+    elevation: 2,
+    backgroundColor: theme.colors.card,
+  },
+  settingsListItemTitle: {
+    fontSize: 16,
+    color: theme.colors.text.primary,
+  },
+  settingsTextSecondary: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+    color: theme.colors.text.secondary,
+  },
 });

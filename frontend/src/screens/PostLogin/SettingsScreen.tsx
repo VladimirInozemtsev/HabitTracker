@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { Text, Appbar, List, Switch } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
 import { SortHabitsModal } from '../../components/modals/SortHabitsModal';
 import { RemindersModal } from '../../components/modals/RemindersModal';
 import { getSortTypeLabel, SortType } from '../../utils/sortHabits';
+import { createScreenStyles } from '../../theme/styles/screenStyles';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -19,30 +20,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 }) => {
   // Получаем тему из контекста
   const { isDark, setIsDark, theme, sortType, setSortType, reminderSettings, setReminderSettings } = useApp();
+  const styles = createScreenStyles(theme);
   
   // ← ДОБАВЛЕНО: состояние для модального окна сортировки
   const [showSortModal, setShowSortModal] = React.useState(false);
   const [showRemindersModal, setShowRemindersModal] = React.useState(false);
 
   const handleGeneralSettingsPress = () => {
-    console.log('General Settings pressed!');
-    if (onNavigateToGeneralSettings) {
-      onNavigateToGeneralSettings();
-    }
+    if (onNavigateToGeneralSettings) onNavigateToGeneralSettings();
   };
 
   const handleArchivePress = () => {
-    console.log('Archive pressed!');
-    if (onNavigateToArchive) {
-      onNavigateToArchive();
-    }
+    if (onNavigateToArchive) onNavigateToArchive();
   };
 
   // ← ДОБАВЛЕНО: обработчик для открытия модального окна сортировки
-  const handleSortPress = () => {
-    console.log('Sort habits pressed!');
-    setShowSortModal(true);
-  };
+  const handleSortPress = () => setShowSortModal(true);
 
   // ← ДОБАВЛЕНО: обработчик для применения сортировки
   const handleSortApply = (newSortType: string) => {
@@ -50,16 +43,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     setShowSortModal(false);
   };
 
-  const handleRemindersPress = () => {
-    setShowRemindersModal(true);
-  };
-
-  const handleRemindersSave = (settings: any) => {
-    setReminderSettings(settings);
-  };
+  const handleRemindersPress = () => setShowRemindersModal(true);
+  const handleRemindersSave = (settings: any) => setReminderSettings(settings);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.card }}>
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
         <Appbar.BackAction 
           onPress={onClose} 
@@ -70,15 +58,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       
       <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         {/* Секция "Приложение" */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Приложение</Text>
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>Приложение</Text>
           
           <List.Item
             title="Основные"
             left={(props) => <List.Icon {...props} icon="cog" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={[styles.settingsListItem, { backgroundColor: theme.colors.card }]}
             onPress={handleGeneralSettingsPress}
           />
           
@@ -86,8 +74,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             title="Ежедневные напоминания о проверке"
             left={(props) => <List.Icon {...props} icon="bell" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={[styles.settingsListItem, { backgroundColor: theme.colors.card }]}
             onPress={handleRemindersPress}
           />
           
@@ -105,16 +93,16 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 }}
               />
             )}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={[styles.settingsListItem, { backgroundColor: theme.colors.card }]}
           />
           
           <List.Item
             title="Архив привычек"
             left={(props) => <List.Icon {...props} icon="archive" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={[styles.settingsListItem, { backgroundColor: theme.colors.card }]}
             onPress={handleArchivePress}
           />
           
@@ -122,8 +110,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             title="Импорт/Экспорт данных"
             left={(props) => <List.Icon {...props} icon="database-export" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={[styles.settingsListItem, { backgroundColor: theme.colors.card }]}
           />
           
           <List.Item
@@ -131,81 +119,81 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             description={getSortTypeLabel(sortType as SortType)}
             left={(props) => <List.Icon {...props} icon="sort" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={[styles.settingsListItem, { backgroundColor: theme.colors.card }]}
             onPress={handleSortPress}
           />
         </View>
 
         {/* Секция "Помощь" */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Помощь</Text>
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>Помощь</Text>
           
           <List.Item
             title="Show Onboarding"
             left={(props) => <List.Icon {...props} icon="ship-wheel" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
           
           <List.Item
             title="Show What's New"
             left={(props) => <List.Icon {...props} icon="newspaper" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
           
           <List.Item
             title="Обратная связь"
             left={(props) => <List.Icon {...props} icon="send" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
         </View>
 
         {/* Секция "Информация о приложении" */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Информация о приложении</Text>
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>Информация о приложении</Text>
           
           <List.Item
             title="Сайт"
             left={(props) => <List.Icon {...props} icon="web" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
           
           <List.Item
             title="Политика конфиденциальности"
             left={(props) => <List.Icon {...props} icon="shield-lock" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
           
           <List.Item
             title="Условия использования"
             left={(props) => <List.Icon {...props} icon="file-document" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
           
           <List.Item
             title="Оцените приложение"
             left={(props) => <List.Icon {...props} icon="star-outline" color={theme.colors.text.primary} />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            titleStyle={[styles.listItemTitle, { color: theme.colors.text.primary }]}
-            style={[styles.listItem, { backgroundColor: theme.colors.surface }]}
+            titleStyle={styles.settingsListItemTitle}
+            style={styles.settingsListItem}
           />
         </View>
 
         {/* Версия приложения */}
-        <View style={styles.section}>
-          <Text style={[styles.textSecondary, { color: theme.colors.text.secondary }]}>HabitTracker 1.0.0</Text>
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsTextSecondary}>HabitTracker 1.0.0</Text>
         </View>
       </ScrollView>
 
@@ -227,28 +215,4 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  section: {
-    marginVertical: 16,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  listItem: {
-    borderRadius: 8,
-    marginBottom: 4,
-  },
-  listItemTitle: {
-    fontSize: 16,
-  },
-  textSecondary: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 8,
-  },
-});
 
