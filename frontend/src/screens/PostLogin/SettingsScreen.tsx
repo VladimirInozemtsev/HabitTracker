@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
-import { Text, Appbar, List, Switch } from 'react-native-paper';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, List, Switch, IconButton } from 'react-native-paper';
 import { useApp } from '../../context/AppContext';
 import { SortHabitsModal } from '../../components/modals/SortHabitsModal';
 import { RemindersModal } from '../../components/modals/RemindersModal';
@@ -48,17 +48,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.card }}>
-      <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 4 }}>
-        <Appbar.BackAction 
-          onPress={onClose} 
-          iconColor={theme.colors.text.primary}
-        />
-        <Appbar.Content title="Настройки" />
-      </Appbar.Header>
+      {/* Заголовок */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onClose} style={styles.backButton}>
+          <IconButton
+            icon="arrow-left"
+            iconColor={theme.colors.text.primary}
+            size={24}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Настройки</Text>
+        <View style={styles.headerSpacer} />
+      </View>
       
       <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         {/* Секция "Приложение" */}
-        <View style={styles.settingsSection}>
+        <View style={styles.settingsSectionFirst}>
           <Text style={styles.settingsSectionTitle}>Приложение</Text>
           
           <List.Item

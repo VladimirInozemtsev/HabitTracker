@@ -14,6 +14,8 @@ interface SettingsItemCardProps {
   showArrow?: boolean;
   showSwitch?: boolean;
   style?: StyleProp<ViewStyle>;
+  rightContent?: React.ReactNode;
+  leftColor?: string;
 }
 
 export const SettingsItemCard: React.FC<SettingsItemCardProps> = ({
@@ -25,6 +27,8 @@ export const SettingsItemCard: React.FC<SettingsItemCardProps> = ({
   showArrow,
   showSwitch,
   style,
+  rightContent,
+  leftColor,
 }) => {
   const { theme } = useApp();
   const styles = createScreenStyles(theme);
@@ -36,13 +40,27 @@ export const SettingsItemCard: React.FC<SettingsItemCardProps> = ({
         disabled={!onPress && !onToggle}
         style={styles.settingsItemContent}
       >
-        <View style={styles.settingsItemText}>
-          <Text style={styles.settingsItemTitle}>{title}</Text>
-          {subtitle ? (
-            <Text style={styles.settingsItemSubtitle}>{subtitle}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          {leftColor ? (
+            <View
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                marginRight: 12,
+                backgroundColor: leftColor,
+              }}
+            />
           ) : null}
+          <View style={styles.settingsItemText}>
+            <Text style={styles.settingsItemTitle}>{title}</Text>
+            {subtitle ? (
+              <Text style={styles.settingsItemSubtitle}>{subtitle}</Text>
+            ) : null}
+          </View>
         </View>
         <View style={styles.settingsItemControl}>
+          {rightContent}
           {showSwitch ? (
             <Switch
               value={!!value}

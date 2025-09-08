@@ -42,18 +42,6 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
     fontSize: 14,
     color: theme.colors.text.secondary,
   },
-  loadButton: {
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginTop: 16,
-  },
-  loadButtonText: {
-    color: theme.colors.onPrimary,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   errorText: {
     color: theme.colors.error,
     fontSize: 14,
@@ -68,8 +56,34 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
     marginBottom: 24,
+  },
+  statCard: {
+    width: '31%',
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    backgroundColor: theme.colors.card,
+    borderRadius: 16,
+    elevation: 3,
+    marginBottom: 16,
+    minHeight: 100,
+  },
+  statNumber: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: theme.colors.text.primary,
+    marginBottom: 8,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: theme.colors.text.secondary,
+    textAlign: 'center',
+    lineHeight: 14,
+    fontWeight: '500',
   },
   statItem: {
     alignItems: 'center',
@@ -79,10 +93,19 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
     fontWeight: 'bold',
     color: theme.colors.primary,
   },
-  statLabel: {
-    fontSize: 12,
-    color: theme.colors.text.secondary,
-    marginTop: 4,
+  loadButton: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    alignSelf: 'center',
+    marginTop: 32,
+  },
+  loadButtonText: {
+    color: theme.colors.background,
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   groupsHeader: {
     flexDirection: 'row',
@@ -119,14 +142,18 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
   },
   // Стили для SettingsSection
   settingsSection: {
-    marginBottom: 24,
+    marginBottom: 16,
+  },
+  settingsSectionFirst: {
+    marginBottom: 16,
+    marginTop: 16,
   },
   settingsSectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text.primary,
     marginBottom: 8,
-    paddingHorizontal: 16,
+    marginLeft: 16,
   },
   settingsSectionCard: {
     backgroundColor: theme.colors.card,
@@ -166,11 +193,12 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
     borderRadius: 12,
     elevation: 2,
     marginHorizontal: 16,
+    marginBottom: 8,
   },
   // Стили для SettingsScreen (листовые элементы)
   settingsListItem: {
     borderRadius: 12,
-    marginBottom: 4,
+    marginBottom: 8,
     marginHorizontal: 16,
     elevation: 2,
     backgroundColor: theme.colors.card,
@@ -184,5 +212,44 @@ export const createScreenStyles = (theme: any) => StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
     color: theme.colors.text.secondary,
+  },
+  // ===== Статистика: список успешных привычек =====
+  successfulHabitsSection: {
+    marginTop: 24,
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+    marginBottom: 12,
+  },
+  habitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: theme.colors.surface,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  habitName: {
+    fontSize: 16,
+    color: theme.colors.text.primary,
+    flex: 1,
+    marginRight: 12,
+  },
+  habitPercentage: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: theme.colors.primary,
+  },
+  noDataText: {
+    fontSize: 14,
+    color: theme.colors.text.secondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });

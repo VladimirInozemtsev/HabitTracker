@@ -82,7 +82,7 @@ export const SortHabitsModal: React.FC<SortHabitsModalProps> = ({
       <Dialog 
         visible={visible} 
         onDismiss={onClose}
-        style={{ backgroundColor: theme.colors.surface }}
+        style={{ backgroundColor: theme.colors.card }}
       >
         <Dialog.Title style={styles.modalTitle}>
           Сортировка привычек

@@ -11,14 +11,15 @@ import { SettingsItemCard } from '../../components/ui';
 interface SettingsSectionProps {
   title: string;
   children: React.ReactNode;
+  isFirst?: boolean;
 }
 
-const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children }) => {
+const SettingsSection: React.FC<SettingsSectionProps> = ({ title, children, isFirst = false }) => {
   const { theme } = useApp();
   const styles = createScreenStyles(theme);
   
   return (
-    <View style={styles.settingsSection}>
+    <View style={isFirst ? styles.settingsSectionFirst : styles.settingsSection}>
       <Text style={styles.settingsSectionTitle}>{title}</Text>
       {children}
     </View>
@@ -146,7 +147,7 @@ export const GeneralSettingsScreen: React.FC<GeneralSettingsScreenProps> = ({
       {/* Контент */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Основные настройки */}
-        <SettingsSection title="Основные">
+        <SettingsSection title="Основные" isFirst>
           <SettingsItemCard
             title={`Неделя начинается с ${getWeekDayName(selectedWeekDay)}`}
             onPress={handleWeekStartPress}
