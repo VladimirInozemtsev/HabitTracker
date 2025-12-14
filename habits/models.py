@@ -128,40 +128,78 @@ class Habit(models.Model):
     @property
     def calculated_streak(self):
         """Подсчитать текущий стрик на лету"""
-        from datetime import date, timedelta
+        from datetime import timedelta
+        from django.utils import timezone
+
+        today = timezone.localdate()
+        start_date = today - timedelta(days=29)  # включая сегодня: 30 дней
+
+        completed_dates = set(
+            self.logs.filter(
+                status='completed',
+                date__gte=start_date,
+                date__lte=today,
+            ).values_list('date', flat=True)
+        )
+
         current_streak = 0
-        
-        # Проверяем последние 30 дней
         for i in range(30):
-            check_date = date.today() - timedelta(days=i)
-            log = self.logs.filter(date=check_date).first()
-            
-            if log and log.status == 'completed':
+            check_date = today - timedelta(days=i)
+            if check_date in completed_dates:
                 current_streak += 1
             else:
                 break
-        
         return current_streak
 
     @property
     def calculated_longest_streak(self):
         """Подсчитать самый длинный стрик на лету"""
-        from datetime import date, timedelta
+        from datetime import timedelta
+        from django.utils import timezone
+
+        today = timezone.localdate()
+        start_date = today - timedelta(days=364)  # включая сегодня: 365 дней
+
+        completed_dates = set(
+            self.logs.filter(
+                status='completed',
+                date__gte=start_date,
+                date__lte=today,
+            ).values_list('date', flat=True)
+        )
+
         longest_streak = 0
         temp_streak = 0
-        
-        # Проверяем последние 365 дней
         for i in range(365):
-            check_date = date.today() - timedelta(days=i)
-            log = self.logs.filter(date=check_date).first()
-            
-            if log and log.status == 'completed':
+            check_date = today - timedelta(days=i)
+            if check_date in completed_dates:
                 temp_streak += 1
             else:
                 longest_streak = max(longest_streak, temp_streak)
                 temp_streak = 0
-        
+
         return max(longest_streak, temp_streak)
+
+    def recalculate_stats(self, *, save: bool = True):
+        """
+        Пересчитать и (опционально) сохранить агрегированную статистику привычки.
+
+        Важно: не делаем инкременты/декременты вручную, чтобы не ломаться на
+        изменении статуса лога (skipped->completed и т.п.) и удалениях.
+        """
+        self.total_completions = self.calculated_total_completions
+        self.total_skips = self.calculated_total_skips
+        self.streak = self.calculated_streak
+        self.longest_streak = self.calculated_longest_streak
+
+        if save:
+            self.save(update_fields=[
+                'total_completions',
+                'total_skips',
+                'streak',
+                'longest_streak',
+                'updated_at',
+            ])
 
     def archive(self):
         """Архивировать привычку"""
