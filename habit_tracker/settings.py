@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +21,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+# Environment
+DJANGO_ENV = config('DJANGO_ENV', default='development')  # development|production
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-iyyi0+av%dw62#d$uxba=xjd+%iiv*u38rby(_-xt*3^@jo@)8'
+DEFAULT_SECRET_KEY = 'django-insecure-iyyi0+av%dw62#d$uxba=xjd+%iiv*u38rby(_-xt*3^@jo@)8'
+SECRET_KEY = config('DJANGO_SECRET_KEY', default=DEFAULT_SECRET_KEY)
+if DJANGO_ENV == 'production' and SECRET_KEY == DEFAULT_SECRET_KEY:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set in production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DJANGO_DEBUG', default=(DJANGO_ENV != 'production'), cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = config(
+    'DJANGO_ALLOWED_HOSTS',
+    default='localhost,127.0.0.1,0.0.0.0',
+    cast=Csv(),
+)
 
 
 
@@ -149,14 +161,18 @@ REST_FRAMEWORK = {
 }
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # Только для разработки!
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8081",
-    "http://localhost:19006",  # Expo Web
-    "http://127.0.0.1:8081",
-    "http://127.0.0.1:19006",
-]
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=DEBUG, cast=bool)  # Только для разработки!
+CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=bool)
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default=(
+        "http://localhost:8081,"
+        "http://localhost:19006,"
+        "http://127.0.0.1:8081,"
+        "http://127.0.0.1:19006"
+    ),
+    cast=Csv(),
+)
 CORS_ALLOWED_HEADERS = [
     'accept',
     'accept-encoding',

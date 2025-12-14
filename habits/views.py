@@ -46,6 +46,7 @@ class HabitViewSet(viewsets.ModelViewSet):
         habit = self.get_object()
         
         # Создаем или обновляем лог выполнения
+        prev_status = None
         log, created = HabitLog.objects.get_or_create(
             habit=habit,
             date=timezone.now().date(),
@@ -57,17 +58,14 @@ class HabitViewSet(viewsets.ModelViewSet):
         
         # Если лог уже существовал, обновляем его статус
         if not created and log.status != 'completed':
+            prev_status = log.status
             log.status = 'completed'
             log.value = request.data.get('value', 1)
             log.save()
         
-        # Обновляем статистику привычки только если лог был создан
-        if created:
-            habit.total_completions += 1
-            habit.streak += 1
-            if habit.streak > habit.longest_streak:
-                habit.longest_streak = habit.streak
-            habit.save()
+        # Обновляем статистику привычки, если лог создан или изменён статус
+        if created or prev_status is not None:
+            habit.recalculate_stats()
         
         # Обновляем статистику пользователя
         request.user.update_habits_completed_count()
@@ -121,11 +119,8 @@ def complete_habit(request, habit_id):
             if existing_log:
                 existing_log.delete()
                 
-                # Обновляем статистику привычки используя вычисляемые свойства
-                habit.total_completions = habit.calculated_total_completions
-                habit.streak = habit.calculated_streak
-                habit.longest_streak = habit.calculated_longest_streak
-                habit.save()
+                # Обновляем статистику привычки
+                habit.recalculate_stats()
                 
                 # Обновляем статистику пользователя
                 try:
@@ -154,6 +149,7 @@ def complete_habit(request, habit_id):
                 }, status=status.HTTP_200_OK)
             
             # Создаем или обновляем лог выполнения
+            prev_status = None
             log, created = HabitLog.objects.get_or_create(
                 habit=habit,
                 date=target_date,
@@ -165,17 +161,14 @@ def complete_habit(request, habit_id):
             
             # Если лог уже существовал, обновляем его статус
             if not created and log.status != 'completed':
+                prev_status = log.status
                 log.status = 'completed'
                 log.value = request.data.get('value', 1)
                 log.save()
             
-            # Обновляем статистику привычки только если лог был создан
-            if created:
-                habit.total_completions += 1
-                habit.streak += 1
-                if habit.streak > habit.longest_streak:
-                    habit.longest_streak = habit.streak
-                habit.save()
+            # Обновляем статистику привычки, если лог создан или изменён статус
+            if created or prev_status is not None:
+                habit.recalculate_stats()
             
             # Обновляем статистику пользователя (с обработкой ошибок)
             try:
